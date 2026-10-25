@@ -3753,3 +3753,206 @@ img.logo-kotak {
   outline: 3px solid rgba(180, 35, 24, 0.35);
   outline-offset: 2px;
 }
+
+/* Tombol "Pesan Sekarang" melayang di atas tombol WhatsApp (semua halaman publik) */
+.btn-pesan-melayang {
+  box-shadow: var(--bayangan);
+}
+
+/* Teks hanya untuk pembaca layar */
+.sr-saja {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Pratinjau desain di atas foto merchandise (F-16) */
+.pratinjau-merch {
+  margin-block: var(--spasi-3);
+}
+
+.pratinjau-kotak {
+  position: relative;
+  max-width: 22rem;
+  border: 1px solid var(--garis);
+  border-radius: var(--radius-kecil);
+  overflow: hidden;
+  background: var(--putih);
+}
+
+.pratinjau-kotak img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pratinjau-kotak #pratinjau-desain {
+  position: absolute;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Banner persetujuan cookie (F-15) */
+.banner-cookie {
+  position: fixed;
+  inset: auto var(--spasi-3) var(--spasi-3) var(--spasi-3);
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spasi-3);
+  max-width: 40rem;
+  margin-inline: auto;
+  padding: var(--spasi-3);
+  border: 1px solid var(--garis);
+  border-radius: var(--radius-kecil);
+  background: var(--putih);
+  box-shadow: var(--bayangan);
+}
+
+.banner-cookie p {
+  margin: 0;
+}
+
+.banner-cookie-aksi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spasi-2);
+}
+
+@media (min-width: 40rem) {
+  .banner-cookie {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .banner-cookie-aksi {
+    flex-shrink: 0;
+  }
+}
+
+/* Chatbot FAQ (F-13) */
+.btn-bot {
+  background: var(--navy);
+  color: #fff;
+}
+
+.btn-bot svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.panel-bot {
+  position: fixed;
+  right: var(--spasi-3);
+  bottom: 6.5rem;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  width: min(calc(100vw - 2rem), 32rem);
+  height: min(44rem, calc(100dvh - 8rem));
+  border: 1px solid var(--garis);
+  border-radius: var(--radius-kecil);
+  background: var(--putih);
+  box-shadow: var(--bayangan);
+  overflow: hidden;
+}
+
+.panel-bot[hidden] {
+  display: none;
+}
+
+.panel-bot-kepala {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spasi-2) var(--spasi-3);
+  background: var(--navy);
+  color: #fff;
+}
+
+.panel-bot-tutup {
+  min-width: var(--tinggi-sentuh);
+  min-height: var(--tinggi-sentuh);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.panel-bot-pesan {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spasi-2);
+  min-height: 0;
+  padding: var(--spasi-3);
+  overflow-y: auto;
+}
+
+.bot-pesan {
+  max-width: 90%;
+  padding: var(--spasi-2) var(--spasi-3);
+  border-radius: var(--radius-kecil);
+  font-size: var(--teks-isi);
+}
+
+.bot-masuk {
+  align-self: flex-start;
+  background: var(--latar);
+}
+
+.bot-keluar {
+  align-self: flex-end;
+  background: var(--biru);
+  color: #fff;
+}
+
+.panel-bot-cepat {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--spasi-2);
+  flex-shrink: 0;
+  padding: var(--spasi-1) var(--spasi-3) var(--spasi-2);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.panel-bot-cepat .chip-filter {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.panel-bot-form {
+  flex-shrink: 0;
+  display: flex;
+  gap: var(--spasi-2);
+  padding: var(--spasi-2) var(--spasi-3) var(--spasi-3);
+  border-top: 1px solid var(--garis);
+}
+
+.panel-bot-form input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tinggi-sentuh);
+  padding: 0 var(--spasi-3);
+  border: 1px solid var(--garis);
+  border-radius: var(--radius-kecil);
+  font: inherit;
+}
+
+/* Jarak antar tombol di bawah form pesan (Kirim pesanan dan WhatsApp) */
+#form-pesan .btn-penuh + .btn-penuh {
+  margin-top: var(--spasi-3);
+}
+
+#form-pesan #info-mode-contoh {
+  margin-top: var(--spasi-3);
+}

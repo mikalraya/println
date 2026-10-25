@@ -36,7 +36,7 @@ function aturMenuHp() {
 // Tandai menu halaman yang sedang dibuka
 function tandaiMenuAktif() {
   const berkas = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.menu-utama a, .tombol-keranjang').forEach((a) => {
+  document.querySelectorAll('.menu-utama a').forEach((a) => {
     if (a.getAttribute('href') === berkas) {
       a.setAttribute('aria-current', 'page');
     }
@@ -59,7 +59,10 @@ function buatTombolMelayang() {
   const linkWa = `https://wa.me/${CONFIG.waAdmin}?text=${encodeURIComponent(CONFIG.pesanWaAwal)}`;
   const kotak = document.createElement('div');
   kotak.className = 'tombol-melayang';
+  const berkas = location.pathname.split('/').pop() || 'index.html';
+  const tombolPesan = berkas === 'pesan.html' ? '' : '<a class="btn btn-utama btn-pesan-melayang" href="pesan.html">Pesan Sekarang</a>';
   kotak.innerHTML = `
+    ${tombolPesan}
     <a class="btn-ikon btn-wa" href="${linkWa}" target="_blank" rel="noopener" aria-label="Chat WhatsApp admin ${CONFIG.namaToko}">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       <span class="label-ikon" aria-hidden="true">Chat WhatsApp</span>
@@ -71,80 +74,40 @@ function buatTombolMelayang() {
 // Format harga: Rp 55.000
 const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
 
-// Keranjang: disimpan di database (tabel keranjang) lewat api/keranjang.php. Perlu login.
-// Bentuk item: { id, produkId, nama, lini, spesifikasi, harga (per item, rupiah), jumlah, dipilih, perluDesain }
-// "Pesan sekarang" tidak lewat keranjang: item disimpan sementara di sessionStorage (lihat Keranjang.pesanLangsung).
-const KUNCI_LANGSUNG = 'printin_langsung';
-let jenisKeranjang = 0;
-
-const Keranjang = {
-  // Panggil API keranjang. Mengembalikan { ok, item, perluMasuk, pesan }
-  async panggil(isi) {
-    try {
-      const res = await fetch(`${CONFIG.urlApiAkun}keranjang.php`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(isi),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        jenisKeranjang = data.item.length;
-        perbaruiLencana();
-      }
-      return data;
-    } catch (err) {
-      return { ok: false, pesan: 'Tidak bisa terhubung ke server. Buka lewat Laragon, lalu coba lagi.' };
-    }
-  },
-
-  ambil() { return this.panggil({ aksi: 'ambil' }); },
-  tambah(item) { return this.panggil({ aksi: 'tambah', ...item }); },
-  ubahJumlah(id, jumlah) { return this.panggil({ aksi: 'jumlah', id, jumlah }); },
-  pilih(id, dipilih) { return this.panggil({ aksi: 'pilih', id, dipilih }); },
-  hapus(id) { return this.panggil({ aksi: 'hapus', id }); },
-  selesai() { return this.panggil({ aksi: 'selesai' }); },
-
-  // Simpan satu item untuk dipesan langsung (tanpa masuk keranjang)
-  pesanLangsung(item) {
-    try { sessionStorage.setItem(KUNCI_LANGSUNG, JSON.stringify(item)); } catch (err) { /* diabaikan */ }
-  },
-  ambilLangsung() {
-    try { return JSON.parse(sessionStorage.getItem(KUNCI_LANGSUNG)); } catch (err) { return null; }
-  },
-  hapusLangsung() {
-    try { sessionStorage.removeItem(KUNCI_LANGSUNG); } catch (err) { /* diabaikan */ }
-  },
-};
-
-// Angka kecil di ikon keranjang navbar
-function perbaruiLencana() {
-  const total = jenisKeranjang;
-  document.querySelectorAll('[data-jumlah-keranjang]').forEach((el) => {
-    el.textContent = total > 99 ? '99+' : total;
-    el.hidden = total === 0;
-  });
-  document.querySelectorAll('.tombol-keranjang').forEach((a) => {
-    a.setAttribute('aria-label', total ? `Keranjang, ${total} jenis produk` : 'Keranjang, kosong');
-  });
-}
-
-// Panggil api/pesanan.php. Mengembalikan { ok, pesan, perluMasuk, ... } (selalu objek, tidak melempar galat).
-async function panggilPesanan(isi) {
+// Panggil Google Apps Script (CONFIG.urlApi). Selalu mengembalikan objek { ok, pesan, ... } dan tidak melempar galat.
+// GET untuk membaca; POST memakai body text/plain berisi JSON agar tidak ada preflight CORS.
+async function panggilApi({ params, body } = {}) {
+  if (!CONFIG.urlApi) return { ok: false, tanpaApi: true, pesan: 'Server pesanan belum disambungkan.' };
   try {
-    const res = await fetch(`${CONFIG.urlApiAkun}pesanan.php`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(isi),
-    });
+    let res;
+    if (body) {
+      res = await fetch(CONFIG.urlApi, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+    } else {
+      res = await fetch(`${CONFIG.urlApi}?${new URLSearchParams(params)}`);
+    }
     return await res.json();
   } catch (err) {
-    return { ok: false, pesan: 'Tidak bisa terhubung ke server. Buka lewat Laragon, lalu coba lagi.' };
+    return { ok: false, pesan: 'Tidak bisa terhubung ke server. Periksa internetmu, lalu coba lagi.' };
   }
 }
 
-// Tanggal dan jam dari MySQL ("2026-10-25 06:31:09") -> "25 Okt 2026, 06.31"
+// Pesan WhatsApp berisi detail pesanan (dipakai di halaman Pesan dan Bayar)
+// p: { kode, nama, produk, spesifikasi, jumlah, total, ambil, tanpaServer }
+function pesanWaPesanan(p) {
+  const baris = [`Halo ${CONFIG.namaToko}, saya ingin memesan.`, ''];
+  if (p.kode) baris.push(`Kode pesanan: ${p.kode}`);
+  baris.push(
+    `Nama: ${p.nama}`,
+    `Produk: ${p.produk}${p.spesifikasi ? ` (${p.spesifikasi})` : ''}`,
+    `Jumlah: ${p.jumlah}`,
+    `Perkiraan total: ${rupiah.format(p.total)}`,
+    `Pengambilan: ${p.ambil === 'kirim' ? 'dikirim ke alamat' : 'ambil di toko'}`,
+  );
+  if (p.tanpaServer) baris.push('', 'File desain saya kirim lewat chat ini.');
+  return baris.join('\n').replace(/\u00a0/g, ' ');
+}
+
+// Tanggal dan jam dari Sheets ("2026-10-25 06:31") -> "25 Okt 2026, 06.31"
 function tanggalJam(teks) {
   const d = new Date(String(teks).replace(' ', 'T'));
   if (Number.isNaN(d.getTime())) return '';
@@ -189,29 +152,6 @@ function tampilToast({ pesan, jenis = 'sukses', tautan }) {
 
   document.body.appendChild(kotak);
   waktuToast = setTimeout(() => kotak.remove(), 6000);
-}
-
-// Beri tahu hasil menambah ke keranjang: sukses, perlu masuk, atau galat lain
-function kabarKeranjang(hasil, namaProduk) {
-  if (hasil.ok) {
-    tampilToast({
-      pesan: `${namaProduk} sudah masuk keranjang.`,
-      tautan: { teks: 'Lihat keranjang', href: 'keranjang.html' },
-    });
-    document.querySelectorAll('.tombol-keranjang').forEach((a) => {
-      a.classList.remove('loncat');
-      void a.offsetWidth; // ulangi animasi
-      a.classList.add('loncat');
-    });
-  } else if (hasil.perluMasuk) {
-    tampilToast({
-      jenis: 'galat',
-      pesan: 'Masuk dulu untuk memakai keranjang.',
-      tautan: { teks: 'Masuk', href: 'login.html' },
-    });
-  } else {
-    tampilToast({ jenis: 'galat', pesan: hasil.pesan || 'Belum bisa menambah ke keranjang. Coba lagi.' });
-  }
 }
 
 // Isi tahun otomatis di footer
@@ -321,118 +261,79 @@ function isiTautanKontak() {
   });
 }
 
-// Ikon dialog konfirmasi (SVG statis)
-const IKON_KONFIRMASI = {
-  keluar: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
-  peran: '<path d="M12 3l8 3v6c0 5-3.4 8.2-8 9-4.6-.8-8-4-8-9V6l8-3z"/>',
-  hapus: '<path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>',
-};
+// ----- Persetujuan cookie (F-15) dan statistik kunjungan GoatCounter (F-14) -----
+// Skrip statistik hanya dimuat setelah pengunjung menekan "Setuju". Aktif bila CONFIG.goatCounter terisi.
+const KUNCI_COOKIE = 'printin_cookie';
 
-// Dialog konfirmasi sesuai tema. Mengembalikan Promise<boolean>.
-// Teks diisi lewat textContent, jadi aman dipakai untuk nama dari database.
-function tanyaKonfirmasi({ judul, teks, ya, ikon = 'hapus' }) {
-  return new Promise((selesai) => {
-    const dialog = document.createElement('dialog');
-    dialog.className = 'dialog-logout';
-    dialog.setAttribute('aria-labelledby', 'judul-konfirmasi');
-    dialog.innerHTML = `
-      <div class="ikon-logout" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IKON_KONFIRMASI[ikon]}</svg>
-      </div>
-      <h2 id="judul-konfirmasi"></h2>
-      <p></p>
-      <div class="aksi-dialog">
-        <button class="btn btn-garis" type="button" data-batal>Batal</button>
-        <button class="btn btn-bahaya" type="button" data-ya></button>
-      </div>`;
-    dialog.querySelector('h2').textContent = judul;
-    dialog.querySelector('p').textContent = teks;
-    dialog.querySelector('[data-ya]').textContent = ya;
-    document.body.appendChild(dialog);
+function bacaPilihanCookie() {
+  try { return localStorage.getItem(KUNCI_COOKIE); } catch (err) { return null; }
+}
 
-    let jawaban = false;
-    dialog.addEventListener('close', () => { dialog.remove(); selesai(jawaban); });
-    dialog.querySelector('[data-batal]').addEventListener('click', () => dialog.close());
-    dialog.querySelector('[data-ya]').addEventListener('click', () => { jawaban = true; dialog.close(); });
-    // Klik area gelap di luar kotak = batal
-    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
-    dialog.showModal();
-    dialog.querySelector('[data-batal]').focus();
+function simpanPilihanCookie(nilai) {
+  try { localStorage.setItem(KUNCI_COOKIE, nilai); } catch (err) { /* pilihan hanya berlaku di halaman ini */ }
+}
+
+function aktifkanStatistik() {
+  if (!CONFIG.goatCounter || document.getElementById('skrip-statistik')) return;
+  const skrip = document.createElement('script');
+  skrip.id = 'skrip-statistik';
+  skrip.async = true;
+  skrip.dataset.goatcounter = `https://${CONFIG.goatCounter}.goatcounter.com/count`;
+  skrip.src = 'https://gc.zgo.at/count.js';
+  document.head.appendChild(skrip);
+}
+
+function tampilkanBannerCookie() {
+  if (document.querySelector('.banner-cookie')) return;
+  const banner = document.createElement('div');
+  banner.className = 'banner-cookie';
+  banner.setAttribute('role', 'region');
+  banner.setAttribute('aria-label', 'Persetujuan cookie');
+  const teks = document.createElement('p');
+  teks.append('Kami ingin memakai statistik kunjungan sederhana untuk memperbaiki website. Statistik hanya aktif kalau kamu setuju. Baca ');
+  const tautan = document.createElement('a');
+  tautan.href = 'privasi.html#cookie';
+  tautan.textContent = 'Kebijakan Privasi';
+  teks.append(tautan, '.');
+
+  const aksi = document.createElement('div');
+  aksi.className = 'banner-cookie-aksi';
+  [['tolak', 'Tolak', 'btn btn-garis'], ['setuju', 'Setuju', 'btn btn-utama']].forEach(([nilai, label, kelas]) => {
+    const tombol = document.createElement('button');
+    tombol.type = 'button';
+    tombol.className = kelas;
+    tombol.textContent = label;
+    tombol.addEventListener('click', () => {
+      simpanPilihanCookie(nilai);
+      if (nilai === 'setuju') aktifkanStatistik();
+      banner.remove();
+    });
+    aksi.append(tombol);
   });
+  banner.append(teks, aksi);
+  document.body.appendChild(banner);
 }
 
-function tanyaLogout() {
-  return tanyaKonfirmasi({
-    judul: 'Yakin ingin keluar?',
-    teks: 'Kamu perlu masuk lagi untuk memesan dan melihat keranjangmu.',
-    ya: 'Ya, keluar',
-    ikon: 'keluar',
-  });
-}
-
-// Jadikan tombol/tautan "Masuk" sebagai "Logout" yang meminta konfirmasi dulu
-function jadikanLogout(el) {
-  el.textContent = 'Keluar';
-  el.href = '#';
-  el.classList.add('tombol-logout');
-  el.addEventListener('click', async (e) => {
-    e.preventDefault();
-    if (!(await tanyaLogout())) return;
-    try {
-      await fetch(`${CONFIG.urlApiAkun}keluar.php`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: '{}',
-      });
-    } catch { /* tetap kembali ke beranda */ }
-    window.location.href = 'index.html';
-  });
-}
-
-// Superadmin yang sedang melihat situs publik bisa kembali ke dashboard (navbar + menu HP)
-function tambahTautanDashboard() {
-  const keluar = document.querySelector('.aksi-nav .btn-masuk');
-  if (keluar) {
-    const tombol = document.createElement('a');
-    tombol.className = 'btn btn-utama btn-dashboard';
-    tombol.href = 'admin.html';
-    tombol.setAttribute('aria-label', 'Dashboard');
-    tombol.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span class="teks-dashboard">Dashboard</span>';
-    keluar.before(tombol);
-  }
-  const menuHp = document.querySelector('.menu-utama a[href="#"]');
-  if (menuHp) {
-    const li = document.createElement('li');
-    li.className = 'hanya-hp';
-    li.innerHTML = '<a href="admin.html">Dashboard</a>';
-    menuHp.parentElement.before(li);
-  }
-}
-
-// Bila sudah login, tombol "Masuk" di navbar (dan menu HP) berubah jadi "Logout"
-async function aturTombolAkun() {
-  try {
-    const res = await fetch(`${CONFIG.urlApiAkun}sesi.php`, { credentials: 'include' });
-    const data = await res.json();
-    if (!data.masuk) return;
-    jenisKeranjang = data.keranjang || 0;
-    perbaruiLencana();
-    document.querySelectorAll('.btn-masuk, .menu-utama a[href="login.html"]').forEach(jadikanLogout);
-    // Menu "Daftar" tidak perlu lagi setelah login
-    document.querySelectorAll('.menu-utama a[href="daftar.html"]').forEach((a) => { a.parentElement.style.display = 'none'; });
-    if (data.role === 'superadmin') tambahTautanDashboard();
-  } catch { /* API tidak aktif: biarkan tombol Masuk */ }
+function aturCookie() {
+  if (document.body.dataset.halaman === 'admin') return;
+  const pilihan = bacaPilihanCookie();
+  if (pilihan === 'setuju') aktifkanStatistik();
+  else if (!pilihan) tampilkanBannerCookie();
+  // Tombol "Ubah pilihan cookie" di halaman Kebijakan Privasi
+  document.querySelectorAll('[data-ubah-cookie]').forEach((t) => t.addEventListener('click', () => {
+    try { localStorage.removeItem(KUNCI_COOKIE); } catch (err) { /* diabaikan */ }
+    tampilkanBannerCookie();
+  }));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  aturTombolAkun();
   isiDariConfig();
   isiTautanKontak();
   aturMenuHp();
   tandaiMenuAktif();
   aturBayanganNavbar();
   buatTombolMelayang();
+  aturCookie();
   isiTahun();
   aturAnimasiScroll();
   aturTab();

@@ -6,6 +6,9 @@
 //   pcs    : harga x jumlah pcs
 // Produk dengan harga "Mulai" (harga_mulai = true) ditampilkan sebagai ESTIMASI.
 
+// Kunci sessionStorage: pilihan dari kalkulator yang diteruskan ke pesan.html
+const KUNCI_PILIHAN = 'printin_pilihan';
+
 const angkaId = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 2 });
 
 // Label kolom jumlah untuk tiap tipe hitung
@@ -128,21 +131,18 @@ function hitungUlang() {
     }));
     el('hasil-total').textContent = rupiah.format(hasil.total);
   }
-  ['btn-keranjang', 'btn-pesan'].forEach((id) => { el(id).disabled = !hasil.valid; });
+  el('btn-pesan').disabled = !hasil.valid;
 }
 
-// Item dari hasil hitungan terakhir
-function itemDariHasil() {
-  const { produk, spesifikasi, hargaPerItem, jumlah } = hasilTerakhir;
-  return {
-    produkId: produk.id,
-    nama: produk.nama,
-    lini: produk.lini,
-    spesifikasi,
-    harga: hargaPerItem,
-    jumlah,
-    perluDesain: produk.perlu_desain,
-  };
+// Simpan pilihan ke sessionStorage untuk diteruskan ke halaman Pesan
+function simpanPilihan() {
+  const { produk, jumlah } = hasilTerakhir;
+  const pilihan = { produkId: produk.id, jumlah };
+  if (produk.tipe_hitung === 'luas') {
+    pilihan.panjang = Number(el('kal-panjang').value);
+    pilihan.lebar = Number(el('kal-lebar').value);
+  }
+  try { sessionStorage.setItem(KUNCI_PILIHAN, JSON.stringify(pilihan)); } catch (err) { /* diabaikan */ }
 }
 
 // Dipanggil dari tombol "Hitung harga" pada kartu produk
@@ -180,27 +180,16 @@ function mulaiKalkulator() {
   el('kal-produk').addEventListener('change', () => { aturFormUntukProduk(); hitungUlang(); });
   ['kal-panjang', 'kal-lebar', 'kal-jumlah'].forEach((id) => el(id).addEventListener('input', hitungUlang));
 
-  // Tambah ke keranjang (database, perlu login)
-  el('btn-keranjang').addEventListener('click', async () => {
-    if (!hasilTerakhir) return;
-    const tombol = el('btn-keranjang');
-    tombol.disabled = true;
-    const item = itemDariHasil();
-    const hasil = await Keranjang.tambah(item);
-    tombol.disabled = false;
-    kabarKeranjang(hasil, item.nama);
-  });
-
-  // Pesan sekarang: langsung ke form, hanya produk ini yang dipesan (tidak masuk keranjang)
+  // Pesan sekarang: teruskan pilihan ke form pemesanan
   el('btn-pesan').addEventListener('click', () => {
     if (!hasilTerakhir) return;
-    Keranjang.pesanLangsung(itemDariHasil());
-    location.href = 'pesan.html?langsung=1';
+    simpanPilihan();
+    location.href = 'pesan.html';
   });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Tunggu produk dari database dulu (fungsi ada di produk.js)
-  if (typeof muatProdukDariDb === 'function') await muatProdukDariDb();
+  // Tunggu produk dari Sheets dulu (fungsi ada di produk.js)
+  if (typeof muatProdukDariSheets === 'function') await muatProdukDariSheets();
   mulaiKalkulator();
 });

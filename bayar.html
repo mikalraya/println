@@ -20,19 +20,15 @@
           <ul class="menu-utama" id="menu-utama">
             <li><a href="index.html">Beranda</a></li>
             <li><a href="produk.html">Produk</a></li>
-            <li><a href="status.html">Pesanan Saya</a></li>
+            <li><a href="pesan.html">Pesan</a></li>
+            <li><a href="status.html">Cek Status</a></li>
             <li><a href="tentang.html">Tentang Kami</a></li>
-            <li><a href="kontak.html">FAQ</a></li>
-            <li class="hanya-hp"><a href="login.html">Masuk</a></li>
-            <li class="hanya-hp"><a href="daftar.html">Daftar</a></li>
+            <li><a href="kontak.html">Kontak &amp; FAQ</a></li>
+            <li class="hanya-hp"><a href="admin.html">Login Admin</a></li>
           </ul>
         </nav>
         <div class="aksi-nav">
-          <a class="tombol-keranjang" href="keranjang.html" aria-label="Keranjang, kosong">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.5L21.5 7H6"/></svg>
-            <span class="lencana" data-jumlah-keranjang hidden>0</span>
-          </a>
-          <a class="btn btn-garis btn-masuk" href="login.html">Masuk</a>
+          <a class="btn btn-garis btn-masuk" href="admin.html">Login Admin</a>
           <button class="tombol-menu" type="button" aria-expanded="false" aria-controls="menu-utama" aria-label="Buka menu">
             <span class="garis"></span><span class="garis"></span><span class="garis"></span>
           </button>
@@ -46,17 +42,18 @@
       <div class="kartu judul-kartu reveal">
         <span class="pil">Pembayaran</span>
         <h1 id="judul-bayar">Pesananmu <span class="sorot sorot-tosca">sudah dibuat</span></h1>
-        <p class="lead">Tinggal satu langkah lagi: bayar lewat QRIS di bawah. Admin akan mulai mengerjakan setelah pesananmu dicek.</p>
+        <p class="lead">Tinggal satu langkah lagi: bayar lewat QRIS di bawah, lalu konfirmasi lewat WhatsApp. Simpan kode pesananmu untuk mengecek status.</p>
       </div>
     </section>
 
     <section class="wadah bagian" aria-label="Pembayaran">
       <p class="catatan-kecil tengah" id="bayar-muat" role="status">Memuat pesananmu…</p>
 
-      <div class="kartu keranjang-kosong" id="bayar-galat" hidden>
+      <div class="kartu kartu-pad tengah" id="bayar-galat" hidden>
         <h2>Pesanan belum bisa dibuka</h2>
         <p id="bayar-galat-teks"></p>
-        <a class="btn btn-utama" id="bayar-galat-tautan" href="status.html">Lihat pesananku</a>
+        <a class="btn btn-utama" href="pesan.html">Buat pesanan</a>
+        <a class="btn btn-garis" href="status.html">Cek status pesanan</a>
       </div>
 
       <div class="bayar-grid" id="bayar-isi" hidden>
@@ -68,29 +65,16 @@
             <span>Perkiraan total</span>
             <strong id="bayar-nominal">Rp0</strong>
           </div>
-          <p class="catatan-kecil">Ini perkiraan harga. Total pasti dikonfirmasi admin setelah desain dicek.</p>
+          <p class="catatan-kecil">Ini perkiraan harga simulasi. Total pasti dikonfirmasi admin setelah desain dicek.</p>
           <a class="btn btn-garis btn-penuh" id="tautan-status" href="status.html">Pantau status pesanan</a>
         </article>
 
         <aside class="kartu kartu-pad qris-kartu" aria-labelledby="judul-qris">
-          <div id="blok-qris">
-            <h2 id="judul-qris">Bayar dengan QRIS</h2>
-            <p class="label-mockup">Contoh/mockup — bukan pembayaran sungguhan</p>
-            <img class="qris-gambar" src="img/qris-contoh.svg" alt="Contoh kode QRIS, hanya mockup dan tidak bisa dipindai untuk membayar" width="232" height="232">
-            <p class="catatan-kecil">Ini hanya simulasi untuk tugas kuliah. Jangan transfer uang sungguhan. Tekan tombol di bawah untuk menandai pesanan ini sudah dibayar.</p>
-            <button class="btn btn-utama btn-penuh" type="button" id="tombol-sudah-bayar">Saya sudah bayar (contoh)</button>
-            <a class="btn btn-wa btn-penuh" id="tombol-wa-bayar" href="#" target="_blank" rel="noopener">Konfirmasi lewat WhatsApp</a>
-          </div>
-          <div id="bayar-lunas" hidden>
-            <h2>Pembayaran dicatat</h2>
-            <p>Terima kasih! Admin akan mengecek pesananmu dan mengubah statusnya saat mulai dikerjakan.</p>
-            <a class="btn btn-utama btn-penuh" href="status.html">Lihat pesananku</a>
-          </div>
-          <div id="bayar-batal" hidden>
-            <h2>Pesanan dibatalkan</h2>
-            <p>Pesanan ini sudah dibatalkan, jadi tidak perlu dibayar.</p>
-            <a class="btn btn-utama btn-penuh" href="produk.html">Lihat produk</a>
-          </div>
+          <h2 id="judul-qris">Bayar dengan QRIS</h2>
+          <p class="label-mockup">Contoh/mockup — bukan pembayaran sungguhan</p>
+          <img class="qris-gambar" src="img/qris-contoh.svg" alt="Contoh kode QRIS, hanya mockup dan tidak bisa dipindai untuk membayar" width="232" height="232">
+          <p class="catatan-kecil">Ini hanya simulasi untuk tugas kuliah. Jangan transfer uang sungguhan. Tekan tombol di bawah untuk mengonfirmasi pesanan ke admin.</p>
+          <a class="btn btn-wa btn-penuh" id="tombol-wa-bayar" href="#" target="_blank" rel="noopener">Konfirmasi lewat WhatsApp</a>
         </aside>
       </div>
     </section>
@@ -125,6 +109,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
   <script src="js/bayar.js"></script>
 </body>
 </html>

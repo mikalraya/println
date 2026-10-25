@@ -4,20 +4,20 @@
 
 const PRODUK = [
   // ----- Printing Reguler -----
-  { id: 'print-bw', nama: 'Print hitam putih', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 500, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: '', deskripsi: 'Print dokumen, makalah, atau skripsi dengan tinta hitam putih.' },
-  { id: 'print-warna', nama: 'Print berwarna', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 1500, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: '', deskripsi: 'Print dokumen berwarna, cocok untuk presentasi, laporan bergambar, atau materi belajar.' },
-  { id: 'fotokopi-bw', nama: 'Fotokopi hitam putih', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 300, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: '', deskripsi: 'Fotokopi dokumen hitam putih dengan harga hemat, bisa dalam jumlah banyak.' },
-  { id: 'scan', nama: 'Scan dokumen', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 1000, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: '', deskripsi: 'Ubah dokumen kertas jadi file digital yang rapi dan mudah dikirim.' },
-  { id: 'brosur', nama: 'Cetak brosur', lini: 'Printing Reguler', kategori: 'Promosi', harga: 1500, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: true, perlu_desain: true, estimasi: '2 hari', status: 'Tersedia', foto: '', deskripsi: 'Brosur untuk promosi usaha, acara, atau organisasi. Harga akhir tergantung ukuran dan bahan.' },
-  { id: 'poster-a3', nama: 'Cetak poster A3', lini: 'Printing Reguler', kategori: 'Promosi', harga: 15000, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: true, estimasi: '1 hari', status: 'Tersedia', foto: '', deskripsi: 'Poster ukuran A3 (29,7 × 42 cm) untuk pengumuman, acara, atau dekorasi.' },
-  { id: 'kartu-nama', nama: 'Cetak kartu nama', lini: 'Printing Reguler', kategori: 'Kartu & Undangan', harga: 25000, satuan: '100 pcs', tipe_hitung: 'paket', harga_mulai: false, perlu_desain: true, estimasi: '2 hari', status: 'Tersedia', foto: '', deskripsi: 'Kartu nama kertas tebal. Satu paket berisi 100 lembar.' },
-  { id: 'banner', nama: 'Cetak banner', lini: 'Printing Reguler', kategori: 'Promosi', harga: 25000, satuan: 'm²', tipe_hitung: 'luas', harga_mulai: false, perlu_desain: true, estimasi: '1 hari', status: 'Tersedia', foto: '', deskripsi: 'Banner untuk spanduk usaha atau acara. Harga dihitung per meter persegi (panjang × lebar).' },
-  { id: 'undangan', nama: 'Cetak undangan', lini: 'Printing Reguler', kategori: 'Kartu & Undangan', harga: 2000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: true, perlu_desain: true, estimasi: '3 hari', status: 'Tersedia', foto: '', deskripsi: 'Undangan pernikahan, ulang tahun, atau acara kantor. Harga akhir tergantung kertas dan ukuran.' },
+  { id: 'print-bw', nama: 'Print hitam putih', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 500, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: 'img/produk/print-bw.webp', deskripsi: 'Print dokumen, makalah, atau skripsi dengan tinta hitam putih.' },
+  { id: 'print-warna', nama: 'Print berwarna', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 1500, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: 'img/produk/print-warna.webp', deskripsi: 'Print dokumen berwarna, cocok untuk presentasi, laporan bergambar, atau materi belajar.' },
+  { id: 'fotokopi-bw', nama: 'Fotokopi hitam putih', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 300, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: 'img/produk/fotokopi-bw.webp', deskripsi: 'Fotokopi dokumen hitam putih dengan harga hemat, bisa dalam jumlah banyak.' },
+  { id: 'scan', nama: 'Scan dokumen', lini: 'Printing Reguler', kategori: 'Dokumen', harga: 1000, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: false, estimasi: 'Hari ini', status: 'Tersedia', foto: 'img/produk/scan.webp', deskripsi: 'Ubah dokumen kertas jadi file digital yang rapi dan mudah dikirim.' },
+  { id: 'brosur', nama: 'Cetak brosur', lini: 'Printing Reguler', kategori: 'Promosi', harga: 1500, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: true, perlu_desain: true, estimasi: '2 hari', status: 'Tersedia', foto: 'img/produk/brosur.webp', deskripsi: 'Brosur untuk promosi usaha, acara, atau organisasi. Harga akhir tergantung ukuran dan bahan.' },
+  { id: 'poster-a3', nama: 'Cetak poster A3', lini: 'Printing Reguler', kategori: 'Promosi', harga: 15000, satuan: 'lembar', tipe_hitung: 'lembar', harga_mulai: false, perlu_desain: true, estimasi: '1 hari', status: 'Tersedia', foto: 'img/produk/poster-a3.webp', deskripsi: 'Poster ukuran A3 (29,7 × 42 cm) untuk pengumuman, acara, atau dekorasi.' },
+  { id: 'kartu-nama', nama: 'Cetak kartu nama', lini: 'Printing Reguler', kategori: 'Kartu & Undangan', harga: 25000, satuan: '100 pcs', tipe_hitung: 'paket', harga_mulai: false, perlu_desain: true, estimasi: '2 hari', status: 'Tersedia', foto: 'img/produk/kartu-nama.webp', deskripsi: 'Kartu nama kertas tebal. Satu paket berisi 100 lembar.' },
+  { id: 'banner', nama: 'Cetak banner', lini: 'Printing Reguler', kategori: 'Promosi', harga: 25000, satuan: 'm²', tipe_hitung: 'luas', harga_mulai: false, perlu_desain: true, estimasi: '1 hari', status: 'Tersedia', foto: 'img/produk/banner.webp', deskripsi: 'Banner untuk spanduk usaha atau acara. Harga dihitung per meter persegi (panjang × lebar).' },
+  { id: 'undangan', nama: 'Cetak undangan', lini: 'Printing Reguler', kategori: 'Kartu & Undangan', harga: 2000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: true, perlu_desain: true, estimasi: '3 hari', status: 'Tersedia', foto: 'img/produk/undangan.webp', deskripsi: 'Undangan pernikahan, ulang tahun, atau acara kantor. Harga akhir tergantung kertas dan ukuran.' },
   // ----- Custom Merchandise -----
-  { id: 'tumbler', nama: 'Custom Tumbler', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 55000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '4 hari', status: 'Tersedia', foto: '', deskripsi: 'Tumbler dengan desainmu sendiri, cocok untuk hadiah atau seragam komunitas.' },
-  { id: 'mug', nama: 'Custom Mug', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 25000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '3 hari', status: 'Tersedia', foto: '', deskripsi: 'Mug keramik dengan foto atau desain pilihanmu.' },
-  { id: 'gantungan-kunci', nama: 'Custom Gantungan Kunci', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 10000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '3 hari', status: 'Tersedia', foto: '', deskripsi: 'Gantungan kunci mungil untuk suvenir acara atau merchandise usaha.' },
-  { id: 'tote-bag', nama: 'Custom Tote Bag', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 35000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '5 hari', status: 'Terbatas', foto: '', deskripsi: 'Tas kain dengan sablon desainmu. Bahan sedang terbatas, hubungi admin untuk jumlah besar.' },
+  { id: 'tumbler', nama: 'Custom Tumbler', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 55000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '4 hari', status: 'Tersedia', foto: 'img/produk/tumbler.webp', deskripsi: 'Tumbler dengan desainmu sendiri, cocok untuk hadiah atau seragam komunitas.' },
+  { id: 'mug', nama: 'Custom Mug', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 25000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '3 hari', status: 'Tersedia', foto: 'img/produk/mug.webp', deskripsi: 'Mug keramik dengan foto atau desain pilihanmu.' },
+  { id: 'gantungan-kunci', nama: 'Custom Gantungan Kunci', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 10000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '3 hari', status: 'Tersedia', foto: 'img/produk/gantungan-kunci.webp', deskripsi: 'Gantungan kunci mungil untuk suvenir acara atau merchandise usaha.' },
+  { id: 'tote-bag', nama: 'Custom Tote Bag', lini: 'Custom Merchandise', kategori: 'Merchandise', harga: 35000, satuan: 'pcs', tipe_hitung: 'pcs', harga_mulai: false, perlu_desain: true, estimasi: '5 hari', status: 'Terbatas', foto: 'img/produk/tote-bag.webp', deskripsi: 'Tas kain dengan sablon desainmu. Bahan sedang terbatas, hubungi admin untuk jumlah besar.' },
 ];
 
 const LINI = ['Printing Reguler', 'Custom Merchandise'];
@@ -43,8 +43,7 @@ function buatKartuProduk(p) {
   let visual;
   if (p.foto) {
     visual = document.createElement('img');
-    // Foto unggahan admin disimpan di server PHP; foto bawaan (img/) ada di situs
-    visual.src = p.foto.startsWith('uploads/') ? CONFIG.urlDasarServer + p.foto : p.foto;
+    visual.src = p.foto;
     visual.alt = p.nama;
     visual.loading = 'lazy';
     visual.className = 'foto-produk';
@@ -98,54 +97,13 @@ function buatKartuProduk(p) {
     });
   }
 
-  // Tombol cepat ke keranjang (produk banner perlu ukuran, jadi diarahkan ke kalkulator)
   const aksi = document.createElement('div');
   aksi.className = 'katalog-aksi';
   aksi.append(tombol);
-  if (p.status !== 'Habis') aksi.append(buatTombolKeranjang(p));
 
   isi.append(status, judul, deskripsi, harga, info, aksi);
   li.append(visual, isi);
   return li;
-}
-
-// Ikon tombol keranjang (SVG statis): keranjang, dan centang saat berhasil
-const IKON_KERANJANG = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.5L21.5 7H6"/></svg>';
-const IKON_CENTANG = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-
-// Tombol "Keranjang" di kartu produk: tambah 1 (lembar/paket/pcs) ke database
-function buatTombolKeranjang(p) {
-  const tombol = document.createElement('button');
-  tombol.type = 'button';
-  tombol.className = 'btn btn-garis btn-keranjang-ikon';
-  tombol.innerHTML = IKON_KERANJANG;
-  tombol.setAttribute('aria-label', `Tambah ${p.nama} ke keranjang`);
-  tombol.title = 'Tambah ke keranjang';
-
-  tombol.addEventListener('click', async () => {
-    // Banner dihitung dari ukuran, jadi isi ukuran dulu di kalkulator
-    if (p.tipe_hitung === 'luas') {
-      if (typeof pilihProdukDiKalkulator === 'function') pilihProdukDiKalkulator(p.id);
-      tampilToast({ pesan: 'Isi ukuran banner dulu, lalu klik "Tambah ke keranjang".', jenis: 'info' });
-      return;
-    }
-    tombol.disabled = true;
-    const hasil = await Keranjang.tambah({
-      produkId: p.id,
-      spesifikasi: p.tipe_hitung === 'paket' ? '100 pcs (1 paket)' : '',
-      jumlah: 1,
-      harga: p.harga,
-    });
-    kabarKeranjang(hasil, p.nama);
-    tombol.innerHTML = hasil.ok ? IKON_CENTANG : IKON_KERANJANG;
-    tombol.classList.toggle('berhasil', hasil.ok);
-    setTimeout(() => {
-      tombol.disabled = false;
-      tombol.innerHTML = IKON_KERANJANG;
-      tombol.classList.remove('berhasil');
-    }, hasil.ok ? 1800 : 0);
-  });
-  return tombol;
 }
 
 function tampilkanKatalog() {
@@ -193,23 +151,21 @@ function buatFilter() {
   segarkan();
 }
 
-// Ambil produk dari database (api/produk.php) dan timpa data contoh di atas.
-// Bila API tidak aktif, katalog tetap memakai data contoh. Aman dipanggil berkali-kali.
+// Ambil produk dari Google Sheets (Apps Script) dan timpa data contoh di atas.
+// Bila urlApi kosong atau server tidak bisa dihubungi, katalog tetap memakai data contoh.
+// Aman dipanggil berkali-kali.
 let janjiProduk;
-function muatProdukDariDb() {
+function muatProdukDariSheets() {
   janjiProduk ??= (async () => {
-    try {
-      const res = await fetch(`${CONFIG.urlApiAkun}produk.php`);
-      const data = await res.json();
-      if (Array.isArray(data.produk) && data.produk.length) PRODUK.splice(0, PRODUK.length, ...data.produk);
-    } catch { /* pakai data contoh */ }
+    const data = await panggilApi({ params: { action: 'produk' } });
+    if (data.ok && Array.isArray(data.produk) && data.produk.length) PRODUK.splice(0, PRODUK.length, ...data.produk);
   })();
   return janjiProduk;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!document.getElementById('katalog')) return;
-  await muatProdukDariDb();
+  await muatProdukDariSheets();
   // Tautan dari Beranda: produk.html?lini=Custom%20Merchandise
   const dariUrl = new URLSearchParams(location.search).get('lini');
   if (LINI.includes(dariUrl)) liniAktif = dariUrl;

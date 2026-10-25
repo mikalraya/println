@@ -11,12 +11,12 @@ const CONFIG = {
   instagram: 'printin.contoh',
   alamat: 'Jl. Contoh No. 1, Semarang',
   jamBuka: 'Senin–Sabtu, 08.00–17.00',
-  // TODO: isi setelah Apps Script di-deploy sebagai Web App (Langkah 8)
-  urlApi: '',
-  // API PHP untuk akun (login/daftar). Bila halaman dibuka lewat Live Server (port 5500), arahkan ke Laragon
-  urlApiAkun: location.port === '5500' ? 'http://localhost:8080/println/api/' : 'api/',
-  // Alamat dasar server tempat foto unggahan disimpan (folder uploads/ ada di server PHP, bukan Live Server)
-  get urlDasarServer() { return this.urlApiAkun.replace(/api\/$/, ''); },
+  // URL Web App Google Apps Script (lihat apps-script/Code.gs). Kosong = mode contoh:
+  // katalog memakai data di js/produk.js dan pesanan dikirim lewat WhatsApp saja.
+  urlApi: 'https://script.google.com/macros/s/AKfycbzW2N-yZ5QpMl-6rJ4f3Wlqdvl25RRVGJPT_kkCtD4tBoHRJTXG9lvawmW6-FGAT9is/exec',
+  // Kode situs GoatCounter (bagian depan https://KODE.goatcounter.com). Kosong = statistik tidak aktif.
+  // Statistik hanya dimuat setelah pengunjung menyetujui banner cookie.
+  goatCounter: '',
   // Pesan awal saat pelanggan membuka WhatsApp dari tombol melayang
   pesanWaAwal: 'Halo PrintIn, saya ingin bertanya tentang produk printing atau custom merchandise.',
 };

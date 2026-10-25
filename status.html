@@ -20,19 +20,15 @@
           <ul class="menu-utama" id="menu-utama">
             <li><a href="index.html">Beranda</a></li>
             <li><a href="produk.html">Produk</a></li>
-            <li><a href="status.html">Pesanan Saya</a></li>
+            <li><a href="pesan.html">Pesan</a></li>
+            <li><a href="status.html">Cek Status</a></li>
             <li><a href="tentang.html">Tentang Kami</a></li>
-            <li><a href="kontak.html">FAQ</a></li>
-            <li class="hanya-hp"><a href="login.html">Masuk</a></li>
-            <li class="hanya-hp"><a href="daftar.html">Daftar</a></li>
+            <li><a href="kontak.html">Kontak &amp; FAQ</a></li>
+            <li class="hanya-hp"><a href="admin.html">Login Admin</a></li>
           </ul>
         </nav>
         <div class="aksi-nav">
-          <a class="tombol-keranjang" href="keranjang.html" aria-label="Keranjang, kosong">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.5L21.5 7H6"/></svg>
-            <span class="lencana" data-jumlah-keranjang hidden>0</span>
-          </a>
-          <a class="btn btn-garis btn-masuk" href="login.html">Masuk</a>
+          <a class="btn btn-garis btn-masuk" href="admin.html">Login Admin</a>
           <button class="tombol-menu" type="button" aria-expanded="false" aria-controls="menu-utama" aria-label="Buka menu">
             <span class="garis"></span><span class="garis"></span><span class="garis"></span>
           </button>
@@ -44,14 +40,14 @@
   <main id="konten">
     <section class="wadah judul-halaman" aria-labelledby="judul-status">
       <div class="kartu judul-kartu reveal">
-        <span class="pil">Pesanan Saya</span>
+        <span class="pil">Cek status</span>
         <h1 id="judul-status">Pantau <span class="sorot sorot-oranye">pesananmu</span></h1>
-        <p class="lead">Lihat tahap pengerjaan pesananmu: antri, sedang dibuat, sampai selesai.</p>
+        <p class="lead">Masukkan kode pesananmu untuk melihat tahap pengerjaan: diterima, cek desain, diproses, siap diambil, sampai selesai.</p>
       </div>
     </section>
 
     <section class="wadah bagian" aria-label="Status pesanan">
-      <!-- Cek lewat kode (tanpa login, tanpa data pribadi) -->
+      <!-- Cek lewat kode (tanpa data pribadi) -->
       <form class="kartu kartu-pad cek-kode" id="form-cek" novalidate aria-labelledby="judul-cek">
         <h2 id="judul-cek">Cek dengan kode pesanan</h2>
         <div class="cek-kode-baris">
@@ -66,20 +62,6 @@
 
       <!-- Detail satu pesanan -->
       <article class="kartu kartu-pad detail-pesanan" id="detail-pesanan" aria-live="polite" hidden></article>
-
-      <!-- Daftar pesanan milik pengguna -->
-      <div id="daftar-pesanan-saya" hidden>
-        <h2 id="judul-daftar">Pesanan saya</h2>
-        <div class="saring-chip" id="saring-status" role="group" aria-label="Saring pesanan menurut status"></div>
-        <ul class="daftar-bersih daftar-pesanan" id="list-pesanan"></ul>
-        <p class="catatan-kecil" id="pesanan-kosong-saya" hidden>Belum ada pesanan di sini. <a href="produk.html">Lihat produk</a></p>
-      </div>
-
-      <div class="kartu keranjang-kosong" id="status-masuk" hidden>
-        <h2>Mau lihat semua pesananmu?</h2>
-        <p>Masuk dulu untuk melihat daftar dan riwayat pesananmu. Kalau cuma mau cek satu pesanan, pakai kode di atas.</p>
-        <a class="btn btn-utama" href="login.html">Masuk</a>
-      </div>
     </section>
   </main>
 
@@ -112,6 +94,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/chatbot.js"></script>
   <script src="js/status.js"></script>
 </body>
 </html>

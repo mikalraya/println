@@ -129,8 +129,9 @@ Semua harga adalah **harga simulasi** dalam rupiah (Rp). Di website, beri ketera
 │   ├── kalkulator.js   # Logika hitung harga (lihat aturan di bagian 3)
 │   ├── pesan.js        # Validasi form, kirim ke Apps Script, link WA
 │   ├── status.js       # Cek status pesanan
+│   ├── chatbot.js      # Chatbot FAQ berbasis aturan (F-13)
 │   └── admin.js        # PIN, ringkasan, grafik, tabel pesanan
-├── img/                # Gambar (format WebP, sudah dikompres)
+├── img/                # Gambar (format WebP, sudah dikompres); foto produk di img/produk/
 └── apps-script/
     └── Code.gs         # Salinan kode Google Apps Script (untuk dokumentasi)
 ```
