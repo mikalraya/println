@@ -1,0 +1,6 @@
+# Folder foto: jangan pernah menjalankan skrip di sini
+php_flag engine off
+RemoveHandler .php .phtml .php3
+<FilesMatch "\.(php|phtml|php3|phar)$">
+  Require all denied
+</FilesMatch>

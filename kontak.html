@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kontak dan FAQ — PrintIn</title>
+  <meta name="description" content="Hubungi PrintIn dan baca pertanyaan yang sering diajukan.">
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="img/printin-logo.png">
+</head>
+<body>
+  <a class="lewati-konten" href="#konten">Lewati ke konten</a>
+
+  <header class="header-situs">
+    <div class="wadah">
+      <div class="pil-nav">
+        <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
+        <nav aria-label="Menu utama">
+          <ul class="menu-utama" id="menu-utama">
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="produk.html">Produk</a></li>
+            <li><a href="status.html">Pesanan Saya</a></li>
+            <li><a href="tentang.html">Tentang Kami</a></li>
+            <li><a href="kontak.html">FAQ</a></li>
+            <li class="hanya-hp"><a href="login.html">Masuk</a></li>
+            <li class="hanya-hp"><a href="daftar.html">Daftar</a></li>
+          </ul>
+        </nav>
+        <div class="aksi-nav">
+          <a class="tombol-keranjang" href="keranjang.html" aria-label="Keranjang, kosong">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.5L21.5 7H6"/></svg>
+            <span class="lencana" data-jumlah-keranjang hidden>0</span>
+          </a>
+          <a class="btn btn-garis btn-masuk" href="login.html">Masuk</a>
+          <button class="tombol-menu" type="button" aria-expanded="false" aria-controls="menu-utama" aria-label="Buka menu">
+            <span class="garis"></span><span class="garis"></span><span class="garis"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="konten">
+    <section class="wadah judul-halaman" aria-labelledby="judul-kontak">
+      <div class="kartu judul-kartu reveal">
+        <span class="pil">FAQ</span>
+        <h1 id="judul-kontak">Ada pertanyaan? <span class="sorot sorot-oranye">Tanya saja</span></h1>
+        <p class="lead">Hubungi kami lewat WhatsApp untuk jawaban tercepat, atau baca dulu pertanyaan yang sering ditanya di bawah.</p>
+      </div>
+    </section>
+
+    <!-- Kontak. Nilai diambil dari js/config.js (TODO: ganti dengan data asli) -->
+    <section class="wadah bagian" aria-labelledby="judul-hubungi">
+      <h2 id="judul-hubungi" class="sembunyi-visual">Hubungi kami</h2>
+      <div class="kisi kisi-3" data-urut>
+        <a class="kartu kartu-kontak" data-kontak="wa" href="#" target="_blank" rel="noopener">
+          <span class="ikon-bulat bg-wa" aria-hidden="true">WA</span>
+          <span><strong>WhatsApp</strong><span class="kontak-nilai" data-config="waTampil">Chat admin</span><span class="kontak-ket">Balasan paling cepat</span></span>
+        </a>
+        <a class="kartu kartu-kontak" data-kontak="email" href="#">
+          <span class="ikon-bulat bg-biru" aria-hidden="true">@</span>
+          <span><strong>Email</strong><span class="kontak-nilai" data-config="email">halo@contoh.id</span><span class="kontak-ket">Untuk pertanyaan tidak mendesak</span></span>
+        </a>
+        <a class="kartu kartu-kontak" data-kontak="ig" href="#" target="_blank" rel="noopener">
+          <span class="ikon-bulat bg-oranye" aria-hidden="true">IG</span>
+          <span><strong>Instagram</strong><span class="kontak-nilai">@<span data-config="instagram">printin.contoh</span></span><span class="kontak-ket">Lihat contoh hasil cetak</span></span>
+        </a>
+      </div>
+      <p class="tengah catatan-kecil reveal" style="margin-top: 1.5rem;">Jam buka: <span data-config="jamBuka">Senin–Sabtu, 08.00–17.00</span> &middot; <span data-config="alamat">Jl. Contoh No. 1, Semarang</span></p>
+    </section>
+
+    <!-- FAQ. TODO: sesuaikan jawaban dengan kebijakan asli PrintIn -->
+    <section class="wadah bagian" aria-labelledby="judul-faq-lengkap">
+      <div class="tengah reveal">
+        <span class="pil">FAQ</span>
+        <h2 id="judul-faq-lengkap">Pertanyaan yang <span class="sorot sorot-oranye">sering ditanya</span></h2>
+      </div>
+      <div class="faq" data-akordeon data-urut>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q1" type="button" aria-expanded="false" aria-controls="a1">Format file desain apa yang bisa dikirim?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a1" role="region" aria-labelledby="q1"><div><p>PDF, PNG, atau JPG dengan ukuran maksimal 10 MB per file. Alternatifnya, taruh file di Google Drive lalu tempel link-nya di form pesanan. Pastikan link bisa dibuka oleh siapa saja yang memegang link.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q2" type="button" aria-expanded="false" aria-controls="a2">Berapa ukuran dan resolusi desain yang disarankan?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a2" role="region" aria-labelledby="q2"><div><p>Usahakan resolusi sekitar 300 dpi pada ukuran cetak sebenarnya agar hasilnya tajam. Untuk banner besar, resolusi lebih rendah biasanya sudah cukup karena dilihat dari jauh. Kalau file perlu diperbaiki, admin akan menghubungimu lewat WhatsApp.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q3" type="button" aria-expanded="false" aria-controls="a3">Berapa lama pengerjaannya?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a3" role="region" aria-labelledby="q3"><div><p>Estimasi selesai tertulis di setiap produk di halaman Produk. Kamu juga bisa mengisi tanggal dibutuhkan di form pesanan. Waktunya bisa berubah kalau pesanan sedang ramai.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q4" type="button" aria-expanded="false" aria-controls="a4">Bagaimana cara membayar?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a4" role="region" aria-labelledby="q4"><div><p>Setelah pesanan dikirim, kamu diarahkan ke halaman pembayaran QRIS. Halaman itu masih contoh (mockup) dan bukan pembayaran sungguhan, jadi konfirmasi pembayaran dilakukan lewat WhatsApp.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q5" type="button" aria-expanded="false" aria-controls="a5">Apakah desain bisa direvisi?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a5" role="region" aria-labelledby="q5"><div><p>Revisi kecil bisa dibicarakan lewat WhatsApp saat pesananmu berstatus "Cek desain". Setelah masuk tahap "Diproses", perubahan tidak bisa dilakukan lagi.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q6" type="button" aria-expanded="false" aria-controls="a6">Bagaimana cara memesan produk custom?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a6" role="region" aria-labelledby="q6"><div><p>Pilih produk custom (tumbler, mug, gantungan kunci, atau tote bag), hitung harganya, lalu kirim pesanan dan sertakan link desainmu. Produk custom wajib menyertakan desain. Admin akan mengecek desainmu dan menghubungi lewat WhatsApp bila ada yang perlu disesuaikan. Pastikan desain itu milikmu atau sudah berizin, sesuai <a href="privasi.html#ketentuan-desain">ketentuan desain custom</a>.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="q7" type="button" aria-expanded="false" aria-controls="a7">Bagaimana cara mengecek status pesanan?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="a7" role="region" aria-labelledby="q7"><div><p>Buka halaman <a href="status.html">Cek Status</a> lalu masukkan kode pesananmu, misalnya PRT-0001. Status berjalan dari Diterima, Cek desain, Diproses, Siap diambil, sampai Selesai.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wadah bagian">
+      <div class="cta-gelap reveal">
+        <h2>Belum ketemu jawabannya?</h2>
+        <p>Tanya langsung lewat WhatsApp, kami balas secepatnya.</p>
+        <div class="hero-aksi tengah-aksi">
+          <a class="btn btn-wa" data-kontak="wa" href="#" target="_blank" rel="noopener">Chat WhatsApp</a>
+          <a class="btn btn-putih" href="pesan.html">Pesan Sekarang</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-situs">
+    <div class="footer-lembar" aria-hidden="true"><span>Banner</span><span>Kartu nama</span><span>Mug</span><span>Undangan</span><span>Brosur</span></div>
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
+        <p>Your Design, Your Style. Jasa printing dan custom merchandise di Semarang.</p>
+      </div>
+      <nav aria-label="Tautan footer">
+        <h2>Halaman</h2>
+        <ul>
+          <li><a href="produk.html">Produk</a></li>
+          <li><a href="pesan.html">Pesan</a></li>
+          <li><a href="status.html">Cek Status Pesanan</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Informasi">
+        <h2>Informasi</h2>
+        <ul>
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="kontak.html">FAQ</a></li>
+          <li><a href="privasi.html">Kebijakan Privasi</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-hak">&copy; <span data-tahun>2026</span> PrintIn. Website ini bagian dari tugas kuliah Sistem Informasi Manajemen.</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

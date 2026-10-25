@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PrintIn — Your Design, Your Style</title>
+  <meta name="description" content="PrintIn, jasa printing dan custom merchandise di Semarang. Lihat katalog, hitung harga, kirim desainmu, dan pantau pesanan dari HP.">
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="img/printin-logo.png">
+</head>
+<body>
+  <a class="lewati-konten" href="#konten">Lewati ke konten</a>
+
+  <header class="header-situs">
+    <div class="wadah">
+      <div class="pil-nav">
+        <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
+        <nav aria-label="Menu utama">
+          <ul class="menu-utama" id="menu-utama">
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="produk.html">Produk</a></li>
+            <!-- <li><a href="pesan.html">Pesan</a></li> -->
+            <li><a href="status.html">Pesanan Saya</a></li>
+            <li><a href="tentang.html">Tentang Kami</a></li>
+            <li><a href="kontak.html">FAQ</a></li>
+            <li class="hanya-hp"><a href="login.html">Masuk</a></li>
+            <li class="hanya-hp"><a href="daftar.html">Daftar</a></li>
+          </ul>
+        </nav>
+        <div class="aksi-nav">
+          <a class="tombol-keranjang" href="keranjang.html" aria-label="Keranjang, kosong">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 1.9-1.5L21.5 7H6"/></svg>
+            <span class="lencana" data-jumlah-keranjang hidden>0</span>
+          </a>
+          <a class="btn btn-garis btn-masuk" href="login.html">Masuk</a>
+          <button class="tombol-menu" type="button" aria-expanded="false" aria-controls="menu-utama" aria-label="Buka menu">
+            <span class="garis"></span><span class="garis"></span><span class="garis"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="konten">
+    <!-- Hero: tagline + value proposition -->
+    <section class="hero" aria-labelledby="judul-hero">
+      <div class="wadah hero-grid">
+        <div class="kartu hero-teks-kartu reveal">
+          <img class="logo-kotak" src="img/printin-logo.png" alt="Logo PrintIn: printer dengan percikan tinta" width="130" height="102">
+          <svg class="doodle doodle-sinar" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 36l-3-8M14 22l-6-6M26 14l-1-9M38 14l5-8M46 24l8-3"/></svg>
+          <h1 id="judul-hero" lang="en">Your Design, <span class="sorot">Your Style.</span></h1>
+          <p class="hero-sub">Jasa printing dan custom merchandise di Semarang. Lihat katalog dan harga, kirim desainmu, lalu pantau pesanan dari HP.</p>
+          <div class="hero-aksi">
+            <a class="btn btn-utama" href="pesan.html">Pesan Sekarang</a>
+            <a class="btn btn-hitam" href="produk.html">Lihat Produk &amp; Harga</a>
+          </div>
+        </div>
+        <div class="hero-visual reveal" style="--d: 120ms" role="img" aria-label="Ilustrasi kertas, banner, kartu nama, dan mug. Foto produk asli menyusul.">
+          <p class="catatan-visual">Ilustrasi &middot; foto produk menyusul</p>
+          <div class="benda benda-kertas"><i></i><i></i><i></i><i></i></div>
+          <div class="benda benda-banner">BANNER</div>
+          <div class="benda benda-kartu"><b></b><i></i><i></i></div>
+          <div class="benda benda-mug"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dua lini layanan -->
+    <section class="wadah bagian" aria-labelledby="judul-lini">
+      <div class="tengah reveal">
+        <span class="pil">Layanan</span>
+        <h2 id="judul-lini">Dua lini, <span class="sorot sorot-tosca">satu tempat</span></h2>
+      </div>
+      <div class="dua-kolom" data-urut>
+        <article class="kartu kartu-pad kartu-lini">
+          <span class="ikon-bulat bg-biru" aria-hidden="true">P</span>
+          <h3>Printing Reguler</h3>
+          <p>Kebutuhan cetak sehari-hari untuk kuliah, kerja, dan promosi.</p>
+          <ul class="chip-daftar daftar-bersih">
+            <li class="chip">Print</li><li class="chip">Fotokopi</li><li class="chip">Scan</li><li class="chip">Brosur</li><li class="chip">Poster A3</li><li class="chip">Kartu nama</li><li class="chip">Banner</li><li class="chip">Undangan</li>
+          </ul>
+          <a class="btn btn-utama" href="produk.html?lini=Printing%20Reguler">Lihat printing reguler</a>
+        </article>
+        <article class="kartu kartu-pad kartu-lini">
+          <span class="ikon-bulat bg-oranye" aria-hidden="true">C</span>
+          <h3>Custom Merchandise</h3>
+          <p>Pakai desainmu sendiri untuk hadiah, komunitas, atau merchandise usaha.</p>
+          <ul class="chip-daftar daftar-bersih">
+            <li class="chip">Tumbler</li><li class="chip">Mug</li><li class="chip">Gantungan kunci</li><li class="chip">Tote bag</li>
+          </ul>
+          <a class="btn btn-hitam" href="produk.html?lini=Custom%20Merchandise">Lihat custom merchandise</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Pernyataan besar dengan stabilo -->
+    <section class="wadah pernyataan reveal" aria-label="Tentang PrintIn">
+      <svg class="doodle doodle-percik" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M24 4v10M24 34v10M4 24h10M34 24h10M10 10l7 7M31 31l7 7M38 10l-7 7M17 31l-7 7"/><path d="M24 18l3 6-3 6-3-6z"/></svg>
+      <p>Mau cetak atau bikin merchandise dengan gayamu sendiri? Di PrintIn kamu bisa <span class="sorot sorot-oranye">cek harga sendiri</span><span class="ikon-kecil ikon-oranye" aria-hidden="true">Rp</span>, <span class="sorot sorot-biru" style="transition-delay: 800ms">kirim desainmu</span><span class="ikon-kecil ikon-biru" aria-hidden="true">&#10003;</span>, lalu pantau pesananmu <span class="sorot" style="transition-delay: 1250ms">sampai jadi</span><span class="ikon-kecil ikon-kuning" aria-hidden="true">&rarr;</span>.</p>
+    </section>
+
+    <!-- Visi & misi: sama dengan halaman Tentang Kami (CLAUDE.md bagian 1) -->
+    <section class="wadah bagian" aria-labelledby="judul-visi">
+      <div class="tengah reveal">
+        <span class="pil">Visi &amp; misi</span>
+        <h2 id="judul-visi">Arah yang <span class="sorot">kami tuju</span></h2>
+      </div>
+      <div class="visi-misi">
+        <article class="visi-kartu reveal" aria-labelledby="judul-visi-teks">
+          <span class="visi-label" id="judul-visi-teks">Visi</span>
+          <p class="visi-isi">Menjadi layanan printing dan custom merchandise yang <span class="sorot">praktis, kreatif, dan terpercaya</span> untuk memenuhi berbagai kebutuhan pelanggan.</p>
+          <a class="visi-tautan" href="tentang.html">Kenali PrintIn lebih jauh <span aria-hidden="true">&rarr;</span></a>
+        </article>
+        <div class="misi-wadah">
+          <h3 class="misi-judul reveal">Misi kami</h3>
+          <ol class="misi-daftar daftar-bersih" data-urut>
+            <li class="kartu misi-item">
+              <span class="ikon-bulat bg-oranye" aria-hidden="true">1</span>
+              <p>Menyediakan layanan printing reguler dan custom merchandise yang beragam.</p>
+            </li>
+            <li class="kartu misi-item">
+              <span class="ikon-bulat bg-biru" aria-hidden="true">2</span>
+              <p>Memudahkan pelanggan memperoleh informasi produk dan harga.</p>
+            </li>
+            <li class="kartu misi-item">
+              <span class="ikon-bulat bg-tosca" aria-hidden="true">3</span>
+              <p>Mempermudah proses pemesanan melalui website.</p>
+            </li>
+            <li class="kartu misi-item">
+              <span class="ikon-bulat bg-kuning" aria-hidden="true">4</span>
+              <p>Mendukung pengelolaan data produk dan pesanan secara terstruktur melalui penerapan Sistem Informasi Manajemen.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Keunggulan -->
+    <section class="wadah bagian" aria-labelledby="judul-unggul">
+      <div class="tengah reveal">
+        <span class="pil">Keunggulan</span>
+        <h2 id="judul-unggul">Kenapa <span class="sorot sorot-biru">PrintIn</span></h2>
+      </div>
+      <div class="kisi kisi-3" data-urut>
+        <div class="kartu kartu-pad">
+          <span class="ikon-bulat bg-oranye" aria-hidden="true">1</span>
+          <h3>Desain sesuai gayamu</h3>
+          <p>Kirim desainmu sendiri untuk dicetak di kertas, banner, mug, tumbler, tote bag, dan lainnya.</p>
+        </div>
+        <div class="kartu kartu-pad">
+          <span class="ikon-bulat bg-biru" aria-hidden="true">2</span>
+          <h3>Harga jelas</h3>
+          <p>Harga dan satuannya tertulis terbuka, dan bisa kamu hitung sendiri sebelum memesan.</p>
+        </div>
+        <div class="kartu kartu-pad">
+          <span class="ikon-bulat bg-tosca" aria-hidden="true">3</span>
+          <h3>Pesan dari HP</h3>
+          <p>Isi form singkat, kirim lewat WhatsApp, lalu pantau status pesanan dengan kode pesanan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lokasi -->
+    <section class="wadah bagian lokasi" aria-labelledby="judul-lokasi">
+      <div class="lokasi-bungkus reveal">
+        <div class="kubah" aria-hidden="true"></div>
+        <span class="kubah-pin">Pesan online</span>
+        <span class="kubah-pin">Ambil atau kirim</span>
+        <span class="kubah-pin utama">Semarang</span>
+      </div>
+      <div class="kartu lokasi-kartu reveal" style="--d: 150ms">
+        <span class="pil">Lokasi</span>
+        <h2 id="judul-lokasi">Dari <span class="sorot sorot-tosca">Semarang</span> untuk kamu</h2>
+        <p>Alamat: <span data-config="alamat">Jl. Contoh No. 1, Semarang</span><br>Jam buka: <span data-config="jamBuka">Senin–Sabtu, 08.00–17.00</span></p>
+        <div class="panel-daftar">
+          <strong>PrintIn</strong>
+          <ol>
+            <li>Pesan online dari HP;</li>
+            <li>kirim desainmu sendiri;</li>
+            <li>status pesanan bisa dipantau.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cara pesan: bagian bergradien dengan tab -->
+    <section class="wadah bagian" aria-labelledby="judul-fitur">
+      <div class="fitur reveal" data-tab>
+        <div class="tengah">
+          <span class="pil pil-garis">Cara pesan</span>
+          <h2 id="judul-fitur">Dari hitung harga <span class="garis-bawah">sampai jadi</span></h2>
+        </div>
+        <div class="tab-daftar" role="tablist" aria-label="Langkah memesan">
+          <button class="tab" role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true" type="button">Hitung harga</button>
+          <button class="tab" role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" type="button">Isi pesanan</button>
+          <button class="tab" role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" type="button">Bayar</button>
+          <button class="tab" role="tab" id="tab-4" aria-controls="panel-4" aria-selected="false" type="button">Cek status</button>
+        </div>
+
+        <div class="panel-tab" role="tabpanel" id="panel-1" aria-labelledby="tab-1">
+          <div class="mock" aria-hidden="true">
+            <p class="mock-label">Tampilan contoh</p>
+            <p class="mock-judul">Kalkulator harga</p>
+            <div class="mock-baris"><span>Produk</span><span>Cetak banner</span></div>
+            <div class="mock-baris"><span>Ukuran</span><span>2 &times; 1 m</span></div>
+            <div class="mock-baris"><span>Jumlah</span><span>1 buah</span></div>
+            <div class="mock-total"><span>Total</span><strong>Rp50.000</strong></div>
+          </div>
+          <div class="keterangan-fitur">
+            <div>
+              <h3>Hitung harga sendiri</h3>
+              <p>Pilih produk dan isi jumlahnya. Total langsung muncul. Ini harga simulasi, dan harga akhir dikonfirmasi admin.</p>
+            </div>
+            <a class="btn btn-utama" href="produk.html#kalkulator">Buka kalkulator</a>
+          </div>
+        </div>
+
+        <div class="panel-tab" role="tabpanel" id="panel-2" aria-labelledby="tab-2">
+          <div class="mock" aria-hidden="true">
+            <p class="mock-label">Tampilan contoh</p>
+            <p class="mock-judul">Form pesanan</p>
+            <div class="mock-baris"><span>Nama</span><span>Nama kamu</span></div>
+            <div class="mock-baris"><span>WhatsApp</span><span>08xx xxxx xxxx</span></div>
+            <div class="mock-baris"><span>Link file desain</span><span>drive.google.com/…</span></div>
+            <div class="mock-centang"><i></i>Saya setuju dengan Kebijakan Privasi</div>
+            <div class="mock-tombol">Lanjut ke WhatsApp</div>
+          </div>
+          <div class="keterangan-fitur">
+            <div>
+              <h3>Isi pesanan dan kirim desain</h3>
+              <p>Isi nama dan WhatsApp, lalu sertakan link desainmu. Produk custom wajib menyertakan desain.</p>
+            </div>
+            <a class="btn btn-utama" href="pesan.html">Mulai pesan</a>
+          </div>
+        </div>
+
+        <div class="panel-tab" role="tabpanel" id="panel-3" aria-labelledby="tab-3">
+          <div class="mock" aria-hidden="true">
+            <p class="mock-label">Contoh / mockup</p>
+            <p class="mock-judul">Pembayaran QRIS</p>
+            <div class="mock-qris"></div>
+            <div class="mock-baris"><span>Nominal</span><span>Rp50.000</span></div>
+            <div class="mock-baris"><span>Catatan</span><span>Bukan pembayaran sungguhan</span></div>
+          </div>
+          <div class="keterangan-fitur">
+            <div>
+              <h3>Bayar lewat QRIS</h3>
+              <p>Halaman pembayaran ini contoh (mockup). Setelah bayar, konfirmasi lewat WhatsApp.</p>
+            </div>
+            <a class="btn btn-utama" href="bayar.html">Lihat halaman bayar</a>
+          </div>
+        </div>
+
+        <div class="panel-tab" role="tabpanel" id="panel-4" aria-labelledby="tab-4">
+          <div class="mock" aria-hidden="true">
+            <p class="mock-label">Tampilan contoh</p>
+            <p class="mock-judul">Status PRT-0001</p>
+            <ul class="mock-linimasa">
+              <li>Diterima</li>
+              <li>Cek desain</li>
+              <li class="aktif">Diproses</li>
+              <li class="belum">Siap diambil</li>
+              <li class="belum">Selesai</li>
+            </ul>
+          </div>
+          <div class="keterangan-fitur">
+            <div>
+              <h3>Cek status kapan saja</h3>
+              <p>Masukkan kode pesanan untuk melihat sampai mana pesananmu dikerjakan.</p>
+            </div>
+            <a class="btn btn-utama" href="status.html">Cek status</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Untuk siapa (target pasar) -->
+    <section class="wadah bagian" aria-labelledby="judul-siapa">
+      <div class="tengah reveal">
+        <span class="pil">Untuk siapa</span>
+        <h2 id="judul-siapa">Siapa yang <span class="sorot sorot-oranye">kami bantu</span></h2>
+      </div>
+      <div class="bento" data-urut>
+        <div class="kartu bento-kartu bento-lebar">
+          <svg class="kilau" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2c1 6 4 9 10 10-6 1-9 4-10 10-1-6-4-9-10-10 6-1 9-4 10-10z"/></svg>
+          <h3>Mahasiswa, pelajar, dosen, dan tenaga pendidik yang butuh cetak dokumen</h3>
+          <div aria-hidden="true">
+            <span class="tag-melayang tag-tosca">Print</span><span class="tag-melayang tag-biru">Fotokopi</span><span class="tag-melayang tag-oranye">Scan</span><span class="tag-melayang tag-biru">Poster A3</span>
+          </div>
+        </div>
+        <div class="kartu bento-kartu">
+          <h3>Komunitas dan organisasi</h3>
+          <div class="orbit" aria-hidden="true">
+            <span class="orbit-titik"></span><span class="orbit-titik"></span><span class="orbit-titik"></span><span class="orbit-titik"></span>
+            <span class="orbit-pusat"><svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="#1f6fe8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8.5l9 7.5-9 7.5"/><path d="M20 24h5"/></svg></span>
+          </div>
+        </div>
+        <div class="kartu bento-kartu">
+          <h3>Pelaku UMKM dan pemilik usaha</h3>
+          <div class="sambung" aria-hidden="true"><span class="sambung-titik"></span><span class="sambung-tengah">&lt;&middot;&gt;</span><span class="sambung-titik"></span></div>
+        </div>
+        <div class="kartu bento-kartu bento-lebar">
+          <h3>Perusahaan dan masyarakat umum yang butuh media promosi atau merchandise</h3>
+          <div class="tumpukan" aria-hidden="true"><span class="lembar"></span><span class="lembar"></span><span class="lembar"></span><span class="lembar"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ ringkas. Selengkapnya di halaman Kontak & FAQ -->
+    <section class="wadah bagian" aria-labelledby="judul-faq">
+      <div class="tengah reveal">
+        <span class="pil">FAQ</span>
+        <h2 id="judul-faq">Pertanyaan yang <span class="sorot sorot-oranye">sering ditanya</span></h2>
+      </div>
+      <div class="faq" data-akordeon data-urut>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="faq-t1" type="button" aria-expanded="false" aria-controls="faq-p1">Format file desain apa yang bisa dikirim?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="faq-p1" role="region" aria-labelledby="faq-t1"><div><p>PDF, PNG, atau JPG dengan ukuran maksimal 10 MB per file. Kamu juga bisa menempelkan link Google Drive di form pesanan.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="faq-t2" type="button" aria-expanded="false" aria-controls="faq-p2">Berapa lama pengerjaannya?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="faq-p2" role="region" aria-labelledby="faq-t2"><div><p>Estimasi selesai tertulis di setiap produk di halaman Produk. Waktunya bisa berubah kalau pesanan sedang ramai.</p></div></div>
+        </div>
+        <div class="akordeon-item">
+          <h3><button class="akordeon-tombol" id="faq-t3" type="button" aria-expanded="false" aria-controls="faq-p3">Bagaimana cara membayar?<span class="plus" aria-hidden="true"></span></button></h3>
+          <div class="akordeon-isi" id="faq-p3" role="region" aria-labelledby="faq-t3"><div><p>Lewat QRIS setelah pesanan dikirim. Halaman pembayaran di website ini masih contoh (mockup), jadi konfirmasi pembayaran dilakukan lewat WhatsApp.</p></div></div>
+        </div>
+      </div>
+      <p class="tengah reveal" style="margin-top: 1.5rem;"><a class="btn btn-hitam" href="kontak.html">Lihat semua</a></p>
+    </section>
+  </main>
+
+  <footer class="footer-situs">
+    <div class="footer-lembar" aria-hidden="true"><span>Banner</span><span>Kartu nama</span><span>Mug</span><span>Undangan</span><span>Brosur</span></div>
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
+        <p>Your Design, Your Style. Jasa printing dan custom merchandise di Semarang.</p>
+      </div>
+      <nav aria-label="Tautan footer">
+        <h2>Halaman</h2>
+        <ul>
+          <li><a href="produk.html">Produk</a></li>
+          <li><a href="pesan.html">Pesan</a></li>
+          <li><a href="status.html">Cek Status Pesanan</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Informasi">
+        <h2>Informasi</h2>
+        <ul>
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="kontak.html">FAQ</a></li>
+          <li><a href="privasi.html">Kebijakan Privasi</a></li>
+        </ul>
+      </nav>
+    </div>
+    <p class="footer-hak">&copy; <span data-tahun>2026</span> PrintIn. Website ini bagian dari tugas kuliah Sistem Informasi Manajemen.</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
