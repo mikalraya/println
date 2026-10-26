@@ -53,14 +53,18 @@ function tampilkanDetail(pesanan) {
   kotak.append(
     buatTahap(pesanan.status),
     buatEl('p', 'info-tahap', KETERANGAN_TAHAP[pesanan.status] || ''),
-    buatEl('p', 'item-nama', `Produk: ${pesanan.produk}`),
   );
+
+  // Teks produk dan tombol WhatsApp satu blok agar lebarnya sama
+  const aksi = buatEl('div', 'detail-aksi');
+  aksi.append(buatEl('p', 'item-nama', `Produk: ${pesanan.produk}`));
 
   const wa = buatEl('a', 'btn btn-garis', 'Tanya admin lewat WhatsApp');
   wa.href = `https://wa.me/${CONFIG.waAdmin}?text=${encodeURIComponent(`Halo ${CONFIG.namaToko}, saya mau tanya soal pesanan ${pesanan.kode}.`)}`;
   wa.target = '_blank';
   wa.rel = 'noopener';
-  kotak.append(wa);
+  aksi.append(wa);
+  kotak.append(aksi);
 
   kotak.hidden = false;
   kotak.scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -3558,15 +3558,23 @@ img.logo-kotak {
   font-weight: 600;
 }
 
-/* Ringkasan produk dan tombol WhatsApp di detail status diberi jarak dan garis pemisah */
-#detail-pesanan .item-nama {
-  margin: var(--spasi-4) 0 var(--spasi-3);
+/* Teks produk dan tombol WhatsApp satu blok: lebar sama, dipisah garis dari keterangan status */
+.detail-aksi {
+  display: grid;
+  gap: var(--spasi-3);
+  width: fit-content;
+  max-width: 100%;
+  margin-top: var(--spasi-4);
   padding-top: var(--spasi-4);
   border-top: 1px solid var(--garis);
 }
 
-#detail-pesanan > .btn {
-  margin-top: var(--spasi-2);
+.detail-aksi .item-nama {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: var(--latar);
+  border-radius: 999px;
+  text-align: center;
 }
 
 .info-batal {
