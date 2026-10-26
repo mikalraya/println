@@ -96,8 +96,11 @@ function awalPeriode(nilai) {
   return new Date(d.getFullYear(), d.getMonth() - (Number(nilai) - 1), 1);
 }
 
+// Teks pilihan dibuat singkat agar muat di HP; label lengkap untuk kartu dan grafik
+const LABEL_PERIODE = { 1: 'Bulan ini', 3: '3 bulan terakhir', 6: '6 bulan terakhir', 12: '12 bulan terakhir', semua: 'Semua waktu' };
+
 function labelPeriode(nilai) {
-  return ambilEl('saring-periode').selectedOptions[0]?.textContent || nilai;
+  return LABEL_PERIODE[nilai] || nilai;
 }
 
 function pesananTersaring() {
@@ -266,7 +269,8 @@ function tampilkanTabelPesanan() {
 
   const isi = tampil.map((p) => {
     const tr = document.createElement('tr');
-    const sel = (...konten) => { const td = document.createElement('td'); td.append(...konten); return td; };
+    // data-label dipakai CSS untuk menampilkan judul kolom saat tabel menjadi kartu di HP
+    const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
 
     const kode = buatEl('strong', '', p.kode);
     const pelanggan = buatEl('div');
@@ -283,7 +287,7 @@ function tampilkanTabelPesanan() {
       desain.rel = 'noopener';
     }
 
-    tr.append(sel(kode), sel(tanggalJam(p.tanggal) || p.tanggal), sel(pelanggan), sel(produk), sel(rupiah.format(p.total)), sel(desain), sel(buatPilihanStatus(p)));
+    tr.append(sel('Kode', kode), sel('Tanggal', tanggalJam(p.tanggal) || p.tanggal), sel('Pelanggan', pelanggan), sel('Produk', produk), sel('Total', rupiah.format(p.total)), sel('Desain', desain), sel('Status', buatPilihanStatus(p)));
     return tr;
   });
   if (!isi.length) {
@@ -344,7 +348,8 @@ function tampilkanTabelProduk() {
 
   const isi = tampil.map((p) => {
     const tr = document.createElement('tr');
-    const sel = (...konten) => { const td = document.createElement('td'); td.append(...konten); return td; };
+    // data-label dipakai CSS untuk menampilkan judul kolom saat tabel menjadi kartu di HP
+    const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
 
     const nama = buatEl('div', 'adm-produk-sel');
     const teks = buatEl('div');
@@ -360,7 +365,7 @@ function tampilkanTabelProduk() {
     );
 
     tr.dataset.id = p.id;
-    tr.append(sel(nama), sel(p.lini), sel(harga), sel(p.estimasi), sel(buatEl('span', `lencana-status ${KELAS_STATUS_PRODUK[p.status] || ''}`, p.status)), sel(aksi));
+    tr.append(sel('Produk', nama), sel('Lini', p.lini), sel('Harga', harga), sel('Estimasi', p.estimasi), sel('Status', buatEl('span', `lencana-status ${KELAS_STATUS_PRODUK[p.status] || ''}`, p.status)), sel('Aksi', aksi));
     return tr;
   });
   if (!isi.length) {

@@ -247,18 +247,22 @@ body.adm.adm-menu-kecil {
 
 /* ----- Filter ----- */
 .adm-saring {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--spasi-3);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.75rem;
   margin-bottom: var(--spasi-3);
 }
 
 .adm-saring .field {
-  flex: 1 1 9rem;
   min-width: 0;
-  max-width: 16rem;
   margin-bottom: 0;
+}
+
+/* HP: kolom cari dan tombol reset memakai satu baris penuh */
+.adm-saring .field:has(input[type="search"]),
+.adm-saring > .btn {
+  grid-column: 1 / -1;
 }
 
 .adm-saring > .btn {
@@ -289,14 +293,14 @@ select.adm-pilih {
   appearance: none;
   -webkit-appearance: none;
   min-height: var(--tinggi-sentuh);
-  padding: 0.5rem 2.75rem 0.5rem 1rem;
+  padding: 0.5rem 2.25rem 0.5rem 0.875rem;
   border: 1.5px solid #b7bdcc;
   border-radius: 0.875rem;
   background-color: var(--putih);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f6fe8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.875rem center;
-  background-size: 1.125rem;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
   color: var(--navy);
   font: inherit;
   font-weight: 500;
@@ -333,15 +337,21 @@ select.adm-pilih {
 /* ----- Kartu angka ----- */
 .adm-kartu-angka {
   display: grid;
-  gap: var(--spasi-3);
-  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-bottom: var(--spasi-4);
+}
+
+/* Jumlah kartu ganjil: kartu terakhir memakai satu baris penuh */
+.adm-angka:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .adm-angka {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: var(--spasi-3);
+  gap: var(--spasi-2);
   padding: var(--spasi-3);
   transition: transform 160ms var(--ease), box-shadow 160ms;
 }
@@ -387,7 +397,7 @@ select.adm-pilih {
 
 .adm-angka-nilai {
   margin: 0.25rem 0 !important;
-  font-size: 1.5rem;
+  font-size: clamp(1.125rem, 4.8vw, 1.5rem);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -1014,6 +1024,89 @@ select.adm-pilih {
   100% { background: transparent; }
 }
 
+/* ----- HP: tabel ditampilkan sebagai kartu (judul kolom dari data-label) ----- */
+@media (max-width: 39.99rem) {
+  .adm-tabel-bungkus {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .adm-tabel,
+  .adm-tabel tbody {
+    display: block;
+    min-width: 0;
+  }
+
+  .adm-tabel thead {
+    display: none;
+  }
+
+  .adm-tabel tbody tr {
+    display: block;
+    margin-bottom: 0.75rem;
+    padding: 0.25rem var(--spasi-3);
+    border: 1px solid #d6dbe8;
+    border-radius: var(--radius-kecil);
+    background: var(--putih) !important;
+    box-shadow: var(--bayangan-lembut);
+  }
+
+  .adm-tabel td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spasi-3);
+    padding: 0.625rem 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--garis);
+    text-align: right;
+  }
+
+  .adm-tabel tbody tr td:last-child {
+    border-bottom: 0;
+  }
+
+  .adm-tabel td::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--teks-redup);
+    font-size: var(--teks-kecil);
+    font-weight: 600;
+    text-align: left;
+  }
+
+  /* Kolom pertama jadi judul kartu, tanpa label */
+  .adm-tabel td:first-child {
+    display: block;
+    padding-top: 0.75rem;
+    text-align: left;
+  }
+
+  .adm-tabel td:first-child::before,
+  .adm-tabel td.adm-kosong::before {
+    content: none;
+  }
+
+  .adm-tabel td.adm-kosong {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .adm-tabel td > div {
+    min-width: 0;
+  }
+
+  .adm-aksi {
+    justify-content: flex-end;
+  }
+
+  .adm-tabel select.adm-pilih {
+    max-width: 60%;
+  }
+}
+
 /* ----- Layar lebih besar ----- */
 @media (min-width: 36rem) {
   .dp-grid {
@@ -1022,6 +1115,27 @@ select.adm-pilih {
 }
 
 @media (min-width: 40rem) {
+  .adm-saring {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--spasi-3);
+  }
+
+  .adm-saring .field {
+    flex: 1 1 9rem;
+    max-width: 16rem;
+  }
+
+  .adm-kartu-angka {
+    gap: var(--spasi-3);
+    grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  }
+
+  .adm-angka:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+
   .adm-nama {
     display: inline-flex;
   }
