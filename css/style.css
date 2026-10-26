@@ -3754,11 +3754,6 @@ img.logo-kotak {
   outline-offset: 2px;
 }
 
-/* Tombol "Pesan Sekarang" melayang di atas tombol WhatsApp (semua halaman publik) */
-.btn-pesan-melayang {
-  box-shadow: var(--bayangan);
-}
-
 /* Teks hanya untuk pembaca layar */
 .sr-saja {
   position: absolute;
@@ -3844,19 +3839,19 @@ img.logo-kotak {
 }
 
 .btn-bot svg {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.625rem;
+  height: 1.625rem;
 }
 
 .panel-bot {
   position: fixed;
   right: var(--spasi-3);
-  bottom: 6.5rem;
+  bottom: 8.5rem;
   z-index: 110;
   display: flex;
   flex-direction: column;
   width: min(calc(100vw - 2rem), 32rem);
-  height: min(44rem, calc(100dvh - 8rem));
+  height: min(44rem, calc(100dvh - 10rem));
   border: 1px solid var(--garis);
   border-radius: var(--radius-kecil);
   background: var(--putih);
@@ -3907,27 +3902,65 @@ img.logo-kotak {
 .bot-masuk {
   align-self: flex-start;
   background: var(--latar);
+  transform-origin: left bottom;
+  animation: bot-muncul-masuk 320ms var(--ease) both;
 }
 
 .bot-keluar {
   align-self: flex-end;
   background: var(--biru);
   color: #fff;
+  transform-origin: right bottom;
+  animation: bot-muncul-keluar 280ms var(--ease) both;
+}
+
+/* Gelembung muncul sambil membesar dan naik sedikit */
+@keyframes bot-muncul-keluar {
+  from { opacity: 0; transform: translate(16px, 10px) scale(0.85); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes bot-muncul-masuk {
+  from { opacity: 0; transform: translate(-16px, 10px) scale(0.85); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Indikator mengetik: tiga titik memantul */
+.bot-mengetik {
+  display: flex;
+  gap: 0.3rem;
+  padding-block: var(--spasi-3);
+}
+
+.bot-mengetik span {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.4;
+  animation: bot-titik 1s ease-in-out infinite;
+}
+
+.bot-mengetik span:nth-child(2) { animation-delay: 0.15s; }
+.bot-mengetik span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes bot-titik {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-5px); opacity: 1; }
 }
 
 .panel-bot-cepat {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: var(--spasi-2);
   flex-shrink: 0;
+  max-height: 11rem;
   padding: var(--spasi-1) var(--spasi-3) var(--spasi-2);
-  overflow-x: auto;
-  scrollbar-width: thin;
+  overflow-y: auto;
 }
 
 .panel-bot-cepat .chip-filter {
   flex-shrink: 0;
-  white-space: nowrap;
 }
 
 .panel-bot-form {

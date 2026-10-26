@@ -30,6 +30,30 @@
   margin: var(--spasi-5) auto;
 }
 
+/* Judul tabel sejajar dengan label filter; info jumlah tepat di bawah judul */
+.adm-panel .adm-kepala {
+  align-items: flex-start;
+}
+
+.adm-panel .adm-kepala h2 {
+  line-height: 1.2;
+}
+
+.adm-gerbang h1 {
+  margin: var(--spasi-3) 0;
+  font-size: 2.25rem;
+}
+
+.adm-gerbang .catatan-kecil {
+  margin: var(--spasi-4) 0 0;
+  text-align: center;
+}
+
+/* Tombol Keluar disembunyikan sebelum masuk (atribut hidden kalah oleh .btn) */
+.adm-bar-aksi [hidden] {
+  display: none;
+}
+
 .adm-kepala {
   display: flex;
   flex-wrap: wrap;
@@ -135,6 +159,17 @@
   border-radius: var(--radius-kecil);
   background: var(--putih);
   font: inherit;
+}
+
+/* Panah dropdown dibuat sendiri supaya tidak menempel di ujung kanan */
+.adm-saring select,
+.adm-pilih-status {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23161a3a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.125rem center;
+  background-size: 0.75rem 0.5rem;
 }
 
 @media (min-width: 40rem) {

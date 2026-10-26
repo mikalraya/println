@@ -88,7 +88,7 @@ function buatBot() {
   tombol.setAttribute('aria-expanded', 'false');
   tombol.setAttribute('aria-controls', 'panel-bot');
   tombol.setAttribute('aria-label', 'Buka chat tanya jawab');
-  tombol.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg><span class="label-ikon" aria-hidden="true">Tanya PrintIn</span>';
+  tombol.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3C6.48 3 2 6.9 2 11.7c0 2.5 1.2 4.7 3.2 6.3L4.6 21l3.6-1.8c1.2.4 2.5.6 3.8.6 5.52 0 10-3.9 10-8.7S17.52 3 12 3z"/><circle cx="8" cy="11.7" r="1.3" fill="#0b1240"/><circle cx="12" cy="11.7" r="1.3" fill="#0b1240"/><circle cx="16" cy="11.7" r="1.3" fill="#0b1240"/></svg><span class="label-ikon" aria-hidden="true">Tanya PrintIn</span>';
   wadahTombol.append(tombol);
 
   const panel = document.createElement('section');
@@ -127,14 +127,26 @@ function buatBot() {
     tambahPesan(bersih, false);
     const kata = bersih.toLowerCase().split(/\s+/);
     const aturan = cariJawabanBot(bersih);
-    if (aturan) {
-      tambahPesan(typeof aturan.jawab === 'function' ? aturan.jawab() : aturan.jawab, true, aturan.tautan);
-    } else if (kata.some((k) => SAPAAN_BOT.includes(k))) {
-      tambahPesan('Halo! Aku asisten PrintIn. Pilih pertanyaan di bawah atau tulis sendiri, ya.', true);
-    } else {
-      tambahPesan('Maaf, aku belum paham pertanyaan itu. Coba kata lain, atau tanya admin langsung lewat WhatsApp.', true,
-        ['Chat WhatsApp admin', `https://wa.me/${CONFIG.waAdmin}?text=${encodeURIComponent(CONFIG.pesanWaAwal)}`]);
-    }
+
+    // Indikator mengetik (tiga titik) sebelum balasan muncul
+    const mengetik = document.createElement('div');
+    mengetik.className = 'bot-pesan bot-masuk bot-mengetik';
+    mengetik.setAttribute('aria-label', 'Asisten sedang mengetik');
+    mengetik.innerHTML = '<span></span><span></span><span></span>';
+    log.append(mengetik);
+    log.scrollTop = log.scrollHeight;
+
+    setTimeout(() => {
+      mengetik.remove();
+      if (aturan) {
+        tambahPesan(typeof aturan.jawab === 'function' ? aturan.jawab() : aturan.jawab, true, aturan.tautan);
+      } else if (kata.some((k) => SAPAAN_BOT.includes(k))) {
+        tambahPesan('Halo! Aku asisten PrintIn. Pilih pertanyaan di bawah atau tulis sendiri, ya.', true);
+      } else {
+        tambahPesan('Maaf, aku belum paham pertanyaan itu. Coba kata lain, atau tanya admin langsung lewat WhatsApp.', true,
+          ['Chat WhatsApp admin', `https://wa.me/${CONFIG.waAdmin}?text=${encodeURIComponent(CONFIG.pesanWaAwal)}`]);
+      }
+    }, 800);
   };
 
   const cepat = panel.querySelector('.panel-bot-cepat');
