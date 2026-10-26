@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1670" viewBox="0 0 1040 1670" font-family="Segoe UI, Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#444441"/></marker></defs><rect width="1040" height="1670" fill="#FFFFFF"/>
+<text x="40" y="58" font-size="26" font-weight="700" fill="#26215C">Flowchart 6 — Keputusan Berbasis Data (Dashboard Admin)</text>
+<text x="40" y="92" font-size="15" fill="#5F5E5A">Data pesanan diolah menjadi informasi untuk pengambilan keputusan</text>
+<text x="1000" y="58" font-size="15" font-weight="700" fill="#534AB7" text-anchor="end">PrintIn</text>
+<path d="M520,222.0 L520,280.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,358.0 L520,410.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,488.0 L520,526.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M400.0,580 L302.0,580" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="374.0" y="566" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Tidak</text>
+<path d="M180,542.0 L180,320 L368.0,320" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,632.0 L520,666.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="552" y="644.0" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Ya</text>
+<path d="M520,752.0 L520,800.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,878.0 L520,930.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,1008.0 L520,1060.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,1138.0 L520,1186.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,1272.0 L520,1320.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,1398.0 L520,1456.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="370.0" y="158.0" width="300" height="64" rx="32.0" fill="#3C3489" stroke="#3C3489" stroke-width="1.5"/>
+<text x="520" y="190.0" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">Admin membuka admin.html</text>
+<polygon points="388.0,282.0 670.0,282.0 652.0,358.0 370.0,358.0" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="520" y="320.0" font-size="15" font-weight="400" fill="#04342C" text-anchor="middle" dominant-baseline="central">Masukkan PIN</text>
+<rect x="370.0" y="412.0" width="300" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="520" y="440.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">PIN dikirim lewat POST</text>
+<text x="520" y="460.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">ke Apps Script</text>
+<polygon points="520,528.0 640.0,580 520,632.0 400.0,580" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5"/>
+<text x="520" y="570.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">PIN cocok dengan</text>
+<text x="520" y="589.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">Script Properties?</text>
+<rect x="60.0" y="542.0" width="240" height="76" rx="6" fill="#FCEBEB" stroke="#A32D2D" stroke-width="1.5"/>
+<text x="180" y="580.0" font-size="15" font-weight="400" fill="#501313" text-anchor="middle" dominant-baseline="central">Tolak: &quot;PIN salah&quot;</text>
+<path d="M370.0,678.0 A150.0,10 0 0 1 670.0,678.0 L670.0,742.0 A150.0,10 0 0 1 370.0,742.0 Z" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<path d="M370.0,678.0 A150.0,10 0 0 0 670.0,678.0" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+<text x="520" y="704.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">Ambil data pesanan dari Sheets</text>
+<text x="520" y="724.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">(no. WA disamarkan)</text>
+<rect x="370.0" y="802.0" width="300" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="520" y="830.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Kartu ringkasan: total pesanan,</text>
+<text x="520" y="850.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">pesanan baru, selesai, omzet</text>
+<rect x="370.0" y="932.0" width="300" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="520" y="960.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Grafik Chart.js: produk terlaris</text>
+<text x="520" y="980.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">&amp; Printing vs Merchandise</text>
+<rect x="330.0" y="1062.0" width="380" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="520" y="1090.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Tabel pesanan: ubah status Diterima →</text>
+<text x="520" y="1110.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Cek desain → Diproses → Siap → Selesai</text>
+<path d="M370.0,1198.0 A150.0,10 0 0 1 670.0,1198.0 L670.0,1262.0 A150.0,10 0 0 1 370.0,1262.0 Z" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<path d="M370.0,1198.0 A150.0,10 0 0 0 670.0,1198.0" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+<text x="520" y="1224.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">Status tersimpan di Sheets</text>
+<text x="520" y="1244.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">(langsung tampil di Cek Status)</text>
+<rect x="340.0" y="1322.0" width="360" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="520" y="1350.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Keputusan: stok bahan, produk yang</text>
+<text x="520" y="1370.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">dipromosikan, harga &amp; status produk</text>
+<rect x="370.0" y="1458.0" width="300" height="64" rx="32.0" fill="#3C3489" stroke="#3C3489" stroke-width="1.5"/>
+<text x="520" y="1490.0" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">Selesai</text>
+<line x1="40" y1="1610" x2="1000" y2="1610" stroke="#D3D1C7" stroke-width="1"/>
+<rect x="48" y="1625" width="30" height="18" rx="9" fill="#3C3489" stroke="#3C3489"/>
+<text x="86" y="1634" font-size="13" fill="#444441" dominant-baseline="central">Mulai / selesai</text>
+<rect x="220.0" y="1625" width="30" height="18" rx="3" fill="#EEEDFE" stroke="#534AB7"/>
+<text x="258.0" y="1634" font-size="13" fill="#444441" dominant-baseline="central">Proses</text>
+<polygon points="332.2,1625 357.2,1625 352.2,1643 327.2,1643" fill="#E1F5EE" stroke="#0F6E56"/>
+<text x="365.2" y="1634" font-size="13" fill="#444441" dominant-baseline="central">Input / output</text>
+<polygon points="507.0,1623 522.0,1634 507.0,1645 492.0,1634" fill="#FAEEDA" stroke="#BA7517"/>
+<text x="530.0" y="1634" font-size="13" fill="#444441" dominant-baseline="central">Keputusan</text>
+<path d="M620.8,1628 A15,4 0 0 1 650.8,1628 L650.8,1640 A15,4 0 0 1 620.8,1640 Z M620.8,1628 A15,4 0 0 0 650.8,1628" fill="#E6F1FB" stroke="#185FA5"/>
+<text x="658.8" y="1634" font-size="13" fill="#444441" dominant-baseline="central">Data (Google Sheets)</text>
+<rect x="828.8" y="1625" width="30" height="18" rx="3" fill="#FCEBEB" stroke="#A32D2D"/>
+<text x="866.8" y="1634" font-size="13" fill="#444441" dominant-baseline="central">Penanganan error</text></svg>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1280" viewBox="0 0 1040 1280" font-family="Segoe UI, Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#444441"/></marker></defs><rect width="1040" height="1280" fill="#FFFFFF"/>
+<text x="40" y="58" font-size="26" font-weight="700" fill="#26215C">Flowchart 5 — Layanan Pelanggan</text>
+<text x="40" y="92" font-size="15" fill="#5F5E5A">Cek status pesanan mandiri, FAQ / chatbot, dan kontak admin</text>
+<text x="1000" y="58" font-size="15" font-weight="700" fill="#534AB7" text-anchor="end">PrintIn</text>
+<path d="M520,222.0 L520,266.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M640.0,320 L718.0,320" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="666.0" y="306" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Tidak</text>
+<path d="M520,372.0 L520,410.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="552" y="384.0" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Ya</text>
+<path d="M860,358.0 L860,396.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M860,502.0 L860,540.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="892" y="514.0" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Tidak</text>
+<path d="M860,618.0 L860,676.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M980.0,450 L1025,450 L1025,710 L1002.0,710" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="996.0" y="436" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Ya</text>
+<path d="M520,488.0 L520,526.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M400.0,580 L180,580 L180,670.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="370.0" y="566" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Tidak</text>
+<path d="M520,632.0 L520,666.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="552" y="644.0" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Ya</text>
+<path d="M520,752.0 L520,786.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M400.0,840 L180,840 L180,750.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="370.0" y="826" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Tidak</text>
+<path d="M50.0,710 L18,710 L18,450 L368.0,450" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M520,892.0 L520,930.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="552" y="904.0" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">Ya</text>
+<path d="M520,1008.0 L520,1066.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="370.0" y="158.0" width="300" height="64" rx="32.0" fill="#3C3489" stroke="#3C3489" stroke-width="1.5"/>
+<text x="520" y="180.0" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">Pelanggan butuh bantuan</text>
+<text x="520" y="200.0" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">atau ingin cek pesanan</text>
+<polygon points="520,268.0 640.0,320 520,372.0 400.0,320" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5"/>
+<text x="520" y="310.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">Ingin cek</text>
+<text x="520" y="329.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">status pesanan?</text>
+<rect x="720.0" y="282.0" width="280" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="860" y="310.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Baca FAQ (halaman Kontak)</text>
+<text x="860" y="330.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">atau tanya chatbot</text>
+<polygon points="860,398.0 980.0,450 860,502.0 740.0,450" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5"/>
+<text x="860" y="440.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">Pertanyaan</text>
+<text x="860" y="459.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">terjawab?</text>
+<polygon points="738.0,542.0 1000.0,542.0 982.0,618.0 720.0,618.0" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="860" y="570.0" font-size="15" font-weight="400" fill="#04342C" text-anchor="middle" dominant-baseline="central">Hubungi admin lewat</text>
+<text x="860" y="590.0" font-size="15" font-weight="400" fill="#04342C" text-anchor="middle" dominant-baseline="central">WhatsApp / email / IG</text>
+<rect x="720.0" y="678.0" width="280" height="64" rx="32.0" fill="#3C3489" stroke="#3C3489" stroke-width="1.5"/>
+<text x="860" y="710.0" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">Selesai</text>
+<polygon points="388.0,412.0 670.0,412.0 652.0,488.0 370.0,488.0" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="520" y="440.0" font-size="15" font-weight="400" fill="#04342C" text-anchor="middle" dominant-baseline="central">Masukkan kode pesanan</text>
+<text x="520" y="460.0" font-size="15" font-weight="400" fill="#04342C" text-anchor="middle" dominant-baseline="central">(contoh: PRT-0001)</text>
+<polygon points="520,528.0 640.0,580 520,632.0 400.0,580" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5"/>
+<text x="520" y="570.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">Format kode</text>
+<text x="520" y="589.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">benar?</text>
+<rect x="50.0" y="672.0" width="260" height="76" rx="6" fill="#FCEBEB" stroke="#A32D2D" stroke-width="1.5"/>
+<text x="180" y="700.0" font-size="15" font-weight="400" fill="#501313" text-anchor="middle" dominant-baseline="central">Tampilkan pesan error</text>
+<text x="180" y="720.0" font-size="15" font-weight="400" fill="#501313" text-anchor="middle" dominant-baseline="central">(format salah / tidak ada)</text>
+<path d="M370.0,678.0 A150.0,10 0 0 1 670.0,678.0 L670.0,742.0 A150.0,10 0 0 1 370.0,742.0 Z" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<path d="M370.0,678.0 A150.0,10 0 0 0 670.0,678.0" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+<text x="520" y="704.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">Apps Script mencari kode</text>
+<text x="520" y="724.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">di Google Sheets</text>
+<polygon points="520,788.0 640.0,840 520,892.0 400.0,840" fill="#FAEEDA" stroke="#BA7517" stroke-width="1.5"/>
+<text x="520" y="830.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">Kode</text>
+<text x="520" y="849.5" font-size="14" font-weight="400" fill="#412402" text-anchor="middle" dominant-baseline="central">ditemukan?</text>
+<rect x="355.0" y="932.0" width="330" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="520" y="960.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Tampilkan produk + tahapan status</text>
+<text x="520" y="980.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">(tanpa nama, no. WA, alamat)</text>
+<rect x="370.0" y="1068.0" width="300" height="64" rx="32.0" fill="#3C3489" stroke="#3C3489" stroke-width="1.5"/>
+<text x="520" y="1100.0" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">Selesai</text>
+<line x1="40" y1="1220" x2="1000" y2="1220" stroke="#D3D1C7" stroke-width="1"/>
+<rect x="48" y="1235" width="30" height="18" rx="9" fill="#3C3489" stroke="#3C3489"/>
+<text x="86" y="1244" font-size="13" fill="#444441" dominant-baseline="central">Mulai / selesai</text>
+<rect x="220.0" y="1235" width="30" height="18" rx="3" fill="#EEEDFE" stroke="#534AB7"/>
+<text x="258.0" y="1244" font-size="13" fill="#444441" dominant-baseline="central">Proses</text>
+<polygon points="332.2,1235 357.2,1235 352.2,1253 327.2,1253" fill="#E1F5EE" stroke="#0F6E56"/>
+<text x="365.2" y="1244" font-size="13" fill="#444441" dominant-baseline="central">Input / output</text>
+<polygon points="507.0,1233 522.0,1244 507.0,1255 492.0,1244" fill="#FAEEDA" stroke="#BA7517"/>
+<text x="530.0" y="1244" font-size="13" fill="#444441" dominant-baseline="central">Keputusan</text>
+<path d="M620.8,1238 A15,4 0 0 1 650.8,1238 L650.8,1250 A15,4 0 0 1 620.8,1250 Z M620.8,1238 A15,4 0 0 0 650.8,1238" fill="#E6F1FB" stroke="#185FA5"/>
+<text x="658.8" y="1244" font-size="13" fill="#444441" dominant-baseline="central">Data (Google Sheets)</text>
+<rect x="828.8" y="1235" width="30" height="18" rx="3" fill="#FCEBEB" stroke="#A32D2D"/>
+<text x="866.8" y="1244" font-size="13" fill="#444441" dominant-baseline="central">Penanganan error</text></svg>

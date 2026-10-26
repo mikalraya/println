@@ -3558,6 +3558,17 @@ img.logo-kotak {
   font-weight: 600;
 }
 
+/* Ringkasan produk dan tombol WhatsApp di detail status diberi jarak dan garis pemisah */
+#detail-pesanan .item-nama {
+  margin: var(--spasi-4) 0 var(--spasi-3);
+  padding-top: var(--spasi-4);
+  border-top: 1px solid var(--garis);
+}
+
+#detail-pesanan > .btn {
+  margin-top: var(--spasi-2);
+}
+
 .info-batal {
   margin: var(--spasi-3) 0;
   padding: 0.75rem 1rem;

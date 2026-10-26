@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="890" viewBox="0 0 1040 890" font-family="Segoe UI, Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#444441"/></marker></defs><rect width="1040" height="890" fill="#FFFFFF"/>
+<text x="40" y="58" font-size="26" font-weight="700" fill="#26215C">Integrasi Aktivitas Bisnis PrintIn</text>
+<text x="40" y="92" font-size="15" fill="#5F5E5A">Kiri: pelanggan di website publik  ·  Kanan: sistem (Google Sheets + Apps Script) dan admin</text>
+<text x="1000" y="58" font-size="15" font-weight="700" fill="#534AB7" text-anchor="end">PrintIn</text>
+<path d="M270,228.0 L270,280.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M270,358.0 L270,410.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M270,488.0 L270,540.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M270,618.0 L270,670.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M600.0,320 L452.0,320" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M450.0,450 L598.0,450" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M770,492.0 L770,540.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M770,618.0 L770,670.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M620.0,618.0 L620.0,632.0 L410.0,632.0 L410.0,670.0" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="520" y="646.0" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">status terbaru</text>
+<path d="M940.0,710 L1022,710 L1022,320 L942.0,320" fill="none" stroke="#444441" stroke-width="1.6" marker-end="url(#ah)"/><text x="982" y="304" font-size="14" font-weight="600" fill="#444441" text-anchor="middle" dominant-baseline="central">umpan balik</text>
+<rect x="90.0" y="152.0" width="360" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="270" y="180.0" font-size="15" font-weight="600" fill="#26215C" text-anchor="middle" dominant-baseline="central">1. Pemasaran</text>
+<text x="270" y="200.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Beranda, Instagram, tombol WA</text>
+<rect x="90.0" y="282.0" width="360" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="270" y="310.0" font-size="15" font-weight="600" fill="#26215C" text-anchor="middle" dominant-baseline="central">2. Info produk</text>
+<text x="270" y="330.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Katalog, stok, kalkulator harga</text>
+<rect x="90.0" y="412.0" width="360" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="270" y="440.0" font-size="15" font-weight="600" fill="#26215C" text-anchor="middle" dominant-baseline="central">3. Pemesanan</text>
+<text x="270" y="460.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Form, upload desain, setuju privasi</text>
+<rect x="90.0" y="542.0" width="360" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="270" y="570.0" font-size="15" font-weight="600" fill="#26215C" text-anchor="middle" dominant-baseline="central">4. Pembayaran</text>
+<text x="270" y="590.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">QRIS mockup, konfirmasi via WA</text>
+<rect x="90.0" y="672.0" width="360" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="270" y="700.0" font-size="15" font-weight="600" fill="#26215C" text-anchor="middle" dominant-baseline="central">5. Layanan pelanggan</text>
+<text x="270" y="720.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Cek status, FAQ, chatbot, WA</text>
+<path d="M600.0,288.0 A170.0,10 0 0 1 940.0,288.0 L940.0,352.0 A170.0,10 0 0 1 600.0,352.0 Z" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<path d="M600.0,288.0 A170.0,10 0 0 0 940.0,288.0" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+<text x="770" y="314.0" font-size="15" font-weight="600" fill="#042C53" text-anchor="middle" dominant-baseline="central">Google Sheets: produk</text>
+<text x="770" y="334.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">Harga, estimasi, status stok</text>
+<path d="M600.0,418.0 A170.0,10 0 0 1 940.0,418.0 L940.0,482.0 A170.0,10 0 0 1 600.0,482.0 Z" fill="#E6F1FB" stroke="#185FA5" stroke-width="1.5"/>
+<path d="M600.0,418.0 A170.0,10 0 0 0 940.0,418.0" fill="none" stroke="#185FA5" stroke-width="1.5"/>
+<text x="770" y="444.0" font-size="15" font-weight="600" fill="#042C53" text-anchor="middle" dominant-baseline="central">Apps Script + Sheets: pesanan</text>
+<text x="770" y="464.0" font-size="15" font-weight="400" fill="#042C53" text-anchor="middle" dominant-baseline="central">Simpan, kode PRT, email admin</text>
+<polygon points="618.0,542.0 940.0,542.0 922.0,618.0 600.0,618.0" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="770" y="570.0" font-size="15" font-weight="600" fill="#04342C" text-anchor="middle" dominant-baseline="central">Admin memproses pesanan</text>
+<text x="770" y="590.0" font-size="15" font-weight="400" fill="#04342C" text-anchor="middle" dominant-baseline="central">Cek desain, ubah status</text>
+<rect x="600.0" y="672.0" width="340" height="76" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
+<text x="770" y="700.0" font-size="15" font-weight="600" fill="#26215C" text-anchor="middle" dominant-baseline="central">6. Keputusan berbasis data</text>
+<text x="770" y="720.0" font-size="15" font-weight="400" fill="#26215C" text-anchor="middle" dominant-baseline="central">Dashboard: terlaris, omzet</text>
+<line x1="40" y1="830" x2="1000" y2="830" stroke="#D3D1C7" stroke-width="1"/>
+<rect x="48" y="845" width="30" height="18" rx="9" fill="#3C3489" stroke="#3C3489"/>
+<text x="86" y="854" font-size="13" fill="#444441" dominant-baseline="central">Mulai / selesai</text>
+<rect x="220.0" y="845" width="30" height="18" rx="3" fill="#EEEDFE" stroke="#534AB7"/>
+<text x="258.0" y="854" font-size="13" fill="#444441" dominant-baseline="central">Proses</text>
+<polygon points="332.2,845 357.2,845 352.2,863 327.2,863" fill="#E1F5EE" stroke="#0F6E56"/>
+<text x="365.2" y="854" font-size="13" fill="#444441" dominant-baseline="central">Input / output</text>
+<polygon points="507.0,843 522.0,854 507.0,865 492.0,854" fill="#FAEEDA" stroke="#BA7517"/>
+<text x="530.0" y="854" font-size="13" fill="#444441" dominant-baseline="central">Keputusan</text>
+<path d="M620.8,848 A15,4 0 0 1 650.8,848 L650.8,860 A15,4 0 0 1 620.8,860 Z M620.8,848 A15,4 0 0 0 650.8,848" fill="#E6F1FB" stroke="#185FA5"/>
+<text x="658.8" y="854" font-size="13" fill="#444441" dominant-baseline="central">Data (Google Sheets)</text>
+<rect x="828.8" y="845" width="30" height="18" rx="3" fill="#FCEBEB" stroke="#A32D2D"/>
+<text x="866.8" y="854" font-size="13" fill="#444441" dominant-baseline="central">Penanganan error</text></svg>
