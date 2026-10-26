@@ -7,7 +7,7 @@
   <title>Dashboard Admin — PrintIn</title>
   <script>document.documentElement.classList.add('js')</script>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=4">
+  <link rel="stylesheet" href="css/admin.css?v=5">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body data-halaman="admin" class="adm">
@@ -150,7 +150,8 @@
           <button class="btn btn-garis" type="button" id="reset-produk">Reset filter</button>
         </div>
         <p class="adm-sub adm-info-saring" id="info-produk" role="status"></p>
-        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi">
+        <p class="adm-geser" aria-hidden="true">Geser tabel ke samping →</p>
+        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi adm-tabel-produk">
           <caption class="sr-saja">Daftar produk</caption>
           <thead><tr><th scope="col">Produk</th><th scope="col">Lini</th><th scope="col">Harga</th><th scope="col">Estimasi</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead>
           <tbody id="isi-tabel-produk"></tbody>
@@ -177,7 +178,7 @@
           <button class="btn btn-garis" type="button" id="reset-pesanan">Reset filter</button>
         </div>
         <p class="adm-sub adm-info-saring" id="info-tabel" role="status"></p>
-        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi">
+        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi adm-tabel-kartu">
           <caption class="sr-saja">Daftar pesanan</caption>
           <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Total</th><th scope="col">Desain</th><th scope="col">Status</th></tr></thead>
           <tbody id="isi-tabel"></tbody>
@@ -338,6 +339,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/admin.js?v=4"></script>
+  <script src="js/admin.js?v=5"></script>
 </body>
 </html>

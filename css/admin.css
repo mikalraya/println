@@ -1024,26 +1024,26 @@ select.adm-pilih {
   100% { background: transparent; }
 }
 
-/* ----- HP: tabel ditampilkan sebagai kartu (judul kolom dari data-label) ----- */
+/* ----- HP: tabel pesanan ditampilkan sebagai kartu (judul kolom dari data-label) ----- */
 @media (max-width: 39.99rem) {
-  .adm-tabel-bungkus {
+  .adm-tabel-bungkus:has(.adm-tabel-kartu) {
     overflow: visible;
     border: 0;
     background: transparent;
     box-shadow: none;
   }
 
-  .adm-tabel,
-  .adm-tabel tbody {
+  .adm-tabel-kartu,
+  .adm-tabel-kartu tbody {
     display: block;
     min-width: 0;
   }
 
-  .adm-tabel thead {
+  .adm-tabel-kartu thead {
     display: none;
   }
 
-  .adm-tabel tbody tr {
+  .adm-tabel-kartu tbody tr {
     display: block;
     margin-bottom: 0.75rem;
     padding: 0.25rem var(--spasi-3);
@@ -1053,7 +1053,7 @@ select.adm-pilih {
     box-shadow: var(--bayangan-lembut);
   }
 
-  .adm-tabel td {
+  .adm-tabel-kartu td {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1064,11 +1064,11 @@ select.adm-pilih {
     text-align: right;
   }
 
-  .adm-tabel tbody tr td:last-child {
+  .adm-tabel-kartu tbody tr td:last-child {
     border-bottom: 0;
   }
 
-  .adm-tabel td::before {
+  .adm-tabel-kartu td::before {
     content: attr(data-label);
     flex: none;
     color: var(--teks-redup);
@@ -1078,32 +1078,87 @@ select.adm-pilih {
   }
 
   /* Kolom pertama jadi judul kartu, tanpa label */
-  .adm-tabel td:first-child {
+  .adm-tabel-kartu td:first-child {
     display: block;
     padding-top: 0.75rem;
     text-align: left;
   }
 
-  .adm-tabel td:first-child::before,
-  .adm-tabel td.adm-kosong::before {
+  .adm-tabel-kartu td:first-child::before,
+  .adm-tabel-kartu td.adm-kosong::before {
     content: none;
   }
 
-  .adm-tabel td.adm-kosong {
+  .adm-tabel-kartu td.adm-kosong {
     justify-content: center;
     text-align: center;
   }
 
-  .adm-tabel td > div {
+  .adm-tabel-kartu td > div {
     min-width: 0;
   }
 
-  .adm-aksi {
+  .adm-tabel-kartu .adm-aksi {
     justify-content: flex-end;
   }
 
-  .adm-tabel select.adm-pilih {
+  .adm-tabel-kartu select.adm-pilih {
     max-width: 60%;
+  }
+}
+
+/* Petunjuk geser hanya tampil di HP */
+.adm-geser {
+  display: none;
+}
+
+@media (max-width: 39.99rem) {
+  .adm-geser {
+    display: block;
+    margin: 0 0 var(--spasi-2);
+    color: var(--teks-redup);
+    font-size: var(--teks-kecil);
+  }
+
+  /* Tabel produk tetap tabel; kolom nama produk menempel di kiri saat digeser */
+  .adm-tabel-produk {
+    min-width: 40rem;
+    font-size: var(--teks-kecil);
+  }
+
+  .adm-tabel-produk th,
+  .adm-tabel-produk td {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .adm-tabel-produk tbody tr {
+    background: var(--putih);
+  }
+
+  .adm-tabel-produk th:first-child,
+  .adm-tabel-produk td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 13rem;
+    max-width: 14rem;
+    box-shadow: 4px 0 8px -6px rgba(7, 10, 31, 0.35);
+  }
+
+  .adm-tabel-produk td:first-child {
+    background: inherit;
+  }
+
+  .adm-tabel-produk .adm-thumb {
+    width: 2.75rem;
+  }
+
+  .adm-tabel-produk td:first-child strong {
+    font-size: var(--teks-kecil);
+  }
+
+  .adm-tabel-produk .adm-produk-sel {
+    gap: 0.5rem;
   }
 }
 
