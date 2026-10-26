@@ -25,6 +25,9 @@
 const KOLOM_PRODUK = ['id', 'nama', 'lini', 'kategori', 'harga', 'satuan', 'tipe_hitung', 'harga_mulai', 'perlu_desain', 'estimasi', 'status', 'foto', 'deskripsi'];
 const KOLOM_PESANAN = ['kode', 'tanggal', 'nama', 'whatsapp', 'lini', 'produk', 'spesifikasi', 'jumlah', 'total', 'link_file', 'tanggal_butuh', 'pengambilan', 'alamat', 'catatan', 'status', 'email'];
 const STATUS_PESANAN = ['Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai'];
+const LINI_PRODUK = ['Printing Reguler', 'Custom Merchandise'];
+const TIPE_HITUNG = ['lembar', 'paket', 'luas', 'pcs'];
+const STATUS_PRODUK = ['Tersedia', 'Terbatas', 'Habis'];
 const JENIS_FILE = ['application/pdf', 'image/png', 'image/jpeg'];
 const MAKS_BYTE = 10 * 1024 * 1024;
 
@@ -48,6 +51,8 @@ function doPost(e) {
     if (data.action === 'pesan') return balas(simpanPesanan(data));
     if (data.action === 'dashboard') return balas(dashboard(data));
     if (data.action === 'ubah_status') return balas(ubahStatus(data));
+    if (data.action === 'produk_simpan') return balas(simpanProduk(data));
+    if (data.action === 'produk_hapus') return balas(hapusProduk(data));
     return balas({ ok: false, pesan: 'Aksi tidak dikenal.' });
   } catch (err) {
     return balas({ ok: false, pesan: 'Terjadi kesalahan di server. Coba lagi nanti.' });
@@ -253,7 +258,99 @@ function dashboard(d) {
       omzet: omzet, perProduk: perProduk, perLini: perLini,
     },
     pesanan: pesanan,
+    produk: ambilProduk(),
   };
+}
+
+// ----- Admin: kelola produk (CRUD) -----
+
+// Periksa dan rapikan data produk dari dashboard. Mengembalikan { galat } atau { produk }.
+function periksaProduk(d) {
+  const p = {
+    id: bersihkan(d.id, 40).toLowerCase(),
+    nama: bersihkan(d.nama, 80),
+    lini: bersihkan(d.lini, 30),
+    kategori: bersihkan(d.kategori, 40),
+    harga: Number(d.harga),
+    satuan: bersihkan(d.satuan, 20),
+    tipe_hitung: bersihkan(d.tipe_hitung, 10),
+    harga_mulai: d.harga_mulai === true,
+    perlu_desain: d.perlu_desain === true,
+    estimasi: bersihkan(d.estimasi, 30),
+    status: bersihkan(d.status, 10),
+    foto: bersihkan(d.foto, 300),
+    deskripsi: bersihkan(d.deskripsi, 300),
+  };
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.id)) return { galat: 'ID hanya boleh huruf kecil, angka, dan tanda hubung, contoh: stiker-vinyl.' };
+  if (p.nama.length < 2) return { galat: 'Nama produk wajib diisi, minimal 2 huruf.' };
+  if (LINI_PRODUK.indexOf(p.lini) === -1) return { galat: 'Lini harus Printing Reguler atau Custom Merchandise.' };
+  if (p.kategori.length < 2) return { galat: 'Kategori wajib diisi.' };
+  if (!(Number.isInteger(p.harga) && p.harga >= 1 && p.harga <= 100000000)) return { galat: 'Harga harus angka bulat antara 1 dan 100.000.000.' };
+  if (!p.satuan) return { galat: 'Satuan wajib diisi, contoh: lembar atau pcs.' };
+  if (TIPE_HITUNG.indexOf(p.tipe_hitung) === -1) return { galat: 'Tipe hitung harus lembar, paket, luas, atau pcs.' };
+  if (!p.estimasi) return { galat: 'Estimasi selesai wajib diisi, contoh: 2 hari.' };
+  if (STATUS_PRODUK.indexOf(p.status) === -1) return { galat: 'Status harus Tersedia, Terbatas, atau Habis.' };
+  if (p.foto && !/^img\/[a-z0-9_\/.-]+\.(webp|png|jpe?g|svg)$/i.test(p.foto) && !/^https:\/\/\S+$/.test(p.foto)) {
+    return { galat: 'Foto harus path gambar di folder img/ (contoh: img/produk/mug.webp) atau link https://.' };
+  }
+  // Cegah teks di sel dibaca sebagai rumus
+  ['nama', 'kategori', 'satuan', 'estimasi', 'deskripsi'].forEach(function (k) { p[k] = amanSel(p[k]); });
+  return { produk: p };
+}
+
+// Cari nomor baris (mulai 1) produk berdasarkan id; 0 bila tidak ada
+function barisProduk(nilai, id) {
+  for (let i = 1; i < nilai.length; i++) {
+    if (String(nilai[i][0]) === id) return i + 1;
+  }
+  return 0;
+}
+
+// Tambah (mode "tambah") atau ubah (mode "ubah") satu produk. ID tidak bisa diganti saat mengubah.
+function simpanProduk(d) {
+  if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
+  const cek = periksaProduk(d.produk || {});
+  if (cek.galat) return { ok: false, pesan: cek.galat };
+  const p = cek.produk;
+
+  const kunci = LockService.getScriptLock();
+  kunci.waitLock(20000);
+  try {
+    const lembar = sheet('produk');
+    const nilai = lembar.getDataRange().getValues();
+    const judul = nilai[0];
+    const baris = barisProduk(nilai, p.id);
+    const isi = [judul.map(function (j) { return p[j] !== undefined ? p[j] : ''; })];
+
+    if (d.mode === 'tambah') {
+      if (baris) return { ok: false, pesan: 'ID "' + p.id + '" sudah dipakai produk lain. Pakai ID yang berbeda.' };
+      lembar.getRange(lembar.getLastRow() + 1, 1, 1, judul.length).setValues(isi);
+    } else if (d.mode === 'ubah') {
+      if (!baris) return { ok: false, pesan: 'Produk tidak ditemukan. Muat ulang data lalu coba lagi.' };
+      lembar.getRange(baris, 1, 1, judul.length).setValues(isi);
+    } else {
+      return { ok: false, pesan: 'Mode simpan tidak dikenal.' };
+    }
+  } finally {
+    kunci.releaseLock();
+  }
+  return { ok: true, produk: ambilProduk() };
+}
+
+function hapusProduk(d) {
+  if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
+  const id = bersihkan(d.id, 40);
+  const kunci = LockService.getScriptLock();
+  kunci.waitLock(20000);
+  try {
+    const lembar = sheet('produk');
+    const baris = barisProduk(lembar.getDataRange().getValues(), id);
+    if (!baris) return { ok: false, pesan: 'Produk tidak ditemukan. Muat ulang data lalu coba lagi.' };
+    lembar.deleteRow(baris);
+  } finally {
+    kunci.releaseLock();
+  }
+  return { ok: true, produk: ambilProduk() };
 }
 
 function ubahStatus(d) {

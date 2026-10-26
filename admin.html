@@ -7,22 +7,25 @@
   <title>Dashboard Admin — PrintIn</title>
   <script>document.documentElement.classList.add('js')</script>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/admin.css?v=3">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body data-halaman="admin" class="adm">
   <a class="lewati-konten" href="#konten">Lewati ke konten</a>
 
   <header class="adm-bar">
+    <button class="adm-toggle" id="adm-toggle" type="button" aria-controls="adm-menu" aria-expanded="true" aria-label="Kecilkan menu" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
+    <span class="adm-pil-halaman">Dashboard</span>
     <div class="adm-bar-aksi">
+      <span class="adm-nama" id="adm-nama" hidden><span class="adm-avatar" aria-hidden="true">A</span>Admin PrintIn</span>
       <a class="btn btn-garis" href="index.html">Lihat situs</a>
       <button class="btn btn-garis" type="button" id="adm-keluar" hidden>Keluar</button>
     </div>
   </header>
 
-  <main id="konten" class="adm-isi">
-    <!-- Gerbang PIN. PIN diperiksa di Apps Script, tidak ada di kode front-end. -->
+  <!-- Gerbang PIN. PIN diperiksa di Apps Script, tidak ada di kode front-end. -->
+  <main class="adm-gerbang-wadah" id="gerbang-wadah">
     <section class="adm-gerbang kartu kartu-pad" id="gerbang" aria-labelledby="judul-pin">
       <span class="pil">Khusus admin</span>
       <h1 id="judul-pin">Masukkan PIN</h1>
@@ -36,67 +39,305 @@
       </form>
       <p class="catatan-kecil">PIN ini pengaman sederhana untuk demo, bukan keamanan tingkat produksi.</p>
     </section>
+  </main>
 
-    <div id="dashboard" hidden>
-      <div class="adm-kepala">
-        <div>
-          <h1>Dashboard pesanan</h1>
-          <p class="adm-sub">Data diambil dari Google Sheets. Nomor WhatsApp pelanggan disamarkan.</p>
-        </div>
-        <button class="btn btn-garis" type="button" id="muat-ulang">Muat ulang</button>
+  <div class="adm-tata" id="adm-tata" hidden>
+    <nav class="adm-menu" id="adm-menu" aria-label="Menu dashboard">
+      <p class="adm-menu-judul">Menu</p>
+      <a href="#ringkasan" data-menu="ringkasan" title="Ringkasan"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="adm-menu-teks">Ringkasan</span></a>
+      <a href="#produk" data-menu="produk" title="Produk"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span><span class="adm-menu-teks">Produk</span></a>
+      <a href="#pesanan" data-menu="pesanan" title="Pesanan"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 6H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/><path d="M8 12h8M8 16h5"/></svg></span><span class="adm-menu-teks">Pesanan</span></a>
+      <div class="adm-akun">
+        <span class="adm-avatar" aria-hidden="true">A</span>
+        <div><strong>Admin PrintIn</strong><span>Masuk dengan PIN</span></div>
       </div>
+    </nav>
 
-      <div class="adm-kartu-angka" id="kartu-angka"></div>
-
-      <div class="adm-grafik-kisi">
-        <article class="kartu adm-panel">
-          <h2>Produk terlaris</h2>
-          <p class="adm-sub">Berdasarkan jumlah yang dipesan</p>
-          <div class="adm-grafik"><canvas id="grafik-produk" role="img" aria-label="Grafik batang produk terlaris"></canvas></div>
-        </article>
-        <article class="kartu adm-panel">
-          <h2>Printing vs Merchandise</h2>
-          <p class="adm-sub">Jumlah pesanan per lini</p>
-          <div class="adm-grafik adm-grafik-kecil"><canvas id="grafik-lini" role="img" aria-label="Grafik perbandingan pesanan Printing Reguler dan Custom Merchandise"></canvas></div>
-        </article>
-      </div>
-      <p class="catatan-kecil" id="info-grafik" hidden>Grafik tidak bisa dimuat (Chart.js belum terunduh). Data tetap tersedia di tabel.</p>
-
-      <section class="adm-panel kartu" aria-labelledby="judul-tabel">
+    <main id="konten" class="adm-isi">
+      <!-- Ringkasan -->
+      <section id="bagian-ringkasan" data-bagian aria-labelledby="judul-ringkasan">
         <div class="adm-kepala">
           <div>
-            <h2 id="judul-tabel">Tabel pesanan</h2>
-            <p class="adm-sub" id="info-tabel" role="status"></p>
+            <p class="adm-salam" id="adm-salam"></p>
+            <h1 id="judul-ringkasan">Ringkasan perusahaan</h1>
+            <p class="adm-sub">Gambaran singkat PrintIn dari data pesanan dan produk di Google Sheets. Omzet = total harga simulasi pesanan.</p>
           </div>
-          <div class="field adm-saring">
-            <label for="saring-status">Tampilkan status</label>
+          <button class="btn btn-garis" type="button" id="muat-ulang">Muat ulang data</button>
+        </div>
+        <div class="adm-saring">
+          <div class="field">
+            <label for="saring-periode">Periode pesanan</label>
+            <select id="saring-periode">
+              <option value="1">Bulan ini</option>
+              <option value="3">3 bulan terakhir</option>
+              <option value="6" selected>6 bulan terakhir</option>
+              <option value="12">12 bulan terakhir</option>
+              <option value="semua">Semua waktu</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="saring-lini-ringkasan">Lini produk</label>
+            <select id="saring-lini-ringkasan">
+              <option value="">Semua lini</option>
+              <option value="Printing Reguler">Printing Reguler</option>
+              <option value="Custom Merchandise">Custom Merchandise</option>
+            </select>
+          </div>
+          <button class="btn btn-garis" type="button" id="reset-ringkasan">Reset filter</button>
+        </div>
+        <p class="adm-sub adm-info-saring" id="info-ringkasan" role="status"></p>
+        <div class="adm-kartu-angka" id="kartu-angka"></div>
+        <div class="adm-grafik-kisi">
+          <article class="kartu adm-panel">
+            <h2>Omzet per bulan</h2>
+            <p class="adm-sub" id="sub-grafik-omzet">6 bulan terakhir, dalam rupiah</p>
+            <div class="adm-grafik"><canvas id="grafik-omzet" role="img" aria-label="Grafik batang omzet per bulan"></canvas></div>
+          </article>
+          <article class="kartu adm-panel">
+            <h2>Printing vs Merchandise</h2>
+            <p class="adm-sub">Jumlah pesanan per lini</p>
+            <div class="adm-grafik"><canvas id="grafik-lini" role="img" aria-label="Grafik perbandingan pesanan Printing Reguler dan Custom Merchandise"></canvas></div>
+          </article>
+        </div>
+        <div class="adm-grafik-kisi">
+          <article class="kartu adm-panel">
+            <h2>Produk terlaris</h2>
+            <p class="adm-sub">Berdasarkan jumlah pesanan (bukan jumlah unit, karena satuannya berbeda-beda)</p>
+            <div class="adm-grafik"><canvas id="grafik-produk" role="img" aria-label="Grafik batang produk terlaris"></canvas></div>
+          </article>
+          <article class="kartu adm-panel">
+            <h2>Perlu perhatian</h2>
+            <p class="adm-sub">Produk yang bahannya terbatas atau habis</p>
+            <ul class="adm-daftar daftar-bersih" id="daftar-perhatian"></ul>
+            <h2 class="adm-judul-kedua">Pesanan terbaru</h2>
+            <ul class="adm-daftar daftar-bersih" id="daftar-terbaru"></ul>
+          </article>
+        </div>
+        <p class="catatan-kecil" id="info-grafik" hidden>Grafik tidak bisa dimuat (Chart.js belum terunduh). Data tetap tersedia di menu Pesanan.</p>
+      </section>
+
+      <!-- Produk -->
+      <section id="bagian-produk" data-bagian hidden aria-labelledby="judul-produk">
+        <div class="adm-kepala">
+          <div>
+            <h1 id="judul-produk">Kelola produk</h1>
+            <p class="adm-sub">Perubahan langsung tersimpan di tab "produk" Google Sheets dan tampil di halaman Produk. Semua harga adalah harga simulasi.</p>
+          </div>
+          <button class="btn btn-utama" type="button" id="tambah-produk">+ Tambah produk</button>
+        </div>
+        <div class="adm-saring">
+          <div class="field">
+            <label for="cari-produk">Cari produk</label>
+            <input id="cari-produk" type="search" placeholder="Nama, ID, atau kategori" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="saring-lini">Lini</label>
+            <select id="saring-lini">
+              <option value="">Semua</option>
+              <option value="Printing Reguler">Printing Reguler</option>
+              <option value="Custom Merchandise">Custom Merchandise</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="saring-status-produk">Status</label>
+            <select id="saring-status-produk">
+              <option value="">Semua</option>
+              <option value="Tersedia">Tersedia</option>
+              <option value="Terbatas">Terbatas</option>
+              <option value="Habis">Habis</option>
+            </select>
+          </div>
+          <button class="btn btn-garis" type="button" id="reset-produk">Reset filter</button>
+        </div>
+        <p class="adm-sub adm-info-saring" id="info-produk" role="status"></p>
+        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi">
+          <caption class="sr-saja">Daftar produk</caption>
+          <thead><tr><th scope="col">Produk</th><th scope="col">Lini</th><th scope="col">Harga</th><th scope="col">Estimasi</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead>
+          <tbody id="isi-tabel-produk"></tbody>
+        </table></div>
+      </section>
+
+      <!-- Pesanan -->
+      <section id="bagian-pesanan" data-bagian hidden aria-labelledby="judul-pesanan">
+        <div class="adm-kepala">
+          <div>
+            <h1 id="judul-pesanan">Kelola pesanan</h1>
+            <p class="adm-sub">Ubah tahap pengerjaan di kolom Status. Pelanggan langsung melihatnya di halaman Cek Status. Nomor WhatsApp disamarkan.</p>
+          </div>
+        </div>
+        <div class="adm-saring">
+          <div class="field">
+            <label for="cari-pesanan">Cari pesanan</label>
+            <input id="cari-pesanan" type="search" placeholder="Kode atau nama pelanggan" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="saring-status">Status</label>
             <select id="saring-status"></select>
           </div>
+          <button class="btn btn-garis" type="button" id="reset-pesanan">Reset filter</button>
         </div>
-        <div class="adm-tabel-bungkus">
-          <table class="adm-tabel">
-            <caption class="sr-saja">Daftar pesanan</caption>
-            <thead>
-              <tr>
-                <th scope="col">Kode</th>
-                <th scope="col">Tanggal</th>
-                <th scope="col">Pelanggan</th>
-                <th scope="col">Produk</th>
-                <th scope="col">Total</th>
-                <th scope="col">Desain</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody id="isi-tabel"></tbody>
-          </table>
-        </div>
+        <p class="adm-sub adm-info-saring" id="info-tabel" role="status"></p>
+        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi">
+          <caption class="sr-saja">Daftar pesanan</caption>
+          <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Total</th><th scope="col">Desain</th><th scope="col">Status</th></tr></thead>
+          <tbody id="isi-tabel"></tbody>
+        </table></div>
       </section>
+    </main>
+  </div>
+
+  <!-- Dialog tambah/ubah produk -->
+  <dialog class="dialog-form dialog-produk" id="dialog-produk" aria-labelledby="judul-form-produk">
+    <form id="form-produk" novalidate>
+      <div class="dp-kepala">
+        <div>
+          <h2 id="judul-form-produk">Tambah produk</h2>
+          <p class="adm-sub">Kolom bertanda <abbr title="wajib">*</abbr> wajib diisi.</p>
+        </div>
+        <button class="dp-tutup" type="button" id="tutup-produk" aria-label="Tutup"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="dp-isi">
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">1</span>Informasi produk</legend>
+          <div class="dp-grid">
+            <div class="field">
+              <label for="pr-id">ID produk <abbr title="wajib">*</abbr></label>
+              <input id="pr-id" name="id" type="text" autocomplete="off" placeholder="contoh: stiker-vinyl" aria-describedby="petunjuk-pr-id galat-pr-id">
+              <p class="petunjuk" id="petunjuk-pr-id">Huruf kecil dan tanda hubung. Tidak bisa diubah setelah disimpan.</p>
+              <p class="pesan-galat" id="galat-pr-id" hidden></p>
+            </div>
+            <div class="field">
+              <label for="pr-nama">Nama produk <abbr title="wajib">*</abbr></label>
+              <input id="pr-nama" name="nama" type="text" autocomplete="off" aria-describedby="galat-pr-nama">
+              <p class="pesan-galat" id="galat-pr-nama" hidden></p>
+            </div>
+            <div class="field">
+              <label for="pr-lini">Lini <abbr title="wajib">*</abbr></label>
+              <select id="pr-lini" name="lini">
+                <option>Printing Reguler</option>
+                <option>Custom Merchandise</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="pr-kategori">Kategori <abbr title="wajib">*</abbr></label>
+              <input id="pr-kategori" name="kategori" type="text" list="daftar-kategori" autocomplete="off" aria-describedby="galat-pr-kategori">
+              <datalist id="daftar-kategori"></datalist>
+              <p class="pesan-galat" id="galat-pr-kategori" hidden></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="pr-deskripsi">Deskripsi singkat</label>
+            <textarea id="pr-deskripsi" name="deskripsi" rows="2" maxlength="300" placeholder="Jelaskan dengan bahasa sehari-hari"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">2</span>Harga</legend>
+          <div class="dp-grid">
+            <div class="field">
+              <label for="pr-harga">Harga <abbr title="wajib">*</abbr></label>
+              <div class="dp-awalan"><span>Rp</span><input id="pr-harga" name="harga" type="number" inputmode="numeric" min="1" step="1" aria-describedby="galat-pr-harga"></div>
+              <p class="pesan-galat" id="galat-pr-harga" hidden></p>
+            </div>
+            <div class="field">
+              <label for="pr-satuan">Satuan harga <abbr title="wajib">*</abbr></label>
+              <input id="pr-satuan" name="satuan" type="text" list="daftar-satuan" autocomplete="off" placeholder="lembar / pcs / m² / 100 pcs" aria-describedby="galat-pr-satuan">
+              <datalist id="daftar-satuan"><option value="lembar"><option value="pcs"><option value="m²"><option value="100 pcs"></datalist>
+              <p class="pesan-galat" id="galat-pr-satuan" hidden></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="pr-tipe">Cara hitung di kalkulator</label>
+            <select id="pr-tipe" name="tipe_hitung">
+              <option value="lembar">Per lembar (harga × jumlah lembar)</option>
+              <option value="paket">Per paket 100 pcs (harga × jumlah paket)</option>
+              <option value="luas">Per m² (harga × panjang × lebar × jumlah)</option>
+              <option value="pcs">Per pcs (harga × jumlah pcs)</option>
+            </select>
+          </div>
+          <label class="dp-saklar"><input id="pr-mulai" name="harga_mulai" type="checkbox"><span>Harga "Mulai"<small>Harga dasar; hasil kalkulator ditandai Estimasi dan harga akhir dikonfirmasi admin.</small></span></label>
+          <p class="dp-pratinjau" id="pratinjau-harga" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">3</span>Ketersediaan</legend>
+          <div class="dp-grid">
+            <div class="field">
+              <label for="pr-estimasi">Estimasi selesai <abbr title="wajib">*</abbr></label>
+              <input id="pr-estimasi" name="estimasi" type="text" autocomplete="off" placeholder="contoh: 2 hari" aria-describedby="galat-pr-estimasi">
+              <p class="pesan-galat" id="galat-pr-estimasi" hidden></p>
+            </div>
+            <div class="field">
+              <label for="pr-status">Status stok</label>
+              <select id="pr-status" name="status">
+                <option>Tersedia</option>
+                <option>Terbatas</option>
+                <option>Habis</option>
+              </select>
+            </div>
+          </div>
+          <label class="dp-saklar"><input id="pr-desain" name="perlu_desain" type="checkbox"><span>Wajib menyertakan file desain<small>Pelanggan tidak bisa memesan tanpa upload atau link desain.</small></span></label>
+        </fieldset>
+
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">4</span>Foto</legend>
+          <div class="dp-foto-baris">
+            <span class="adm-thumb adm-thumb-besar" id="pratinjau-foto"></span>
+            <div class="field">
+              <label for="pr-foto">Path atau link foto <span class="opsional-teks">(boleh dikosongkan)</span></label>
+              <input id="pr-foto" name="foto" type="text" list="daftar-foto" autocomplete="off" placeholder="img/produk/nama-file.webp" aria-describedby="petunjuk-pr-foto galat-pr-foto">
+              <datalist id="daftar-foto"></datalist>
+              <p class="pesan-galat" id="galat-pr-foto" hidden></p>
+            </div>
+          </div>
+          <p class="petunjuk" id="petunjuk-pr-foto">Pilih gambar yang sudah ada di folder img/produk/, atau link https://. Kosong = ilustrasi "foto menyusul" di katalog.</p>
+        </fieldset>
+        <p class="pesan-galat" id="galat-form-produk" role="alert" hidden></p>
+      </div>
+      <div class="aksi-dialog">
+        <button class="btn btn-garis" type="button" id="batal-produk">Batal</button>
+        <button class="btn btn-utama" type="submit" id="simpan-produk">Simpan produk</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Dialog konfirmasi hapus produk -->
+  <dialog class="dialog-form dialog-konfirmasi" id="dialog-hapus" aria-labelledby="judul-hapus" aria-describedby="teks-hapus">
+    <span class="konf-ikon konf-ikon-bahaya" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></span>
+    <h2 id="judul-hapus">Hapus produk ini?</h2>
+    <p class="adm-sub" id="teks-hapus">Produk akan hilang dari katalog website dan barisnya dihapus dari Google Sheets. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="konf-produk">
+      <span class="adm-thumb" id="hapus-thumb"></span>
+      <div>
+        <strong id="hapus-nama"></strong>
+        <span class="adm-sub" id="hapus-info"></span>
+      </div>
     </div>
-  </main>
+    <ul class="konf-catatan daftar-bersih">
+      <li>Pesanan lama yang memakai produk ini tetap aman.</li>
+      <li>Kalau hanya sementara tidak dijual, lebih baik ubah statusnya menjadi <strong>Habis</strong>.</li>
+    </ul>
+    <p class="pesan-galat" id="galat-hapus" role="alert" hidden></p>
+    <div class="konf-aksi">
+      <button class="btn btn-garis" type="button" id="batal-hapus">Batal</button>
+      <button class="btn btn-bahaya" type="button" id="ya-hapus">Ya, hapus produk</button>
+    </div>
+  </dialog>
+
+  <!-- Dialog umpan balik berhasil -->
+  <dialog class="dialog-form dialog-konfirmasi" id="dialog-hasil" aria-labelledby="hasil-judul" aria-describedby="hasil-pesan">
+    <span class="konf-ikon konf-ikon-sukses" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <h2 id="hasil-judul">Berhasil</h2>
+    <p class="adm-sub" id="hasil-pesan"></p>
+    <ul class="konf-rincian daftar-bersih" id="hasil-rincian" hidden></ul>
+    <div class="konf-aksi">
+      <button class="btn btn-utama" type="button" id="tutup-hasil" autofocus>Oke, mengerti</button>
+    </div>
+  </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/admin.js"></script>
+  <script src="js/admin.js?v=3"></script>
 </body>
 </html>

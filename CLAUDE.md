@@ -158,7 +158,7 @@ Semua harga adalah **harga simulasi** dalam rupiah (Rp). Di website, beri ketera
 | F-07 | Tentang Kami: deskripsi, visi, misi, target pelanggan, keunggulan, alamat Semarang, jam buka, Google Maps embed | Wajib |
 | F-08 | Kontak & FAQ: WA, email, Instagram; FAQ format file desain, ukuran, lama pengerjaan, pembayaran, revisi, produk custom | Wajib |
 | F-09 | Pembayaran QRIS mockup: nominal, gambar QRIS contoh berlabel "mockup", tombol konfirmasi via WA | Wajib |
-| F-10 | Dashboard admin: PIN, kartu ringkasan, grafik produk terlaris & perbandingan Printing vs Merchandise (Chart.js), tabel pesanan | Wajib |
+| F-10 | Dashboard admin: PIN, menu Dashboard / Produk / Pesanan; kartu ringkasan, grafik produk terlaris & perbandingan Printing vs Merchandise (Chart.js), kelola produk (tambah/ubah/hapus ke tab `produk`), tabel pesanan | Wajib |
 | F-11 | Kebijakan Privasi (dasar UU PDP) + ketentuan desain custom | Wajib |
 | F-12 | Cek status pesanan via kode | Tambahan |
 | F-13 | Chatbot FAQ sederhana berbasis aturan (JS) | Tambahan |
@@ -207,6 +207,7 @@ Nilai `status`: `Diterima` → `Cek desain` → `Diproses` → `Siap diambil` �
 - `GET ?action=produk` → daftar produk (JSON).
 - `GET ?action=status&kode=PRT-0001` → status satu pesanan (hanya kode, produk, status; **tanpa** data pribadi).
 - `POST` dengan `action: "dashboard"` + PIN di body → ringkasan + daftar pesanan untuk admin (no. WA disamarkan). PIN jangan dikirim lewat URL.
+- `POST` dengan `action: "ubah_status"` / `"produk_simpan"` (mode `tambah`/`ubah`) / `"produk_hapus"` + PIN di body → khusus admin; PIN diperiksa di Apps Script sebelum menulis ke Sheets.
 - `POST` dengan `action: "pesan"` (body `text/plain` berisi JSON, untuk menghindari CORS preflight) → simpan pesanan, buat kode, kirim email admin, kembalikan `{kode, total}`.
 
 **Penting:** selama backend belum siap, gunakan **data dummy** di `js/produk.js` dengan struktur yang sama persis, supaya nanti tinggal diganti ke `fetch`.
