@@ -46,6 +46,7 @@
       <a href="#ringkasan" data-menu="ringkasan" title="Ringkasan"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="adm-menu-teks">Ringkasan</span></a>
       <a href="#produk" data-menu="produk" title="Produk"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span><span class="adm-menu-teks">Produk</span></a>
       <a href="#pesanan" data-menu="pesanan" title="Pesanan"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 6H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/><path d="M8 12h8M8 16h5"/></svg></span><span class="adm-menu-teks">Pesanan</span></a>
+      <a href="#keuangan" data-menu="keuangan" title="Keuangan"><span class="adm-ikon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="12" cy="14.5" r="1.8"/></svg></span><span class="adm-menu-teks">Keuangan</span></a>
       <div class="adm-akun">
         <span class="adm-avatar" aria-hidden="true">A</span>
         <div><strong>Admin PrintIn</strong><span>Masuk dengan PIN</span></div>
@@ -182,6 +183,49 @@
           <caption class="sr-saja">Daftar pesanan</caption>
           <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Total</th><th scope="col">Desain</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead>
           <tbody id="isi-tabel"></tbody>
+        </table></div>
+      </section>
+
+      <!-- Keuangan -->
+      <section id="bagian-keuangan" data-bagian hidden aria-labelledby="judul-keuangan">
+        <div class="adm-kepala">
+          <div>
+            <h1 id="judul-keuangan">Keuangan</h1>
+            <p class="adm-sub">Uang masuk dihitung dari total semua pesanan yang sudah masuk (harga simulasi). Data diperbarui otomatis tiap 30 detik.</p>
+            <p class="adm-sub" id="keuangan-terakhir" role="status"></p>
+          </div>
+          <button class="btn btn-garis" type="button" id="muat-ulang-keuangan">Muat ulang data</button>
+        </div>
+        <div class="adm-kartu-angka" id="kartu-keuangan"></div>
+        <div class="adm-saring">
+          <div class="field">
+            <label for="cari-keuangan">Cari pemasukan</label>
+            <input id="cari-keuangan" type="search" placeholder="Kode atau nama pelanggan" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="saring-periode-keuangan">Periode</label>
+            <select id="saring-periode-keuangan">
+              <option value="hari">Hari ini</option>
+              <option value="1">Bulan ini</option>
+              <option value="semua" selected>Semua waktu</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="saring-lini-keuangan">Lini produk</label>
+            <select id="saring-lini-keuangan">
+              <option value="">Semua lini</option>
+              <option value="Printing Reguler">Printing Reguler</option>
+              <option value="Custom Merchandise">Custom Merchandise</option>
+            </select>
+          </div>
+          <button class="btn btn-garis" type="button" id="reset-keuangan">Reset filter</button>
+        </div>
+        <p class="adm-sub adm-info-saring" id="info-keuangan" role="status"></p>
+        <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi adm-tabel-kartu">
+          <caption class="sr-saja">Daftar uang masuk</caption>
+          <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Status</th><th scope="col">Nominal masuk</th></tr></thead>
+          <tbody id="isi-tabel-keuangan"></tbody>
+          <tfoot><tr><th scope="row" colspan="5">Total pemasukan (sesuai filter)</th><td id="total-keuangan"></td></tr></tfoot>
         </table></div>
       </section>
     </main>

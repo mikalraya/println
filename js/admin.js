@@ -66,7 +66,7 @@ function keTanggal(teks) {
 
 function bagianAktif() {
   const nama = location.hash.slice(1);
-  return ['ringkasan', 'produk', 'pesanan'].includes(nama) ? nama : 'ringkasan';
+  return ['ringkasan', 'produk', 'pesanan', 'keuangan'].includes(nama) ? nama : 'ringkasan';
 }
 
 function tampilkanBagian() {
@@ -231,6 +231,71 @@ function tampilkanRingkasan() {
   tampilkanKartu(pesanan, produk);
   tampilkanGrafik(pesanan);
   tampilkanDaftar(pesanan, produk);
+  tampilkanKeuangan();
+}
+
+// ----- Keuangan -----
+
+const sama = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+
+function tampilkanKeuangan() {
+  const kini = new Date();
+  const jumlah = (daftar) => daftar.reduce((s, p) => s + p.total, 0);
+  const hariIni = semuaPesanan.filter((p) => { const t = keTanggal(p.tanggal); return t && sama(t, kini) && t.getDate() === kini.getDate(); });
+  const bulanIni = semuaPesanan.filter((p) => { const t = keTanggal(p.tanggal); return t && sama(t, kini); });
+  const total = jumlah(semuaPesanan);
+  const selesai = jumlah(semuaPesanan.filter((p) => p.status === 'Selesai'));
+  ambilEl('kartu-keuangan').replaceChildren(
+    kartuAngka({ ikon: 'omzet', warna: 'biru', label: 'Total uang masuk', nilai: rupiah.format(total), sub: `${angkaId.format(semuaPesanan.length)} pesanan, semua waktu` }),
+    kartuAngka({ ikon: 'rata', warna: 'oranye', label: 'Hari ini', nilai: rupiah.format(jumlah(hariIni)), sub: `${hariIni.length} pesanan` }),
+    kartuAngka({ ikon: 'pesanan', warna: 'tosca', label: 'Bulan ini', nilai: rupiah.format(jumlah(bulanIni)), sub: `${bulanIni.length} pesanan` }),
+    kartuAngka({ ikon: 'selesai', warna: 'ungu', label: 'Pesanan selesai', nilai: rupiah.format(selesai), sub: `Belum selesai: ${rupiah.format(total - selesai)}` }),
+  );
+
+  ambilEl('keuangan-terakhir').textContent = `Terakhir diperbarui: ${new Intl.DateTimeFormat('id-ID', { timeStyle: 'medium' }).format(kini)}`;
+  tampilkanTabelKeuangan();
+}
+
+// Tabel pemasukan: pesanan terbaru di atas, nominal ditebalkan
+function tampilkanTabelKeuangan() {
+  const kini = new Date();
+  const cari = ambilEl('cari-keuangan').value.trim().toLowerCase();
+  const periode = ambilEl('saring-periode-keuangan').value;
+  const lini = ambilEl('saring-lini-keuangan').value;
+  const tampil = semuaPesanan.filter((p) => {
+    const t = keTanggal(p.tanggal);
+    const cocokPeriode = periode === 'semua' || (t && sama(t, kini) && (periode === '1' || t.getDate() === kini.getDate()));
+    return cocokPeriode && (!lini || p.lini === lini) && (!cari || `${p.kode} ${p.nama}`.toLowerCase().includes(cari));
+  }).sort((a, b) => (keTanggal(b.tanggal) || 0) - (keTanggal(a.tanggal) || 0));
+
+  ambilEl('info-keuangan').textContent = `Menampilkan ${tampil.length} dari ${semuaPesanan.length} pesanan.`;
+  ambilEl('total-keuangan').textContent = rupiah.format(tampil.reduce((s, p) => s + p.total, 0));
+
+  const isi = tampil.map((p) => {
+    const tr = document.createElement('tr');
+    const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
+    const pelanggan = buatEl('div');
+    pelanggan.append(buatEl('strong', '', p.nama), buatEl('div', 'item-spek', p.whatsapp));
+    const produk = buatEl('div');
+    produk.append(buatEl('strong', '', p.produk), buatEl('div', 'item-spek', `${p.lini} · Jumlah ${p.jumlah}`));
+    tr.append(sel('Kode', buatEl('strong', '', p.kode)), sel('Tanggal', tanggalJam(p.tanggal) || p.tanggal), sel('Pelanggan', pelanggan), sel('Produk', produk), sel('Status', p.status), sel('Nominal masuk', buatEl('strong', 'adm-nominal', `+ ${rupiah.format(p.total)}`)));
+    return tr;
+  });
+  if (!isi.length) {
+    const tr = document.createElement('tr');
+    const td = buatEl('td', 'adm-kosong', 'Belum ada pemasukan yang cocok dengan filter.');
+    td.colSpan = 6;
+    tr.append(td);
+    isi.push(tr);
+  }
+  ambilEl('isi-tabel-keuangan').replaceChildren(...isi);
+}
+
+// Perbarui data diam-diam tiap 30 detik selama menu Keuangan terbuka
+async function segarkanKeuangan() {
+  if (!pinAdmin || document.hidden || bagianAktif() !== 'keuangan') return;
+  const hasil = await panggilApi({ body: { action: 'dashboard', pin: pinAdmin } });
+  if (hasil.ok) perbaruiPesanan(hasil.pesanan);
 }
 
 // ----- Pesanan -----
@@ -1113,6 +1178,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ringkasan
   ambilEl('muat-ulang').addEventListener('click', muatUlang);
+  ambilEl('muat-ulang-keuangan').addEventListener('click', muatUlang);
+  setInterval(segarkanKeuangan, 30000);
+  ambilEl('cari-keuangan').addEventListener('input', tampilkanTabelKeuangan);
+  ['saring-periode-keuangan', 'saring-lini-keuangan'].forEach((id) => ambilEl(id).addEventListener('change', tampilkanTabelKeuangan));
+  ambilEl('reset-keuangan').addEventListener('click', () => {
+    ambilEl('cari-keuangan').value = '';
+    ambilEl('saring-periode-keuangan').value = 'semua';
+    ambilEl('saring-lini-keuangan').value = '';
+    tampilkanTabelKeuangan();
+  });
   ['saring-periode', 'saring-lini-ringkasan'].forEach((id) => ambilEl(id).addEventListener('change', tampilkanRingkasan));
   ambilEl('reset-ringkasan').addEventListener('click', () => {
     ambilEl('saring-periode').value = '6';

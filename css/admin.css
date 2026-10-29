@@ -1463,3 +1463,19 @@ select.adm-pilih {
 #form-produk #petunjuk-pr-foto {
   margin-bottom: var(--spasi-4);
 }
+
+/* Tabel keuangan: nominal masuk dan baris total */
+.adm-tabel .adm-nominal {
+  color: #0a7a55;
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.adm-tabel tfoot th,
+.adm-tabel tfoot td {
+  background: #f2f6ff;
+  color: var(--teks, #0b1020);
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
