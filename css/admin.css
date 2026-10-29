@@ -63,16 +63,6 @@ body.adm.adm-menu-kecil {
   height: 22px;
 }
 
-.adm-pil-halaman {
-  display: none;
-  padding: 0.375rem 0.875rem;
-  border-radius: 999px;
-  background: var(--navy);
-  color: #fff;
-  font-size: var(--teks-kecil);
-  font-weight: 700;
-}
-
 .adm-bar-aksi {
   display: flex;
   align-items: center;
@@ -1195,9 +1185,6 @@ select.adm-pilih {
     display: inline-flex;
   }
 
-  .adm-pil-halaman {
-    display: inline-block;
-  }
 }
 
 @media (min-width: 60rem) {
@@ -1360,4 +1347,119 @@ select.adm-pilih {
   .adm-isi {
     transition: none;
   }
+}
+
+/* Form pesanan: bagian yang disembunyikan lewat atribut hidden */
+#ps-ukuran[hidden],
+#ps-kolom-alamat[hidden] {
+  display: none;
+}
+
+/* Form pesanan: jarak antar kolom lebih lega */
+#form-pesanan .field {
+  margin-bottom: var(--spasi-4);
+}
+
+#form-pesanan .dp-bagian > .field:last-child,
+#form-pesanan .dp-bagian > .dp-grid:last-child > .field {
+  margin-bottom: 0;
+}
+
+#form-pesanan .dp-pratinjau {
+  margin: 0 0 var(--spasi-4);
+}
+
+#form-pesanan .ps-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: var(--teks-kecil);
+  font-weight: 600;
+}
+
+#form-pesanan .ps-unggah {
+  margin-top: var(--spasi-3);
+}
+
+#form-pesanan .unggah-hasil,
+#form-pesanan .unggah-zona + .unggah-hasil {
+  margin-top: 0;
+}
+
+/* ----- Tombol dashboard: lebih ramping dan tenang (hanya di halaman admin) ----- */
+.adm .btn {
+  padding: 0.5rem 1.125rem;
+  border-width: 1px;
+  border-radius: 0.625rem;
+  font-size: var(--teks-kecil);
+  font-weight: 600;
+  transition: background-color 150ms, border-color 150ms, color 150ms;
+}
+
+.adm .btn:hover,
+.adm .btn:active {
+  transform: none;
+  box-shadow: none;
+}
+
+.adm .btn:focus-visible {
+  outline: 2px solid var(--biru);
+  outline-offset: 2px;
+}
+
+.adm .btn-garis {
+  border-color: #cdd3e0;
+  background: var(--putih);
+  color: var(--teks);
+}
+
+.adm .btn-garis:hover {
+  border-color: #aab3c6;
+  background: var(--latar);
+  color: var(--teks);
+}
+
+.adm .btn-utama:hover {
+  background: var(--biru-gelap);
+}
+
+/* Tombol ikon ubah/hapus di tabel: kotak lembut, bukan lingkaran tebal */
+.adm .tombol-ikon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-width: 1px;
+  border-radius: 0.625rem;
+}
+
+.adm .tombol-ikon:hover,
+.adm .tombol-ikon:focus-visible {
+  border-color: #c9dafb;
+  background: #eef3ff;
+  color: var(--biru);
+}
+
+.adm .tombol-ikon.ikon-hapus:hover,
+.adm .tombol-ikon.ikon-hapus:focus-visible {
+  border-color: #f3c5c0;
+  background: #fdf0ee;
+  color: #b42318;
+}
+
+/* Form produk: kolom upload foto */
+.ps-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: var(--teks-kecil);
+  font-weight: 600;
+}
+
+#form-produk .ps-unggah {
+  margin-top: var(--spasi-3);
+}
+
+#form-produk .dp-foto-baris {
+  margin-bottom: var(--spasi-3);
+}
+
+#form-produk #petunjuk-pr-foto {
+  margin-bottom: var(--spasi-4);
 }

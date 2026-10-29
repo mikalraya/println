@@ -8,7 +8,8 @@
  * 3. Project Settings > Script Properties, tambahkan:
  *      PIN_ADMIN   = PIN dashboard admin (mis. 6 angka)
  *      EMAIL_ADMIN = email penerima notifikasi pesanan baru
- *      FOLDER_ID   = (opsional) ID folder Google Drive untuk file desain
+ *      FOLDER_ID   = (opsional) ID folder Drive induk, mis. PrintIn/Pesanan. Desain pelanggan
+ *                    disimpan di subfolder per hari ("Rabu, 28 Oktober 2026") yang dibuat otomatis
  * 4. Jalankan fungsi siapkanSheet() sekali untuk membuat judul kolom dan isi 13 produk awal.
  * 5. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.
  * 6. Salin URL web app ke js/config.js (urlApi).
@@ -30,6 +31,7 @@ const TIPE_HITUNG = ['lembar', 'paket', 'luas', 'pcs'];
 const STATUS_PRODUK = ['Tersedia', 'Terbatas', 'Habis'];
 const JENIS_FILE = ['application/pdf', 'image/png', 'image/jpeg'];
 const MAKS_BYTE = 10 * 1024 * 1024;
+const MAKS_FOTO_BYTE = 5 * 1024 * 1024;
 
 // ----- Pintu masuk -----
 
@@ -53,6 +55,8 @@ function doPost(e) {
     if (data.action === 'ubah_status') return balas(ubahStatus(data));
     if (data.action === 'produk_simpan') return balas(simpanProduk(data));
     if (data.action === 'produk_hapus') return balas(hapusProduk(data));
+    if (data.action === 'pesanan_simpan') return balas(simpanPesananAdmin(data));
+    if (data.action === 'pesanan_hapus') return balas(hapusPesanan(data));
     return balas({ ok: false, pesan: 'Aksi tidak dikenal.' });
   } catch (err) {
     return balas({ ok: false, pesan: 'Terjadi kesalahan di server. Coba lagi nanti.' });
@@ -119,15 +123,35 @@ function kodeBerikut() {
   return 'PRT-' + ('0000' + angka).slice(-4);
 }
 
+// Folder per hari di dalam folder induk (FOLDER_ID), mis. "Rabu, 28 Oktober 2026". Dibuat bila belum ada.
+function folderHariIni() {
+  const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  const tz = 'Asia/Jakarta';
+  const sekarang = new Date();
+  const nama = hari[Number(Utilities.formatDate(sekarang, tz, 'u')) % 7] + ', '
+    + Number(Utilities.formatDate(sekarang, tz, 'd')) + ' '
+    + bulan[Number(Utilities.formatDate(sekarang, tz, 'M')) - 1] + ' '
+    + Utilities.formatDate(sekarang, tz, 'yyyy');
+  const idFolder = props().getProperty('FOLDER_ID');
+  // Tanpa FOLDER_ID, pakai jalur Drive Saya/PrintIn/Pesanan (dibuat bila belum ada)
+  const induk = idFolder ? DriveApp.getFolderById(idFolder)
+    : cariAtauBuatFolder(cariAtauBuatFolder(DriveApp.getRootFolder(), 'PrintIn'), 'Pesanan');
+  return cariAtauBuatFolder(induk, nama);
+}
+
+function cariAtauBuatFolder(induk, nama) {
+  const ada = induk.getFoldersByName(nama);
+  return ada.hasNext() ? ada.next() : induk.createFolder(nama);
+}
+
 function simpanFile(berkas, kode) {
   if (JENIS_FILE.indexOf(berkas.tipe) === -1) throw new Error('Format file harus PDF, PNG, atau JPG.');
   const bytes = Utilities.base64Decode(berkas.data);
   if (bytes.length > MAKS_BYTE) throw new Error('Ukuran file maksimal 10 MB.');
   const ekstensi = { 'application/pdf': 'pdf', 'image/png': 'png', 'image/jpeg': 'jpg' }[berkas.tipe];
   const blob = Utilities.newBlob(bytes, berkas.tipe, kode + '-desain.' + ekstensi);
-  const idFolder = props().getProperty('FOLDER_ID');
-  const folder = idFolder ? DriveApp.getFolderById(idFolder) : DriveApp.getRootFolder();
-  const berkasDrive = folder.createFile(blob);
+  const berkasDrive = folderHariIni().createFile(blob);
   berkasDrive.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   return berkasDrive.getUrl();
 }
@@ -230,16 +254,31 @@ function samarkanNomor(wa) {
   return n.length > 6 ? n.slice(0, 4) + '••••' + n.slice(-2) : n;
 }
 
-function dashboard(d) {
-  if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
-  const pesanan = bacaTabel('pesanan').map(function (p) {
+// Sel tanggal bisa terbaca sebagai Date oleh Sheets; ubah kembali ke teks yyyy-MM-dd
+function teksTanggalButuh(nilai) {
+  if (nilai instanceof Date) return Utilities.formatDate(nilai, 'Asia/Jakarta', 'yyyy-MM-dd');
+  return String(nilai || '');
+}
+
+// Daftar pesanan untuk admin (terbaru di atas). No. WA disamarkan.
+function daftarPesanan() {
+  const katalog = ambilProduk();
+  return bacaTabel('pesanan').map(function (p) {
+    const cocok = katalog.filter(function (k) { return k.nama === p.produk; })[0];
     return {
       kode: p.kode, tanggal: Utilities.formatDate(new Date(p.tanggal), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm'),
       nama: p.nama, whatsapp: samarkanNomor(String(p.whatsapp)), lini: p.lini, produk: p.produk,
+      produk_id: cocok ? cocok.id : '',
       spesifikasi: p.spesifikasi, jumlah: Number(p.jumlah), total: Number(p.total), link_file: p.link_file,
+      tanggal_butuh: teksTanggalButuh(p.tanggal_butuh), alamat: p.alamat, catatan: p.catatan,
       pengambilan: p.pengambilan, status: p.status,
     };
   }).reverse();
+}
+
+function dashboard(d) {
+  if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
+  const pesanan = daftarPesanan();
 
   const perProduk = {};
   const perLini = { 'Printing Reguler': 0, 'Custom Merchandise': 0 };
@@ -298,6 +337,19 @@ function periksaProduk(d) {
   return { produk: p };
 }
 
+// Simpan foto produk ke Drive Saya/PrintIn/Produk dan kembalikan link gambar yang bisa dipakai di <img>
+function simpanFotoProduk(berkas, id) {
+  const ekstensi = { 'image/webp': 'webp', 'image/png': 'png', 'image/jpeg': 'jpg' }[berkas.tipe];
+  if (!ekstensi) throw new Error('Format foto harus WebP, PNG, atau JPG.');
+  const bytes = Utilities.base64Decode(berkas.data);
+  if (bytes.length > MAKS_FOTO_BYTE) throw new Error('Ukuran foto maksimal 5 MB.');
+  const blob = Utilities.newBlob(bytes, berkas.tipe, id + '-' + Date.now() + '.' + ekstensi);
+  const folder = cariAtauBuatFolder(cariAtauBuatFolder(DriveApp.getRootFolder(), 'PrintIn'), 'Produk');
+  const berkasDrive = folder.createFile(blob);
+  berkasDrive.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return 'https://drive.google.com/thumbnail?id=' + berkasDrive.getId() + '&sz=w1000';
+}
+
 // Cari nomor baris (mulai 1) produk berdasarkan id; 0 bila tidak ada
 function barisProduk(nilai, id) {
   for (let i = 1; i < nilai.length; i++) {
@@ -320,17 +372,20 @@ function simpanProduk(d) {
     const nilai = lembar.getDataRange().getValues();
     const judul = nilai[0];
     const baris = barisProduk(nilai, p.id);
-    const isi = [judul.map(function (j) { return p[j] !== undefined ? p[j] : ''; })];
 
-    if (d.mode === 'tambah') {
-      if (baris) return { ok: false, pesan: 'ID "' + p.id + '" sudah dipakai produk lain. Pakai ID yang berbeda.' };
-      lembar.getRange(lembar.getLastRow() + 1, 1, 1, judul.length).setValues(isi);
-    } else if (d.mode === 'ubah') {
-      if (!baris) return { ok: false, pesan: 'Produk tidak ditemukan. Muat ulang data lalu coba lagi.' };
-      lembar.getRange(baris, 1, 1, judul.length).setValues(isi);
-    } else {
-      return { ok: false, pesan: 'Mode simpan tidak dikenal.' };
+    if (d.mode !== 'tambah' && d.mode !== 'ubah') return { ok: false, pesan: 'Mode simpan tidak dikenal.' };
+    if (d.mode === 'tambah' && baris) return { ok: false, pesan: 'ID "' + p.id + '" sudah dipakai produk lain. Pakai ID yang berbeda.' };
+    if (d.mode === 'ubah' && !baris) return { ok: false, pesan: 'Produk tidak ditemukan. Muat ulang data lalu coba lagi.' };
+
+    // Foto yang diunggah menggantikan isian path/link foto
+    const berkas = d.berkas && d.berkas.data ? d.berkas : null;
+    if (berkas) {
+      try { p.foto = simpanFotoProduk(berkas, p.id); } catch (err) { return { ok: false, pesan: err.message }; }
     }
+
+    const isi = [judul.map(function (j) { return p[j] !== undefined ? p[j] : ''; })];
+    if (d.mode === 'tambah') lembar.getRange(lembar.getLastRow() + 1, 1, 1, judul.length).setValues(isi);
+    else lembar.getRange(baris, 1, 1, judul.length).setValues(isi);
   } finally {
     kunci.releaseLock();
   }
@@ -366,6 +421,146 @@ function ubahStatus(d) {
     }
   }
   return { ok: false, pesan: 'Pesanan tidak ditemukan.' };
+}
+
+// ----- Admin: kelola pesanan (tambah/ubah/hapus) -----
+
+// Periksa isian pesanan dari dashboard. mode "tambah": no. WA wajib; mode "ubah": no. WA kosong = tidak diganti.
+function periksaPesanan(f, mode) {
+  const p = {
+    nama: bersihkan(f.nama, 80),
+    wa: bersihkan(f.wa, 20).replace(/[\s-]/g, ''),
+    produkId: bersihkan(f.produkId, 40),
+    ambil: f.ambil === 'kirim' ? 'kirim' : 'ambil',
+    alamat: bersihkan(f.alamat, 300),
+    linkFile: bersihkan(f.linkFile, 300),
+    tanggalButuh: bersihkan(f.tanggalButuh, 10),
+    catatan: bersihkan(f.catatan, 500),
+    status: bersihkan(f.status, 20),
+    jumlah: f.jumlah, panjang: f.panjang, lebar: f.lebar,
+    berkas: f.berkas && f.berkas.data ? f.berkas : null, // file desain yang diunggah admin (base64)
+  };
+  if (p.ambil === 'ambil') p.alamat = '';
+  if (p.nama.length < 2) return { galat: 'Nama wajib diisi, minimal 2 huruf.' };
+  if ((mode === 'tambah' || p.wa) && !/^08\d{8,12}$/.test(p.wa)) return { galat: 'Nomor WhatsApp harus diawali 08 dan berisi 10 sampai 13 angka.' };
+  if (p.ambil === 'kirim' && p.alamat.length < 10) return { galat: 'Alamat wajib diisi lengkap kalau pesanan dikirim.' };
+  if (p.linkFile && !/^https:\/\/\S+$/.test(p.linkFile)) return { galat: 'Link desain harus diawali https://' };
+  if (p.tanggalButuh && !/^\d{4}-\d{2}-\d{2}$/.test(p.tanggalButuh)) return { galat: 'Format tanggal dibutuhkan belum benar.' };
+  if (STATUS_PESANAN.indexOf(p.status) === -1) return { galat: 'Status tidak dikenal.' };
+  return { pesanan: p };
+}
+
+function spesifikasiPesanan(produk, hitung, d) {
+  if (produk.tipe_hitung === 'luas') return Number(d.panjang) + ' x ' + Number(d.lebar) + ' m';
+  return produk.tipe_hitung === 'paket' ? hitung.jumlah * 100 + ' pcs' : '';
+}
+
+// Tambah pesanan manual (mis. pelanggan datang langsung atau pesan lewat WA)
+function tambahPesananAdmin(p) {
+  const produk = ambilProduk().filter(function (x) { return x.id === p.produkId; })[0];
+  if (!produk) return { ok: false, pesan: 'Pilih produk dulu.' };
+  let hitung;
+  try { hitung = hitungTotal(produk, p); } catch (err) { return { ok: false, pesan: err.message }; }
+
+  const kunci = LockService.getScriptLock();
+  kunci.waitLock(20000);
+  try {
+    const kode = kodeBerikut();
+    if (p.berkas) {
+      try { p.linkFile = simpanFile(p.berkas, kode); } catch (err) { return { ok: false, pesan: err.message }; }
+    }
+    const baris = {
+      kode: kode, tanggal: new Date(), nama: amanSel(p.nama), whatsapp: p.wa, lini: produk.lini, produk: produk.nama,
+      spesifikasi: spesifikasiPesanan(produk, hitung, p), jumlah: hitung.jumlah, total: hitung.total, link_file: p.linkFile,
+      tanggal_butuh: p.tanggalButuh, pengambilan: p.ambil, alamat: amanSel(p.alamat),
+      catatan: amanSel(p.catatan), status: p.status, email: '',
+    };
+    const lembar = sheet('pesanan');
+    lembar.appendRow(KOLOM_PESANAN.map(function (k) { return baris[k]; }));
+    lembar.getRange(lembar.getLastRow(), KOLOM_PESANAN.indexOf('whatsapp') + 1).setNumberFormat('@').setValue(p.wa);
+    return { ok: true, kode: kode };
+  } finally {
+    kunci.releaseLock();
+  }
+}
+
+// Ubah pesanan. Total dihitung ulang hanya bila produk, jumlah, atau ukuran berubah.
+function ubahPesananAdmin(kode, p) {
+  const kunci = LockService.getScriptLock();
+  kunci.waitLock(20000);
+  try {
+    const lembar = sheet('pesanan');
+    const nilai = lembar.getDataRange().getValues();
+    const judul = nilai[0];
+    let nomor = 0;
+    for (let i = 1; i < nilai.length; i++) { if (String(nilai[i][0]) === kode) { nomor = i + 1; break; } }
+    if (!nomor) return { ok: false, pesan: 'Pesanan tidak ditemukan. Muat ulang data lalu coba lagi.' };
+
+    if (p.berkas) {
+      try { p.linkFile = simpanFile(p.berkas, kode); } catch (err) { return { ok: false, pesan: err.message }; }
+    }
+    const lama = {};
+    judul.forEach(function (j, i) { lama[j] = nilai[nomor - 1][i]; });
+    const baru = {};
+    Object.keys(lama).forEach(function (k) { baru[k] = lama[k]; });
+
+    if (p.produkId) {
+      const produk = ambilProduk().filter(function (x) { return x.id === p.produkId; })[0];
+      if (!produk) return { ok: false, pesan: 'Produk tidak ditemukan.' };
+      let hitung;
+      try { hitung = hitungTotal(produk, p); } catch (err) { return { ok: false, pesan: err.message }; }
+      const spek = spesifikasiPesanan(produk, hitung, p);
+      const berubah = produk.nama !== lama.produk || hitung.jumlah !== Number(lama.jumlah) || spek !== String(lama.spesifikasi);
+      baru.lini = produk.lini; baru.produk = produk.nama; baru.spesifikasi = spek; baru.jumlah = hitung.jumlah;
+      if (berubah) baru.total = hitung.total;
+    }
+    baru.nama = amanSel(p.nama);
+    baru.link_file = p.linkFile;
+    baru.tanggal_butuh = p.tanggalButuh;
+    baru.pengambilan = p.ambil;
+    baru.alamat = amanSel(p.alamat);
+    baru.catatan = amanSel(p.catatan);
+    baru.status = p.status;
+
+    lembar.getRange(nomor, 1, 1, judul.length).setValues([judul.map(function (j) { return baru[j]; })]);
+    if (p.wa) lembar.getRange(nomor, judul.indexOf('whatsapp') + 1).setNumberFormat('@').setValue(p.wa);
+    return { ok: true };
+  } finally {
+    kunci.releaseLock();
+  }
+}
+
+// mode "tambah" atau "ubah" (butuh kode); PIN diperiksa di sini
+function simpanPesananAdmin(d) {
+  if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
+  if (d.mode !== 'tambah' && d.mode !== 'ubah') return { ok: false, pesan: 'Mode simpan tidak dikenal.' };
+  const cek = periksaPesanan(d.pesanan || {}, d.mode);
+  if (cek.galat) return { ok: false, pesan: cek.galat };
+  const hasil = d.mode === 'tambah' ? tambahPesananAdmin(cek.pesanan) : ubahPesananAdmin(String(d.kode || ''), cek.pesanan);
+  if (!hasil.ok) return hasil;
+  hasil.pesanan = daftarPesanan();
+  return hasil;
+}
+
+// Hapus baris pesanan. File desain di Google Drive tidak ikut dihapus.
+function hapusPesanan(d) {
+  if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
+  const kode = bersihkan(d.kode, 20);
+  const kunci = LockService.getScriptLock();
+  kunci.waitLock(20000);
+  try {
+    const lembar = sheet('pesanan');
+    const nilai = lembar.getDataRange().getValues();
+    for (let i = 1; i < nilai.length; i++) {
+      if (String(nilai[i][0]) === kode) {
+        lembar.deleteRow(i + 1);
+        return { ok: true, pesanan: daftarPesanan() };
+      }
+    }
+    return { ok: false, pesan: 'Pesanan tidak ditemukan. Muat ulang data lalu coba lagi.' };
+  } finally {
+    kunci.releaseLock();
+  }
 }
 
 // ----- Persiapan awal (jalankan sekali dari editor) -----

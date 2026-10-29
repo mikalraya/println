@@ -7,7 +7,7 @@
   <title>Dashboard Admin — PrintIn</title>
   <script>document.documentElement.classList.add('js')</script>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=5">
+  <link rel="stylesheet" href="css/admin.css?v=9">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body data-halaman="admin" class="adm">
@@ -16,7 +16,6 @@
   <header class="adm-bar">
     <button class="adm-toggle" id="adm-toggle" type="button" aria-controls="adm-menu" aria-expanded="true" aria-label="Kecilkan menu" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
-    <span class="adm-pil-halaman">Dashboard</span>
     <div class="adm-bar-aksi">
       <span class="adm-nama" id="adm-nama" hidden><span class="adm-avatar" aria-hidden="true">A</span>Admin PrintIn</span>
       <a class="btn btn-garis" href="index.html">Lihat situs</a>
@@ -165,6 +164,7 @@
             <h1 id="judul-pesanan">Kelola pesanan</h1>
             <p class="adm-sub">Ubah tahap pengerjaan di kolom Status. Pelanggan langsung melihatnya di halaman Cek Status. Nomor WhatsApp disamarkan.</p>
           </div>
+          <button class="btn btn-utama" type="button" id="tambah-pesanan">+ Tambah pesanan</button>
         </div>
         <div class="adm-saring">
           <div class="field">
@@ -180,7 +180,7 @@
         <p class="adm-sub adm-info-saring" id="info-tabel" role="status"></p>
         <div class="adm-tabel-bungkus"><table class="adm-tabel adm-tabel-rapi adm-tabel-kartu">
           <caption class="sr-saja">Daftar pesanan</caption>
-          <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Total</th><th scope="col">Desain</th><th scope="col">Status</th></tr></thead>
+          <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Total</th><th scope="col">Desain</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead>
           <tbody id="isi-tabel"></tbody>
         </table></div>
       </section>
@@ -292,6 +292,11 @@
             </div>
           </div>
           <p class="petunjuk" id="petunjuk-pr-foto">Pilih gambar yang sudah ada di folder img/produk/, atau link https://. Kosong = ilustrasi "foto menyusul" di katalog.</p>
+          <div class="field" role="group" aria-labelledby="judul-pr-unggah">
+            <span class="ps-label" id="judul-pr-unggah">Atau upload foto baru <span class="opsional-teks">(boleh dikosongkan)</span></span>
+            <p class="petunjuk">PNG, JPG, atau WebP. Foto otomatis dikecilkan dan disimpan di Google Drive (PrintIn/Produk). Kalau diunggah, foto ini menggantikan path atau link di atas.</p>
+            <div class="ps-unggah" id="pr-unggah"></div>
+          </div>
         </fieldset>
         <p class="pesan-galat" id="galat-form-produk" role="alert" hidden></p>
       </div>
@@ -325,6 +330,144 @@
     </div>
   </dialog>
 
+  <!-- Dialog tambah/ubah pesanan -->
+  <dialog class="dialog-form dialog-produk" id="dialog-pesanan" aria-labelledby="judul-form-pesanan">
+    <form id="form-pesanan" novalidate>
+      <div class="dp-kepala">
+        <div>
+          <h2 id="judul-form-pesanan">Tambah pesanan</h2>
+          <p class="adm-sub">Kolom bertanda <abbr title="wajib">*</abbr> wajib diisi. Total dihitung otomatis dari harga produk.</p>
+        </div>
+        <button class="dp-tutup" type="button" id="tutup-pesanan" aria-label="Tutup"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="dp-isi">
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">1</span>Pelanggan</legend>
+          <div class="dp-grid">
+            <div class="field">
+              <label for="ps-nama">Nama <abbr title="wajib">*</abbr></label>
+              <input id="ps-nama" name="nama" type="text" autocomplete="off" maxlength="80" aria-describedby="galat-ps-nama">
+              <p class="pesan-galat" id="galat-ps-nama" hidden></p>
+            </div>
+            <div class="field">
+              <label for="ps-wa">Nomor WhatsApp <abbr title="wajib" id="ps-wa-wajib">*</abbr></label>
+              <input id="ps-wa" name="wa" type="tel" inputmode="numeric" autocomplete="off" placeholder="08xxxxxxxxxx" aria-describedby="petunjuk-ps-wa galat-ps-wa">
+              <p class="petunjuk" id="petunjuk-ps-wa">Nomor lengkap hanya diminta saat menambah atau mengganti.</p>
+              <p class="pesan-galat" id="galat-ps-wa" hidden></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">2</span>Pesanan</legend>
+          <div class="dp-grid">
+            <div class="field">
+              <label for="ps-produk">Produk <abbr title="wajib">*</abbr></label>
+              <select id="ps-produk" name="produkId" aria-describedby="galat-ps-produk"></select>
+              <p class="pesan-galat" id="galat-ps-produk" hidden></p>
+            </div>
+            <div class="field">
+              <label for="ps-jumlah" id="label-ps-jumlah">Jumlah <abbr title="wajib">*</abbr></label>
+              <input id="ps-jumlah" name="jumlah" type="number" inputmode="numeric" min="1" max="10000" step="1" value="1" aria-describedby="galat-ps-jumlah">
+              <p class="pesan-galat" id="galat-ps-jumlah" hidden></p>
+            </div>
+          </div>
+          <div class="dp-grid" id="ps-ukuran" hidden>
+            <div class="field">
+              <label for="ps-panjang">Panjang (meter) <abbr title="wajib">*</abbr></label>
+              <input id="ps-panjang" name="panjang" type="number" inputmode="decimal" min="0.1" max="20" step="0.1" aria-describedby="galat-ps-panjang">
+              <p class="pesan-galat" id="galat-ps-panjang" hidden></p>
+            </div>
+            <div class="field">
+              <label for="ps-lebar">Lebar (meter) <abbr title="wajib">*</abbr></label>
+              <input id="ps-lebar" name="lebar" type="number" inputmode="decimal" min="0.1" max="20" step="0.1" aria-describedby="galat-ps-lebar">
+              <p class="pesan-galat" id="galat-ps-lebar" hidden></p>
+            </div>
+          </div>
+          <p class="dp-pratinjau" id="pratinjau-total" aria-live="polite"></p>
+          <div class="field" role="group" aria-labelledby="judul-ps-berkas">
+            <span class="ps-label" id="judul-ps-berkas">Upload file desain <span class="opsional-teks">(boleh dikosongkan)</span></span>
+            <p class="petunjuk">PDF, PNG, atau JPG, maksimal 10 MB. File disimpan di Google Drive, folder PrintIn/Pesanan sesuai tanggal hari ini. Kalau ada link di bawah, file yang diunggah menggantikannya.</p>
+            <div class="ps-unggah" id="ps-unggah"></div>
+          </div>
+          <div class="field">
+            <label for="ps-link">Atau link desain <span class="opsional-teks">(boleh dikosongkan)</span></label>
+            <input id="ps-link" name="linkFile" type="url" inputmode="url" placeholder="https://drive.google.com/..." aria-describedby="galat-ps-link">
+            <p class="pesan-galat" id="galat-ps-link" hidden></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="dp-bagian">
+          <legend><span class="dp-nomor">3</span>Pengambilan dan status</legend>
+          <div class="dp-grid">
+            <div class="field">
+              <label for="ps-tanggal">Tanggal dibutuhkan <span class="opsional-teks">(boleh dikosongkan)</span></label>
+              <input id="ps-tanggal" name="tanggalButuh" type="date">
+            </div>
+            <div class="field">
+              <label for="ps-status">Status pesanan</label>
+              <select id="ps-status" name="status"></select>
+            </div>
+            <div class="field">
+              <label for="ps-ambil">Pengambilan</label>
+              <select id="ps-ambil" name="ambil">
+                <option value="ambil">Diambil di toko</option>
+                <option value="kirim">Dikirim</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" id="ps-kolom-alamat" hidden>
+            <label for="ps-alamat">Alamat pengiriman <abbr title="wajib">*</abbr></label>
+            <textarea id="ps-alamat" name="alamat" rows="2" maxlength="300" aria-describedby="galat-ps-alamat"></textarea>
+            <p class="pesan-galat" id="galat-ps-alamat" hidden></p>
+          </div>
+          <div class="field">
+            <label for="ps-catatan">Catatan <span class="opsional-teks">(boleh dikosongkan)</span></label>
+            <textarea id="ps-catatan" name="catatan" rows="2" maxlength="500"></textarea>
+          </div>
+        </fieldset>
+        <p class="pesan-galat" id="galat-form-pesanan" role="alert" hidden></p>
+      </div>
+      <div class="aksi-dialog">
+        <button class="btn btn-garis" type="button" id="batal-pesanan">Batal</button>
+        <button class="btn btn-utama" type="submit" id="simpan-pesanan">Simpan pesanan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Dialog konfirmasi hapus pesanan -->
+  <dialog class="dialog-form dialog-konfirmasi" id="dialog-hapus-pesanan" aria-labelledby="judul-hapus-pesanan" aria-describedby="teks-hapus-pesanan">
+    <span class="konf-ikon konf-ikon-bahaya" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></span>
+    <h2 id="judul-hapus-pesanan">Hapus pesanan ini?</h2>
+    <p class="adm-sub" id="teks-hapus-pesanan">Barisnya dihapus dari Google Sheets dan kodenya tidak bisa dicek lagi di halaman Cek Status. Tindakan ini tidak bisa dibatalkan.</p>
+    <div class="konf-produk">
+      <div>
+        <strong id="hapus-pesanan-nama"></strong>
+        <span class="adm-sub" id="hapus-pesanan-info"></span>
+      </div>
+    </div>
+    <ul class="konf-catatan daftar-bersih">
+      <li>File desain di Google Drive tidak ikut terhapus.</li>
+      <li>Kalau pesanan hanya dibatalkan, lebih baik biarkan tersimpan sebagai arsip.</li>
+    </ul>
+    <p class="pesan-galat" id="galat-hapus-pesanan" role="alert" hidden></p>
+    <div class="konf-aksi">
+      <button class="btn btn-garis" type="button" id="batal-hapus-pesanan">Batal</button>
+      <button class="btn btn-bahaya" type="button" id="ya-hapus-pesanan">Ya, hapus pesanan</button>
+    </div>
+  </dialog>
+
+  <!-- Dialog konfirmasi keluar -->
+  <dialog class="dialog-form dialog-konfirmasi" id="dialog-keluar" aria-labelledby="judul-keluar" aria-describedby="teks-keluar">
+    <span class="konf-ikon konf-ikon-bahaya" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/><path d="M16 8l4 4-4 4M20 12H9"/></svg></span>
+    <h2 id="judul-keluar">Keluar dari dashboard?</h2>
+    <p class="adm-sub" id="teks-keluar">Kamu harus memasukkan PIN lagi untuk membuka dashboard admin.</p>
+    <div class="konf-aksi">
+      <button class="btn btn-garis" type="button" id="batal-keluar">Batal</button>
+      <button class="btn btn-utama" type="button" id="ya-keluar">Ya, keluar</button>
+    </div>
+  </dialog>
+
   <!-- Dialog umpan balik berhasil -->
   <dialog class="dialog-form dialog-konfirmasi" id="dialog-hasil" aria-labelledby="hasil-judul" aria-describedby="hasil-pesan">
     <span class="konf-ikon konf-ikon-sukses" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
@@ -339,6 +482,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/admin.js?v=5"></script>
+  <script src="js/admin.js?v=12"></script>
 </body>
 </html>

@@ -1,12 +1,13 @@
-// Dashboard admin: PIN, menu Ringkasan (statistik + grafik Chart.js), Produk (CRUD), Pesanan (tabel + ubah status).
+// Dashboard admin: PIN, menu Ringkasan (statistik + grafik Chart.js), Produk (CRUD), Pesanan (tabel + CRUD + ubah status).
 // PIN dikirim lewat POST ke Apps Script dan diperiksa di sana (tidak ada PIN di front-end).
-// PIN hanya disimpan di memori halaman ini, hilang saat halaman ditutup atau tombol Keluar ditekan.
+// PIN disimpan di localStorage browser admin supaya tidak diminta lagi setelah refresh; dihapus saat tombol Keluar ditekan.
 
 const STATUS_PESANAN = ['Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai'];
 const LINI = ['Printing Reguler', 'Custom Merchandise'];
 const WARNA = { biru: '#1f6fe8', oranye: '#ff8a3d', tosca: '#3de0b5' };
 const KELAS_STATUS_PRODUK = { Tersedia: 'status-tersedia', Terbatas: 'status-terbatas', Habis: 'status-habis' };
 const KUNCI_MENU_KECIL = 'printin_menu_kecil';
+const KUNCI_PIN = 'printin_pin_admin';
 // Foto produk yang sudah ada di repo (img/produk/), untuk saran isian kolom foto
 const FOTO_TERSEDIA = ['banner', 'brosur', 'fotokopi-bw', 'gantungan-kunci', 'kartu-nama', 'mug', 'poster-a3', 'print-bw', 'print-warna', 'scan', 'tote-bag', 'tumbler', 'undangan']
   .map((n) => `img/produk/${n}.webp`);
@@ -287,13 +288,20 @@ function tampilkanTabelPesanan() {
       desain.rel = 'noopener';
     }
 
-    tr.append(sel('Kode', kode), sel('Tanggal', tanggalJam(p.tanggal) || p.tanggal), sel('Pelanggan', pelanggan), sel('Produk', produk), sel('Total', rupiah.format(p.total)), sel('Desain', desain), sel('Status', buatPilihanStatus(p)));
+    const aksi = buatEl('div', 'adm-aksi');
+    aksi.append(
+      tombolIkon('ubah', `Ubah pesanan ${p.kode}`, '', () => bukaFormPesanan(p)),
+      tombolIkon('hapus', `Hapus pesanan ${p.kode}`, 'ikon-hapus', () => hapusPesanan(p)),
+    );
+
+    tr.dataset.kode = p.kode;
+    tr.append(sel('Kode', kode), sel('Tanggal', tanggalJam(p.tanggal) || p.tanggal), sel('Pelanggan', pelanggan), sel('Produk', produk), sel('Total', rupiah.format(p.total)), sel('Desain', desain), sel('Status', buatPilihanStatus(p)), sel('Aksi', aksi));
     return tr;
   });
   if (!isi.length) {
     const tr = document.createElement('tr');
     const td = buatEl('td', 'adm-kosong', 'Tidak ada pesanan yang cocok dengan filter.');
-    td.colSpan = 7;
+    td.colSpan = 8;
     tr.append(td);
     isi.push(tr);
   }
@@ -307,6 +315,363 @@ function isiSaringStatus() {
     o.value = nilai;
     return o;
   }));
+}
+
+// ----- Foto produk (unggah langsung) -----
+
+const FOTO_MAKS_BYTE = 10 * 1024 * 1024;
+const FOTO_SISI_MAKS = 1000; // px; foto dikecilkan agar katalog tetap cepat
+let kartuFoto = null;
+
+// Kecilkan dan ubah ke WebP di browser. Bila gagal, kirim file aslinya.
+async function siapkanFoto(berkas) {
+  try {
+    const gambar = await createImageBitmap(berkas);
+    const skala = Math.min(1, FOTO_SISI_MAKS / Math.max(gambar.width, gambar.height));
+    const kanvas = document.createElement('canvas');
+    kanvas.width = Math.round(gambar.width * skala);
+    kanvas.height = Math.round(gambar.height * skala);
+    kanvas.getContext('2d').drawImage(gambar, 0, 0, kanvas.width, kanvas.height);
+    const blob = await new Promise((selesai) => kanvas.toBlob(selesai, 'image/webp', 0.85));
+    if (blob && blob.type === 'image/webp') return { nama: 'foto.webp', tipe: 'image/webp', data: await bacaBase64(blob) };
+  } catch (err) { /* lanjut kirim file asli */ }
+  return { nama: berkas.name, tipe: berkas.type, data: await bacaBase64(berkas) };
+}
+
+// ----- Pesanan (tambah / ubah / hapus) -----
+
+let kodeDiubah = ''; // kosong = form pesanan dalam mode tambah
+let pesananDihapus = null;
+const KOLOM_GALAT_PESANAN = ['nama', 'wa', 'produk', 'jumlah', 'panjang', 'lebar', 'link', 'alamat'];
+const FILE_MAKS_BYTE = 10 * 1024 * 1024;
+const JENIS_FILE = ['application/pdf', 'image/png', 'image/jpeg'];
+const IKON_UNGGAH = '<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5"/><path d="M7.5 9.5L12 5l4.5 4.5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>';
+let kartuUnggah = null; // kartu pilih file desain (tampilan sama seperti halaman Pesan)
+
+function ukuranFile(byte) {
+  return byte >= 1048576 ? `${(byte / 1048576).toFixed(1).replace('.', ',')} MB` : `${Math.max(1, Math.round(byte / 1024))} KB`;
+}
+
+// Kartu pilih file: klik atau seret-lepas, pratinjau gambar, tombol Ganti dan Hapus
+function buatKartuUnggah({ jenis = JENIS_FILE, maksByte = FILE_MAKS_BYTE, namaFormat = 'PDF, PNG, atau JPG', label = 'file desain', saran = ' atau pakai link Google Drive' } = {}) {
+  const kartu = buatEl('div', 'desain-item');
+  let berkasPilih = null;
+  let urlPratinjau = '';
+
+  const berkasInput = buatEl('input');
+  berkasInput.type = 'file';
+  berkasInput.accept = jenis.join(',');
+  berkasInput.hidden = true;
+  berkasInput.setAttribute('aria-label', label);
+
+  const zona = buatEl('button', 'unggah-zona');
+  zona.type = 'button';
+  zona.innerHTML = IKON_UNGGAH; // konstanta tetap di atas, bukan data pengguna
+  zona.append(buatEl('strong', '', 'Klik untuk pilih file'), buatEl('span', '', 'atau seret dan lepas file ke sini'));
+  zona.setAttribute('aria-label', `Pilih ${label}`);
+
+  const hasil = buatEl('div', 'unggah-hasil');
+  hasil.hidden = true;
+  const gambar = buatEl('img');
+  gambar.alt = 'Pratinjau file yang dipilih';
+  const pdf = buatEl('div', 'unggah-pdf', 'PDF');
+  pdf.setAttribute('aria-hidden', 'true');
+  const info = buatEl('div', 'unggah-info');
+  const namaFile = buatEl('strong');
+  const ukuran = buatEl('small');
+  const tombol = buatEl('div', 'unggah-tombol');
+  const ganti = buatEl('button', 'btn btn-garis btn-kecil', 'Ganti file');
+  const hapus = buatEl('button', 'btn btn-garis btn-kecil', 'Hapus');
+  ganti.type = 'button';
+  hapus.type = 'button';
+  tombol.append(ganti, hapus);
+  info.append(namaFile, ukuran, tombol);
+  hasil.append(gambar, pdf, info);
+
+  const galat = buatEl('p', 'pesan-galat');
+  galat.setAttribute('role', 'alert');
+  galat.hidden = true;
+  const tampilGalat = (teks) => { galat.textContent = teks || ''; galat.hidden = !teks; };
+
+  const tampilFile = (berkas) => {
+    if (urlPratinjau) { URL.revokeObjectURL(urlPratinjau); urlPratinjau = ''; }
+    zona.hidden = Boolean(berkas);
+    hasil.hidden = !berkas;
+    gambar.hidden = true;
+    pdf.hidden = true;
+    if (!berkas) return;
+    namaFile.textContent = berkas.name;
+    ukuran.textContent = ukuranFile(berkas.size);
+    if (berkas.type === 'application/pdf') {
+      pdf.hidden = false;
+    } else {
+      urlPratinjau = URL.createObjectURL(berkas);
+      gambar.src = urlPratinjau;
+      gambar.hidden = false;
+    }
+  };
+
+  const kosongkan = () => {
+    berkasPilih = null;
+    berkasInput.value = '';
+    tampilFile(null);
+  };
+
+  const pilih = (berkas) => {
+    tampilGalat('');
+    let pesan = '';
+    if (!jenis.includes(berkas.type)) pesan = `Format file harus ${namaFormat}.`;
+    else if (berkas.size > maksByte) pesan = `Ukuran file ${ukuranFile(berkas.size)}, maksimal ${Math.round(maksByte / 1048576)} MB. Kecilkan dulu filenya${saran}.`;
+    if (pesan) {
+      kosongkan();
+      tampilGalat(pesan);
+      return;
+    }
+    berkasPilih = berkas;
+    tampilFile(berkas);
+  };
+
+  const buka = () => berkasInput.click();
+  zona.addEventListener('click', buka);
+  ganti.addEventListener('click', buka);
+  hapus.addEventListener('click', () => { tampilGalat(''); kosongkan(); });
+  berkasInput.addEventListener('change', () => { if (berkasInput.files[0]) pilih(berkasInput.files[0]); });
+
+  // Seret dan lepas file ke area unggah
+  ['dragenter', 'dragover'].forEach((n) => zona.addEventListener(n, (e) => { e.preventDefault(); zona.classList.add('unggah-seret'); }));
+  ['dragleave', 'drop'].forEach((n) => zona.addEventListener(n, (e) => { e.preventDefault(); zona.classList.remove('unggah-seret'); }));
+  zona.addEventListener('drop', (e) => {
+    if (!e.dataTransfer.files.length) return;
+    berkasInput.files = e.dataTransfer.files;
+    pilih(berkasInput.files[0]);
+  });
+
+  kartu.append(berkasInput, zona, hasil, galat);
+  return {
+    kartu,
+    tampilGalat,
+    kosongkan: () => { tampilGalat(''); kosongkan(); },
+    berkas: () => berkasPilih,
+    fokus: () => (zona.hidden ? ganti : zona).focus(),
+  };
+}
+
+// Baca file sebagai base64 (tanpa awalan data:)
+function bacaBase64(berkas) {
+  return new Promise((selesai, gagal) => {
+    const pembaca = new FileReader();
+    pembaca.onload = () => selesai(String(pembaca.result).split(',')[1]);
+    pembaca.onerror = () => gagal(new Error('File belum bisa dibaca. Pilih ulang filenya.'));
+    pembaca.readAsDataURL(berkas);
+  });
+}
+
+function setGalatPesanan(nama, teks) {
+  const input = ambilEl(`ps-${nama}`);
+  const area = ambilEl(`galat-ps-${nama}`);
+  area.textContent = teks || '';
+  area.hidden = !teks;
+  if (teks) input.setAttribute('aria-invalid', 'true');
+  else input.removeAttribute('aria-invalid');
+}
+
+function bersihkanGalatPesanan() {
+  KOLOM_GALAT_PESANAN.forEach((n) => setGalatPesanan(n, ''));
+  ambilEl('galat-form-pesanan').hidden = true;
+}
+
+function produkTerpilih() {
+  return semuaProduk.find((p) => p.id === ambilEl('form-pesanan').elements.produkId.value);
+}
+
+// Total yang akan disimpan, dengan rumus yang sama seperti kalkulator (server menghitung ulang)
+function hitungTotalPesanan(produk, f) {
+  const jumlah = Number(f.elements.jumlah.value);
+  const luas = produk.tipe_hitung === 'luas' ? Number(f.elements.panjang.value) * Number(f.elements.lebar.value) : 1;
+  const total = Math.round(produk.harga * luas * jumlah);
+  return Number.isFinite(total) && total > 0 ? total : 0;
+}
+
+// Tampilkan kolom ukuran untuk banner, alamat untuk pengiriman, dan pratinjau total
+function perbaruiFormPesanan() {
+  const f = ambilEl('form-pesanan');
+  const produk = produkTerpilih();
+  ambilEl('ps-ukuran').hidden = !(produk && produk.tipe_hitung === 'luas');
+  ambilEl('ps-kolom-alamat').hidden = f.elements.ambil.value !== 'kirim';
+  ambilEl('label-ps-jumlah').firstChild.textContent = produk && produk.tipe_hitung === 'paket' ? 'Jumlah paket (1 paket = 100 pcs) ' : 'Jumlah ';
+  const area = ambilEl('pratinjau-total');
+  area.replaceChildren();
+  if (!produk) {
+    area.append(kodeDiubah ? 'Produk lama: total tidak dihitung ulang.' : 'Pilih produk dulu.');
+    return;
+  }
+  const total = hitungTotalPesanan(produk, f);
+  area.append(`${produk.harga_mulai ? 'Estimasi total: ' : 'Total: '}`, buatEl('strong', '', total ? rupiah.format(total) : '—'), ' (harga simulasi)');
+}
+
+function isiPilihanProduk(nilaiAwal, namaLama) {
+  const pilih = ambilEl('ps-produk');
+  const opsi = (nilai, teks) => { const o = buatEl('option', '', teks); o.value = nilai; return o; };
+  const isi = semuaProduk.map((p) => opsi(p.id, `${p.nama} (${teksHargaProduk(p)})`));
+  // Pesanan lama yang produknya sudah dihapus atau diganti namanya tetap bisa disimpan
+  if (kodeDiubah && !nilaiAwal) isi.unshift(opsi('', `${namaLama} (sudah tidak ada di katalog)`));
+  else if (!kodeDiubah) isi.unshift(opsi('', '— Pilih produk —'));
+  pilih.replaceChildren(...isi);
+  pilih.value = nilaiAwal || '';
+}
+
+// Buka dialog: tanpa argumen = tambah pesanan, dengan pesanan = ubah pesanan itu
+function bukaFormPesanan(p) {
+  const f = ambilEl('form-pesanan');
+  f.reset();
+  bersihkanGalatPesanan();
+  if (!kartuUnggah) {
+    kartuUnggah = buatKartuUnggah();
+    ambilEl('ps-unggah').append(kartuUnggah.kartu);
+  }
+  kartuUnggah.kosongkan();
+  kodeDiubah = p ? p.kode : '';
+  ambilEl('judul-form-pesanan').textContent = p ? `Ubah pesanan ${p.kode}` : 'Tambah pesanan';
+  ambilEl('ps-wa-wajib').hidden = Boolean(p);
+  ambilEl('ps-wa').placeholder = p ? `Tersimpan: ${p.whatsapp}` : '08xxxxxxxxxx';
+  ambilEl('petunjuk-ps-wa').textContent = p ? 'Kosongkan kalau nomor tidak diganti.' : 'Nomor lengkap hanya diminta saat menambah atau mengganti.';
+  const status = ambilEl('ps-status');
+  status.replaceChildren(...STATUS_PESANAN.map((s) => Object.assign(buatEl('option', '', s), { value: s })));
+  isiPilihanProduk(p ? p.produk_id : '', p ? p.produk : '');
+  if (p) {
+    f.elements.nama.value = p.nama;
+    f.elements.jumlah.value = p.jumlah;
+    const ukuran = /^([\d.]+) x ([\d.]+) m$/.exec(p.spesifikasi || '');
+    if (ukuran) { f.elements.panjang.value = ukuran[1]; f.elements.lebar.value = ukuran[2]; }
+    f.elements.linkFile.value = /^https:\/\//.test(String(p.link_file)) ? p.link_file : '';
+    f.elements.tanggalButuh.value = /^\d{4}-\d{2}-\d{2}$/.test(p.tanggal_butuh) ? p.tanggal_butuh : '';
+    f.elements.ambil.value = p.pengambilan === 'kirim' ? 'kirim' : 'ambil';
+    f.elements.alamat.value = p.alamat || '';
+    f.elements.catatan.value = p.catatan || '';
+    f.elements.status.value = p.status;
+  }
+  perbaruiFormPesanan();
+  ambilEl('dialog-pesanan').showModal();
+  ambilEl('ps-nama').focus();
+}
+
+function tutupFormPesanan() {
+  kodeDiubah = '';
+  const dialog = ambilEl('dialog-pesanan');
+  if (dialog.open) dialog.close();
+}
+
+// Validasi di browser (server tetap memeriksa ulang). Mengembalikan data pesanan atau null.
+function bacaFormPesanan() {
+  const f = ambilEl('form-pesanan');
+  const v = (k) => f.elements[k].value.trim();
+  const produk = produkTerpilih();
+  const data = {
+    nama: v('nama'), wa: v('wa').replace(/[\s-]/g, ''), produkId: f.elements.produkId.value, jumlah: Number(v('jumlah')),
+    panjang: Number(v('panjang')), lebar: Number(v('lebar')), linkFile: v('linkFile'), tanggalButuh: v('tanggalButuh'),
+    ambil: f.elements.ambil.value, alamat: v('alamat'), catatan: v('catatan'), status: f.elements.status.value,
+  };
+  const galat = [];
+  if (data.nama.length < 2) galat.push(['nama', 'Nama wajib diisi, minimal 2 huruf.']);
+  if ((!kodeDiubah || data.wa) && !/^08\d{8,12}$/.test(data.wa)) galat.push(['wa', 'Nomor WhatsApp harus diawali 08 dan berisi 10 sampai 13 angka.']);
+  if (!kodeDiubah && !produk) galat.push(['produk', 'Pilih produk dulu.']);
+  if (!(Number.isInteger(data.jumlah) && data.jumlah >= 1 && data.jumlah <= 10000)) galat.push(['jumlah', 'Jumlah harus angka bulat antara 1 dan 10.000.']);
+  if (produk && produk.tipe_hitung === 'luas') {
+    if (!(data.panjang >= 0.1 && data.panjang <= 20)) galat.push(['panjang', 'Panjang harus antara 0,1 dan 20 meter.']);
+    if (!(data.lebar >= 0.1 && data.lebar <= 20)) galat.push(['lebar', 'Lebar harus antara 0,1 dan 20 meter.']);
+  }
+  if (data.linkFile && !/^https:\/\/\S+$/.test(data.linkFile)) galat.push(['link', 'Link harus diawali https://, contoh: https://drive.google.com/...']);
+  if (data.ambil === 'kirim' && data.alamat.length < 10) galat.push(['alamat', 'Alamat wajib diisi lengkap kalau pesanan dikirim.']);
+  galat.forEach(([nama, teks]) => setGalatPesanan(nama, teks));
+  if (galat.length) ambilEl(`ps-${galat[0][0]}`).focus();
+  return galat.length ? null : data;
+}
+
+async function simpanPesanan(e) {
+  e.preventDefault();
+  bersihkanGalatPesanan();
+  const data = bacaFormPesanan();
+  if (!data) return;
+
+  const tombol = ambilEl('simpan-pesanan');
+  tombol.disabled = true;
+  tombol.textContent = 'Menyimpan...';
+  const modeUbah = Boolean(kodeDiubah);
+  const berkas = kartuUnggah.berkas();
+  if (berkas) {
+    try {
+      data.berkas = { nama: berkas.name, tipe: berkas.type, data: await bacaBase64(berkas) };
+    } catch (err) {
+      tombol.disabled = false;
+      tombol.textContent = 'Simpan pesanan';
+      kartuUnggah.tampilGalat(err.message);
+      return;
+    }
+  }
+  const hasil = await panggilApi({ body: { action: 'pesanan_simpan', pin: pinAdmin, mode: modeUbah ? 'ubah' : 'tambah', kode: kodeDiubah, pesanan: data } });
+  tombol.disabled = false;
+  tombol.textContent = 'Simpan pesanan';
+
+  if (!hasil.ok) {
+    const area = ambilEl('galat-form-pesanan');
+    area.textContent = hasil.pesan || 'Pesanan belum bisa disimpan. Coba lagi.';
+    area.hidden = false;
+    return;
+  }
+  const kode = modeUbah ? kodeDiubah : hasil.kode;
+  tutupFormPesanan();
+  perbaruiPesanan(hasil.pesanan);
+  sorotBarisPesanan(kode);
+  tampilkanHasil({
+    judul: modeUbah ? 'Perubahan tersimpan' : 'Pesanan ditambahkan',
+    pesan: modeUbah ? `Pesanan ${kode} berhasil diperbarui di Google Sheets.` : `Pesanan ${kode} berhasil disimpan ke Google Sheets.`,
+  });
+}
+
+function perbaruiPesanan(daftar) {
+  semuaPesanan = daftar || [];
+  tampilkanTabelPesanan();
+  tampilkanRingkasan();
+}
+
+function sorotBarisPesanan(kode) {
+  const tr = ambilEl('isi-tabel').querySelector(`tr[data-kode="${CSS.escape(kode)}"]`);
+  if (!tr) return;
+  tr.classList.add('adm-sorot');
+  setTimeout(() => tr.classList.remove('adm-sorot'), 2500);
+}
+
+function hapusPesanan(p) {
+  pesananDihapus = p;
+  ambilEl('hapus-pesanan-nama').textContent = `${p.kode} · ${p.nama}`;
+  ambilEl('hapus-pesanan-info').textContent = `${p.produk} · ${rupiah.format(p.total)} · ${p.status}`;
+  ambilEl('galat-hapus-pesanan').hidden = true;
+  const tombol = ambilEl('ya-hapus-pesanan');
+  tombol.disabled = false;
+  tombol.textContent = 'Ya, hapus pesanan';
+  ambilEl('dialog-hapus-pesanan').showModal();
+  ambilEl('batal-hapus-pesanan').focus(); // fokus awal di tombol aman
+}
+
+async function konfirmasiHapusPesanan() {
+  const p = pesananDihapus;
+  if (!p) return;
+  const tombol = ambilEl('ya-hapus-pesanan');
+  tombol.disabled = true;
+  tombol.textContent = 'Menghapus...';
+  const hasil = await panggilApi({ body: { action: 'pesanan_hapus', pin: pinAdmin, kode: p.kode } });
+  if (!hasil.ok) {
+    tombol.disabled = false;
+    tombol.textContent = 'Coba hapus lagi';
+    const galat = ambilEl('galat-hapus-pesanan');
+    galat.textContent = hasil.pesan || 'Pesanan belum bisa dihapus. Periksa internet lalu coba lagi.';
+    galat.hidden = false;
+    return;
+  }
+  pesananDihapus = null;
+  ambilEl('dialog-hapus-pesanan').close();
+  perbaruiPesanan(hasil.pesanan);
+  tampilkanHasil({ judul: 'Pesanan dihapus', pesan: `Pesanan ${p.kode} berhasil dihapus dari Google Sheets.` });
 }
 
 // ----- Produk (CRUD) -----
@@ -427,6 +792,11 @@ function bukaFormProduk(p) {
   const f = ambilEl('form-produk');
   f.reset();
   bersihkanGalatProduk();
+  if (!kartuFoto) {
+    kartuFoto = buatKartuUnggah({ jenis: ['image/png', 'image/jpeg', 'image/webp'], maksByte: FOTO_MAKS_BYTE, namaFormat: 'PNG, JPG, atau WebP', label: 'foto produk', saran: '' });
+    ambilEl('pr-unggah').append(kartuFoto.kartu);
+  }
+  kartuFoto.kosongkan();
   idDiubah = p ? p.id : '';
   ambilEl('judul-form-produk').textContent = p ? `Ubah produk: ${p.nama}` : 'Tambah produk';
   f.elements.id.readOnly = Boolean(p);
@@ -486,7 +856,19 @@ async function simpanProduk(e) {
   tombol.disabled = true;
   tombol.textContent = 'Menyimpan...';
   const modeUbah = Boolean(idDiubah);
-  const hasil = await panggilApi({ body: { action: 'produk_simpan', pin: pinAdmin, mode: modeUbah ? 'ubah' : 'tambah', produk: data } });
+  const berkasFoto = kartuFoto.berkas();
+  let fotoSiap = null;
+  if (berkasFoto) {
+    try {
+      fotoSiap = await siapkanFoto(berkasFoto);
+    } catch (err) {
+      tombol.disabled = false;
+      tombol.textContent = 'Simpan produk';
+      kartuFoto.tampilGalat(err.message);
+      return;
+    }
+  }
+  const hasil = await panggilApi({ body: { action: 'produk_simpan', pin: pinAdmin, mode: modeUbah ? 'ubah' : 'tambah', produk: data, berkas: fotoSiap } });
   tombol.disabled = false;
   tombol.textContent = 'Simpan produk';
 
@@ -657,7 +1039,11 @@ async function masuk(e) {
   }
 
   pinAdmin = pin;
+  simpanPin(pin);
   ambilEl('pin').value = '';
+  // Setelah masuk selalu mulai dari Ringkasan, apa pun bagian yang terakhir dibuka di URL
+  history.replaceState(null, '', '#ringkasan');
+  window.scrollTo(0, 0);
   tampilkanDashboard(hasil);
 }
 
@@ -671,11 +1057,40 @@ async function muatUlang() {
   tampilToast({ pesan: 'Data terbaru dari Google Sheets sudah dimuat.' });
 }
 
+// Simpan PIN di browser ini supaya refresh atau pindah halaman tidak minta PIN lagi; dihapus saat Keluar.
+// Pengaman demo: PIN tetap diperiksa di Apps Script setiap kali data diminta.
+function simpanPin(pin) {
+  try { localStorage.setItem(KUNCI_PIN, pin); } catch (err) { /* penyimpanan diblokir: tetap bisa dipakai tanpa ingat PIN */ }
+}
+
+function hapusPinTersimpan() {
+  try { localStorage.removeItem(KUNCI_PIN); } catch (err) { /* diabaikan */ }
+}
+
+// Masuk otomatis memakai PIN tersimpan. Bila PIN sudah tidak berlaku, tampilkan form PIN seperti biasa.
+async function masukOtomatis() {
+  let pin = '';
+  try { pin = localStorage.getItem(KUNCI_PIN) || ''; } catch (err) { /* diabaikan */ }
+  if (!pin || !CONFIG.urlApi) return;
+  ambilEl('gerbang-wadah').hidden = true; // hindari form PIN berkedip selagi data dimuat
+  const hasil = await panggilApi({ body: { action: 'dashboard', pin } });
+  if (hasil.ok) {
+    pinAdmin = pin;
+    tampilkanDashboard(hasil);
+    return;
+  }
+  if (hasil.pesan === 'PIN salah.') hapusPinTersimpan();
+  ambilEl('gerbang-wadah').hidden = false;
+  setGalatPin(hasil.pesan === 'PIN salah.' ? 'PIN sudah berubah. Masukkan PIN yang baru.' : (hasil.pesan || 'Dashboard belum bisa dibuka. Coba lagi.'));
+}
+
 function keluar() {
+  hapusPinTersimpan();
   pinAdmin = '';
   semuaPesanan = [];
   semuaProduk = [];
   tutupFormProduk();
+  tutupFormPesanan();
   ambilEl('adm-tata').hidden = true;
   ambilEl('gerbang-wadah').hidden = false;
   ['adm-keluar', 'adm-nama', 'adm-toggle'].forEach((id) => { ambilEl(id).hidden = true; });
@@ -687,7 +1102,12 @@ document.addEventListener('DOMContentLoaded', () => {
   try { if (localStorage.getItem(KUNCI_MENU_KECIL) === '1') aturMenuKecil(true); } catch (err) { /* diabaikan */ }
 
   ambilEl('form-pin').addEventListener('submit', masuk);
-  ambilEl('adm-keluar').addEventListener('click', keluar);
+  ambilEl('adm-keluar').addEventListener('click', () => {
+    ambilEl('dialog-keluar').showModal();
+    ambilEl('batal-keluar').focus(); // fokus awal di tombol aman
+  });
+  ambilEl('batal-keluar').addEventListener('click', () => ambilEl('dialog-keluar').close());
+  ambilEl('ya-keluar').addEventListener('click', () => { ambilEl('dialog-keluar').close(); keluar(); });
   ambilEl('adm-toggle').addEventListener('click', () => aturMenuKecil(!document.body.classList.contains('adm-menu-kecil')));
   window.addEventListener('hashchange', tampilkanBagian);
 
@@ -726,6 +1146,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Pesanan
+  ambilEl('tambah-pesanan').addEventListener('click', () => bukaFormPesanan());
+  ambilEl('batal-pesanan').addEventListener('click', tutupFormPesanan);
+  ambilEl('tutup-pesanan').addEventListener('click', tutupFormPesanan);
+  ambilEl('form-pesanan').addEventListener('submit', simpanPesanan);
+  ambilEl('form-pesanan').addEventListener('input', (e) => {
+    const nama = e.target.id?.startsWith('ps-') ? e.target.id.slice(3) : '';
+    if (nama && ambilEl(`galat-ps-${nama}`)) setGalatPesanan(nama, '');
+    perbaruiFormPesanan();
+  });
+  ambilEl('batal-hapus-pesanan').addEventListener('click', () => { pesananDihapus = null; ambilEl('dialog-hapus-pesanan').close(); });
+  ambilEl('ya-hapus-pesanan').addEventListener('click', konfirmasiHapusPesanan);
   ambilEl('cari-pesanan').addEventListener('input', tampilkanTabelPesanan);
   ambilEl('saring-status').addEventListener('change', tampilkanTabelPesanan);
   ambilEl('reset-pesanan').addEventListener('click', () => {
@@ -733,4 +1164,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ambilEl('saring-status').value = '';
     tampilkanTabelPesanan();
   });
+
+  masukOtomatis();
 });
