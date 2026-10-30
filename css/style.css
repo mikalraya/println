@@ -4075,17 +4075,18 @@ img.logo-kotak {
   height: 1.625rem;
 }
 
+/* Mobile: panel menutupi tombol melayang hampir selebar layar (tombol tutup ada di kepala panel) */
 .panel-bot {
   position: fixed;
-  right: var(--spasi-3);
-  bottom: 8.5rem;
+  right: 0.75rem;
+  left: 0.75rem;
+  bottom: 0.75rem;
   z-index: 110;
   display: flex;
   flex-direction: column;
-  width: min(calc(100vw - 2rem), 32rem);
-  height: min(44rem, calc(100dvh - 10rem));
+  height: min(40rem, calc(100dvh - 5rem));
   border: 1px solid var(--garis);
-  border-radius: var(--radius-kecil);
+  border-radius: 1.25rem;
   background: var(--putih);
   box-shadow: var(--bayangan);
   overflow: hidden;
@@ -4098,42 +4099,103 @@ img.logo-kotak {
 .panel-bot-kepala {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--spasi-2) var(--spasi-3);
+  gap: var(--spasi-2);
+  flex-shrink: 0;
+  padding: var(--spasi-2) var(--spasi-2) var(--spasi-2) var(--spasi-3);
   background: var(--navy);
   color: #fff;
+}
+
+.panel-bot-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--kuning);
+  color: var(--navy);
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.panel-bot-judul {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.panel-bot-judul span {
+  color: #c9cee3;
+  font-size: var(--teks-kecil);
 }
 
 .panel-bot-tutup {
   min-width: var(--tinggi-sentuh);
   min-height: var(--tinggi-sentuh);
   border: 0;
+  border-radius: 50%;
   background: transparent;
   color: inherit;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   cursor: pointer;
 }
 
+.panel-bot-tutup:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .panel-bot-pesan {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spasi-2);
+  gap: var(--spasi-3);
   min-height: 0;
   padding: var(--spasi-3);
+  background: #f7f8fc;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .bot-pesan {
-  max-width: 90%;
-  padding: var(--spasi-2) var(--spasi-3);
-  border-radius: var(--radius-kecil);
+  max-width: 88%;
+  padding: 0.75rem var(--spasi-3);
   font-size: var(--teks-isi);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.bot-pesan p {
+  margin: 0;
+}
+
+/* Tautan aksi di bawah jawaban bot: tombol kecil, mudah disentuh */
+.bot-tautan {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tinggi-sentuh);
+  margin-top: var(--spasi-2);
+  padding: 0 var(--spasi-3);
+  background: #fff;
+  color: var(--biru);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bot-tautan:hover {
+  background: var(--biru);
+  color: #fff;
 }
 
 .bot-masuk {
   align-self: flex-start;
-  background: var(--latar);
+  background: #fff;
+  border: 1px solid var(--garis);
+  border-radius: 0.25rem 1.125rem 1.125rem 1.125rem;
   transform-origin: left bottom;
   animation: bot-muncul-masuk 320ms var(--ease) both;
 }
@@ -4142,6 +4204,7 @@ img.logo-kotak {
   align-self: flex-end;
   background: var(--biru);
   color: #fff;
+  border-radius: 1.125rem 0.25rem 1.125rem 1.125rem;
   transform-origin: right bottom;
   animation: bot-muncul-keluar 280ms var(--ease) both;
 }
@@ -4181,18 +4244,20 @@ img.logo-kotak {
   30% { transform: translateY(-5px); opacity: 1; }
 }
 
+/* Pertanyaan cepat: satu baris yang bisa digeser ke samping, hemat tempat */
 .panel-bot-cepat {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--spasi-2);
   flex-shrink: 0;
-  max-height: 11rem;
-  padding: var(--spasi-1) var(--spasi-3) var(--spasi-2);
-  overflow-y: auto;
+  padding: var(--spasi-2) var(--spasi-3);
+  border-top: 1px solid var(--garis);
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .panel-bot-cepat .chip-filter {
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .panel-bot-form {
@@ -4200,7 +4265,6 @@ img.logo-kotak {
   display: flex;
   gap: var(--spasi-2);
   padding: var(--spasi-2) var(--spasi-3) var(--spasi-3);
-  border-top: 1px solid var(--garis);
 }
 
 .panel-bot-form input {
@@ -4209,8 +4273,18 @@ img.logo-kotak {
   min-height: var(--tinggi-sentuh);
   padding: 0 var(--spasi-3);
   border: 1px solid var(--garis);
-  border-radius: var(--radius-kecil);
+  border-radius: 999px;
   font: inherit;
+}
+
+@media (min-width: 40rem) {
+  .panel-bot {
+    left: auto;
+    right: var(--spasi-3);
+    bottom: 8.5rem;
+    width: 26rem;
+    height: min(38rem, calc(100dvh - 10rem));
+  }
 }
 
 /* Jarak antar tombol di bawah form pesan (Kirim pesanan dan WhatsApp) */

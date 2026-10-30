@@ -98,9 +98,13 @@ function buatBot() {
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-label', 'Tanya jawab PrintIn');
   panel.innerHTML = `
-    <header class="panel-bot-kepala"><strong>Tanya PrintIn</strong><button type="button" class="panel-bot-tutup" aria-label="Tutup chat">×</button></header>
+    <header class="panel-bot-kepala">
+      <span class="panel-bot-avatar" aria-hidden="true">P</span>
+      <div class="panel-bot-judul"><strong>Tanya PrintIn</strong><span>Asisten FAQ · membalas langsung</span></div>
+      <button type="button" class="panel-bot-tutup" aria-label="Tutup chat">×</button>
+    </header>
     <div class="panel-bot-pesan" role="log" aria-live="polite"></div>
-    <div class="panel-bot-cepat"></div>
+    <div class="panel-bot-cepat" role="group" aria-label="Pertanyaan cepat"></div>
     <form class="panel-bot-form"><label class="sr-saja" for="bot-teks">Tulis pertanyaanmu</label><input id="bot-teks" type="text" autocomplete="off" maxlength="120" placeholder="Tulis pertanyaanmu…"><button class="btn btn-utama" type="submit">Kirim</button></form>`;
   document.body.append(panel);
 
@@ -110,15 +114,20 @@ function buatBot() {
   const tambahPesan = (teks, dariBot, tautan) => {
     const gelembung = document.createElement('div');
     gelembung.className = `bot-pesan ${dariBot ? 'bot-masuk' : 'bot-keluar'}`;
-    gelembung.append(teks);
+    const isi = document.createElement('p');
+    isi.textContent = teks;
+    gelembung.append(isi);
     if (tautan) {
       const a = document.createElement('a');
+      a.className = 'bot-tautan';
       a.href = tautan[1];
-      a.textContent = tautan[0];
-      gelembung.append(document.createElement('br'), a);
+      a.textContent = `${tautan[0]} →`;
+      gelembung.append(a);
     }
     log.append(gelembung);
-    log.scrollTop = log.scrollHeight;
+    // Balasan bot: gulir ke awal gelembung supaya dibaca dari kalimat pertama. Pesan sendiri: gulir ke bawah.
+    if (dariBot) log.scrollTo({ top: Math.max(gelembung.offsetTop - 12, 0), behavior: 'smooth' });
+    else log.scrollTop = log.scrollHeight;
   };
 
   const jawab = (teks) => {
