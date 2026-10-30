@@ -76,7 +76,7 @@
         <p>Kami memproses datamu berdasarkan persetujuanmu. Persetujuan itu kamu berikan dengan mencentang kotak persetujuan di form pesanan. Tanpa centang itu, form tidak bisa dikirim.</p>
 
         <h2>4. Tempat penyimpanan dan siapa yang bisa melihat</h2>
-        <p>Data pesanan disimpan di Google Sheets milik PrintIn, dan pesanan baru diberitahukan ke admin lewat email. Hanya admin PrintIn yang bisa melihat data lengkap. Halaman cek status publik hanya menampilkan kode pesanan, produk, dan status, tanpa nama, nomor WhatsApp, atau alamat. Di dashboard admin, nomor WhatsApp ditampilkan sebagian saja.</p>
+        <p>Data pesanan disimpan di Google Sheets milik PrintIn, dan pesanan baru diberitahukan ke admin lewat email. Hanya admin PrintIn yang bisa melihat data lengkap. Halaman cek status publik hanya menampilkan kode pesanan, produk, dan status, tanpa nama, nomor WhatsApp, atau alamat. Dashboard admin hanya bisa dibuka dengan PIN.</p>
         <p>Karena memakai layanan Google, data juga diproses di sistem Google sesuai kebijakan mereka.</p>
 
         <h2>5. Berapa lama data disimpan</h2>
@@ -119,15 +119,16 @@
   </main>
 
   <footer class="footer-situs">
-    <div class="footer-lembar" aria-hidden="true"><span>Banner</span><span>Kartu nama</span><span>Mug</span><span>Undangan</span><span>Brosur</span></div>
     <div class="footer-grid">
-      <div>
+      <div class="footer-merek">
         <a class="logo" href="index.html" aria-label="PrintIn, ke beranda"><img class="logo-gambar" src="img/printin-logo.png" alt="PrintIn" width="61" height="48"></a>
-        <p>Your Design, Your Style. Jasa printing dan custom merchandise di Semarang.</p>
+        <p class="footer-tagline">Your Design, Your Style.</p>
+        <p>Jasa printing dan custom merchandise di Semarang untuk kebutuhan kuliah, komunitas, dan usaha.</p>
       </div>
       <nav aria-label="Tautan footer">
         <h2>Halaman</h2>
         <ul>
+          <li><a href="index.html">Beranda</a></li>
           <li><a href="produk.html">Produk</a></li>
           <li><a href="pesan.html">Pesan</a></li>
           <li><a href="status.html">Cek Status Pesanan</a></li>
@@ -137,12 +138,24 @@
         <h2>Informasi</h2>
         <ul>
           <li><a href="tentang.html">Tentang Kami</a></li>
-          <li><a href="kontak.html">FAQ</a></li>
+          <li><a href="kontak.html">Kontak &amp; FAQ</a></li>
           <li><a href="privasi.html">Kebijakan Privasi</a></li>
         </ul>
       </nav>
+      <div>
+        <h2>Hubungi kami</h2>
+        <ul class="footer-kontak">
+          <li><span class="footer-label">Alamat</span><span data-config="alamat">Fakultas Ekonomika dan Bisnis UNNES, Semarang</span></li>
+          <li><span class="footer-label">Jam buka</span><span data-config="jamBuka">Senin–Sabtu, 08.00–17.00</span></li>
+          <li><span class="footer-label">WhatsApp</span><a data-kontak="wa" data-config="waTampil" href="#" target="_blank" rel="noopener">0812-3456-7890</a></li>
+          <li><span class="footer-label">Email</span><a data-kontak="email" data-config="email" href="#">halo@contoh.id</a></li>
+        </ul>
+      </div>
     </div>
-    <p class="footer-hak">&copy; <span data-tahun>2026</span> PrintIn. Website ini bagian dari tugas kuliah Sistem Informasi Manajemen.</p>
+    <div class="footer-bawah">
+      <p>&copy; <span data-tahun>2026</span> PrintIn. Website ini bagian dari tugas kuliah Sistem Informasi Manajemen.</p>
+      <p>Harga di website adalah harga simulasi.</p>
+    </div>
   </footer>
 
   <script src="js/config.js"></script>

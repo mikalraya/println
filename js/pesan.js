@@ -67,13 +67,12 @@ function tampilkanPesanan() {
   ambilEl('pesanan-total').textContent = rupiah.format(hasil.total);
   ambilEl('tautan-ubah').href = `produk.html?produk=${encodeURIComponent(produk.id)}#kalkulator`;
 
-  // Desain wajib untuk produk custom, brosur, poster, kartu nama, banner, undangan
-  const wajib = produk.perlu_desain;
+  // File desain/dokumen wajib untuk semua produk
   ambilEl('blok-desain').hidden = false;
-  ambilEl('judul-desain').textContent = wajib ? 'File desain' : 'File dokumen';
+  ambilEl('judul-desain').textContent = produk.perlu_desain ? 'File desain' : 'File dokumen';
   const lencana = ambilEl('lencana-desain');
-  lencana.textContent = wajib ? 'Wajib' : 'Boleh dikosongkan';
-  lencana.classList.toggle('wajib', wajib);
+  lencana.textContent = 'Wajib';
+  lencana.classList.add('wajib');
 }
 
 // Periksa isian. Mengembalikan daftar [input, pesan] untuk kolom yang salah.
@@ -96,7 +95,7 @@ function periksaForm(f) {
   }
 
   if (f.elements.ambil.value === 'kirim' && alamat.value.trim().length < 10) {
-    salah.push([alamat, 'Alamat wajib diisi lengkap kalau pesanan dikirim.']);
+    salah.push([alamat, 'Alamat terlalu singkat (minimal 10 karakter). Tulis lengkap, contoh: Jl. Pandanaran No. 12, RT 03/RW 05, Semarang Selatan, Kota Semarang.']);
   }
 
   if (!setuju.checked) salah.push([setuju, 'Centang persetujuan Kebijakan Privasi dan ketentuan desain dulu.']);
@@ -260,7 +259,7 @@ function periksaDesain(form) {
     setGalat(form.elements.linkFile, 'Link harus diawali https://, contoh: https://drive.google.com/...');
     return 'link';
   }
-  if (pesananIni.produk.perlu_desain && !berkasDesain && !link) {
+  if (!berkasDesain && !link) {
     kartuDesain.tampilGalat(`File untuk ${pesananIni.produk.nama} wajib diunggah (PDF, PNG, atau JPG), atau tempel link Google Drive di bawahnya.`);
     return 'file';
   }

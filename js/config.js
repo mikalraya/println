@@ -9,7 +9,7 @@ const CONFIG = {
   // TODO: semua data di bawah ini masih anonim/placeholder. Ganti dengan data asli PrintIn.
   email: 'halo@contoh.id',
   instagram: 'printin.contoh',
-  alamat: 'Jl. Contoh No. 1, Semarang',
+  alamat: 'Fakultas Ekonomika dan Bisnis UNNES, Semarang',
   jamBuka: 'Senin–Sabtu, 08.00–17.00',
   // URL Web App Google Apps Script (lihat apps-script/Code.gs). Kosong = mode contoh:
   // katalog memakai data di js/produk.js dan pesanan dikirim lewat WhatsApp saja.

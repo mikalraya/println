@@ -511,7 +511,7 @@ p {
 /* Kartu visual kanan: ilustrasi benda cetak (foto produk menyusul) */
 .hero-visual {
   position: relative;
-  min-height: 22rem;
+  min-height: 30rem;
   overflow: hidden;
   border-radius: var(--radius-kartu);
   background:
@@ -527,8 +527,8 @@ p {
 }
 
 .benda-kertas {
-  left: 12%;
-  top: 14%;
+  left: 8%;
+  top: 12%;
   width: 7.5rem;
   height: 9.5rem;
   padding: 0.875rem 0.75rem;
@@ -551,23 +551,101 @@ p {
   background: var(--oranye);
 }
 
+/* Banner: lembar kuning dengan lubang pengait di sudut dan tali gantung */
 .benda-banner {
-  right: 8%;
-  top: 22%;
-  padding: 0.875rem 1.5rem;
-  background: var(--kuning);
-  color: var(--navy);
-  border-radius: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  right: 5%;
+  top: 13%;
+  width: 6rem;
+  height: 4rem;
+  padding: 0.875rem 0.875rem 0;
+  background:
+    radial-gradient(circle at 0.5rem 0.5rem, var(--navy) 0 0.15rem, transparent 0.17rem),
+    radial-gradient(circle at calc(100% - 0.5rem) 0.5rem, var(--navy) 0 0.15rem, transparent 0.17rem),
+    radial-gradient(circle at 0.5rem calc(100% - 0.5rem), var(--navy) 0 0.15rem, transparent 0.17rem),
+    radial-gradient(circle at calc(100% - 0.5rem) calc(100% - 0.5rem), var(--navy) 0 0.15rem, transparent 0.17rem),
+    var(--kuning);
+  border-radius: 0.5rem;
   rotate: 5deg;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
   animation-delay: -2s;
 }
 
-.benda-kartu {
-  left: 38%;
+.benda-banner::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -1.25rem;
+  width: 3rem;
+  height: 1.5rem;
+  margin-left: -1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-bottom: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.benda-banner i {
+  display: block;
+  height: 0.5rem;
+  margin-bottom: 0.4rem;
+  background: var(--navy);
+  border-radius: 99px;
+}
+
+.benda-banner i:last-child {
+  width: 55%;
+  background: var(--oranye);
+}
+
+/* Amplop undangan */
+.benda-amplop {
+  left: 41%;
+  top: 11%;
+  width: 5rem;
+  height: 3.5rem;
+  background: #fff;
+  border-radius: 0.375rem;
+  rotate: -7deg;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  animation-delay: -3.5s;
+}
+
+.benda-amplop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #e3e9fb;
+  clip-path: polygon(0 0, 100% 0, 50% 62%);
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.benda-amplop::after {
+  content: "";
+  position: absolute;
+  left: 50%;
   top: 46%;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-left: -0.4375rem;
+  background: #ff7eb6;
+  border-radius: 50%;
+}
+
+/* Pin/lencana bulat */
+.benda-pin {
+  left: calc(42% - 0.5rem);
+  top: 86%;
+  width: 3.25rem;
+  height: 3.25rem;
+  background: radial-gradient(circle at 50% 50%, var(--navy) 0 0.5rem, transparent 0.55rem), var(--kuning);
+  border: 0.25rem solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  animation-delay: -4.5s;
+}
+
+.benda-kartu {
+  left: 36%;
+  top: 33%;
   width: 9rem;
   height: 5.5rem;
   padding: 0.75rem;
@@ -597,7 +675,7 @@ p {
 
 .benda-mug {
   right: 14%;
-  top: 52%;
+  top: 40%;
   width: 4.5rem;
   height: 4rem;
   background: var(--oranye);
@@ -616,6 +694,161 @@ p {
   border: 0.5rem solid var(--oranye);
   border-left: 0;
   border-radius: 0 1rem 1rem 0;
+}
+
+/* ID card dengan tali lanyard */
+.benda-idcard {
+  left: 9%;
+  top: 56%;
+  width: 5.5rem;
+  height: 8rem;
+  padding: 0.875rem 0.625rem;
+  background: #fff;
+  border-radius: 0.625rem;
+  rotate: 6deg;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+  animation-delay: -3s;
+}
+
+.benda-idcard::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -2.25rem;
+  width: 0.75rem;
+  height: 2.5rem;
+  margin-left: -0.375rem;
+  background: var(--tosca);
+  border-radius: 99px 99px 0 0;
+}
+
+.benda-idcard b {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0.25rem auto 0.625rem;
+  background: linear-gradient(135deg, var(--oranye), var(--kuning));
+  border-radius: 50%;
+}
+
+.benda-idcard i {
+  display: block;
+  height: 0.375rem;
+  margin: 0 auto 0.375rem;
+  background: var(--garis);
+  border-radius: 99px;
+}
+
+.benda-idcard i:nth-of-type(1) {
+  width: 80%;
+}
+
+.benda-idcard i:nth-of-type(2) {
+  width: 55%;
+}
+
+/* Tumbler: badan menyempit ke bawah, tutup, dan sedotan */
+.benda-tumbler {
+  left: 42%;
+  top: 58%;
+  width: 3.75rem;
+  height: 6.5rem;
+  rotate: -5deg;
+  animation-delay: -5s;
+}
+
+.benda-tumbler i {
+  position: absolute;
+  inset: 0.75rem 0 0;
+  background: linear-gradient(90deg, var(--tosca), #12a89a);
+  clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%);
+  border-radius: 0.25rem 0.25rem 0.75rem 0.75rem;
+}
+
+.benda-tumbler::before {
+  content: "";
+  position: absolute;
+  left: -0.25rem;
+  right: -0.25rem;
+  top: 0;
+  height: 0.875rem;
+  background: var(--navy);
+  border: 2px solid #fff;
+  border-radius: 0.5rem;
+}
+
+.benda-tumbler::after {
+  content: "";
+  position: absolute;
+  left: 60%;
+  top: -1.5rem;
+  width: 0.3125rem;
+  height: 1.75rem;
+  background: var(--kuning);
+  border-radius: 99px;
+  rotate: 12deg;
+}
+
+/* Tote bag: kain krem dengan tali dan sablon */
+.benda-tote {
+  right: 8%;
+  top: 62%;
+  width: 5.5rem;
+  height: 5.75rem;
+  background: #f3ead7;
+  border-radius: 0.25rem 0.25rem 0.5rem 0.5rem;
+  rotate: 4deg;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  animation-delay: -2.5s;
+}
+
+.benda-tote::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -2rem;
+  width: 3rem;
+  height: 2.5rem;
+  margin-left: -1.5rem;
+  border: 0.375rem solid #f3ead7;
+  border-bottom: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.benda-tote b {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: -1.125rem 0 0 -1.125rem;
+  background: linear-gradient(135deg, var(--biru), var(--tosca));
+  border-radius: 50%;
+}
+
+/* Gantungan kunci: cincin dan tag */
+.benda-gantungan {
+  left: 22%;
+  top: 86%;
+  width: 2.75rem;
+  height: 2.75rem;
+  background: #ff7eb6;
+  border-radius: 0.75rem;
+  rotate: -12deg;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  animation-delay: -1.5s;
+}
+
+.benda-gantungan::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -1.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: -0.625rem;
+  border: 3px solid #fff;
+  border-radius: 50%;
 }
 
 .catatan-visual {
@@ -1308,47 +1541,12 @@ p {
 /* ===== Footer ===== */
 .footer-situs {
   position: relative;
-  margin: 7rem var(--spasi-2) var(--spasi-2);
+  margin: 5rem var(--spasi-2) var(--spasi-2);
   padding: var(--spasi-5) var(--spasi-4) var(--spasi-4);
   background: linear-gradient(180deg, #0b1030 0%, var(--navy) 100%);
   color: #c9cee3;
   border-radius: var(--radius-kartu);
 }
-
-/* kartu miring yang menyembul di atas footer */
-.footer-lembar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(100% - 1.5rem);
-  display: flex;
-  justify-content: center;
-  gap: var(--spasi-2);
-  overflow-x: clip;
-  pointer-events: none;
-}
-
-.footer-lembar span {
-  display: flex;
-  align-items: flex-end;
-  width: 5.5rem;
-  height: 6.5rem;
-  padding: 0.5rem;
-  color: var(--navy);
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1.2;
-  border: 4px solid #fff;
-  border-radius: 1rem;
-  box-shadow: var(--bayangan);
-  transition: transform 600ms var(--ease), opacity 600ms var(--ease);
-}
-
-.footer-lembar span:nth-child(1) { background: var(--oranye); transform: rotate(-7deg); }
-.footer-lembar span:nth-child(2) { background: var(--biru-titik); transform: rotate(4deg) translateY(1rem); }
-.footer-lembar span:nth-child(3) { background: var(--tosca); transform: rotate(-3deg); }
-.footer-lembar span:nth-child(4) { background: var(--kuning); transform: rotate(6deg) translateY(0.5rem); }
-.footer-lembar span:nth-child(5) { background: #fff; transform: rotate(-5deg) translateY(1.25rem); }
 
 .footer-situs a {
   color: #fff;
@@ -1394,11 +1592,43 @@ p {
   text-decoration: none;
 }
 
-.footer-hak {
-  margin: var(--spasi-4) 0 0;
+.footer-merek p {
+  max-width: 24rem;
+  margin: var(--spasi-2) 0 0;
+}
+
+.footer-tagline {
+  color: #fff;
+  font-weight: 600;
+}
+
+.footer-kontak li {
+  display: grid;
+  gap: 0.125rem;
+  margin-bottom: var(--spasi-2);
+}
+
+.footer-label {
+  color: #8f97bd;
+  font-size: var(--teks-kecil);
+}
+
+.footer-kontak a {
+  overflow-wrap: anywhere;
+}
+
+.footer-bawah {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spasi-1);
+  margin-top: var(--spasi-4);
   padding-top: var(--spasi-3);
   border-top: 1px solid rgba(255, 255, 255, 0.14);
   font-size: var(--teks-kecil);
+}
+
+.footer-bawah p {
+  margin: 0;
 }
 
 /* ===== Tombol melayang (Pesan + WhatsApp) =====
@@ -1526,21 +1756,6 @@ p {
   animation: muncul-pop 700ms var(--ease) 500ms both;
 }
 
-.js .footer-lembar span {
-  opacity: 0;
-  transform: translateY(5rem);
-}
-
-.js .footer-lembar.terlihat span {
-  opacity: 1;
-}
-
-.js .footer-lembar.terlihat span:nth-child(1) { transform: rotate(-7deg); }
-.js .footer-lembar.terlihat span:nth-child(2) { transform: rotate(4deg) translateY(1rem); transition-delay: 80ms; }
-.js .footer-lembar.terlihat span:nth-child(3) { transform: rotate(-3deg); transition-delay: 160ms; }
-.js .footer-lembar.terlihat span:nth-child(4) { transform: rotate(6deg) translateY(0.5rem); transition-delay: 240ms; }
-.js .footer-lembar.terlihat span:nth-child(5) { transform: rotate(-5deg) translateY(1.25rem); transition-delay: 320ms; }
-
 /* ===== Layar lebih besar ===== */
 @media (min-width: 40rem) {
   .t2 {
@@ -1667,13 +1882,15 @@ p {
     padding-inline: var(--spasi-5);
   }
 
-  .footer-lembar span {
-    width: 7.5rem;
-    height: 8.5rem;
+  .footer-grid {
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+    gap: var(--spasi-5);
   }
 
-  .footer-grid {
-    grid-template-columns: 2fr 1fr 1fr;
+  .footer-bawah {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--spasi-3);
   }
 
   .tombol-melayang {
@@ -1706,10 +1923,6 @@ p {
   }
 
   .js .doodle {
-    opacity: 1;
-  }
-
-  .js .footer-lembar span {
     opacity: 1;
   }
 }

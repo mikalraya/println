@@ -199,7 +199,7 @@ function simpanPesanan(d) {
     if (d.berkas && d.berkas.data) {
       try { linkFile = simpanFile(d.berkas, kode); } catch (err) { return { ok: false, pesan: err.message }; }
     }
-    if (produk.perlu_desain && !linkFile) return { ok: false, pesan: 'Produk ini wajib menyertakan file desain atau link Google Drive.' };
+    if (!linkFile) return { ok: false, pesan: 'Semua pesanan wajib menyertakan file desain/dokumen atau link Google Drive.' };
     if (linkFile && !/^https:\/\//.test(linkFile)) return { ok: false, pesan: 'Link desain harus diawali https://' };
 
     const spesifikasi = produk.tipe_hitung === 'luas'
@@ -248,10 +248,11 @@ function cekStatus(kode) {
 
 // ----- Admin (PIN) -----
 
-function samarkanNomor(wa) {
+// Nomor WA ditampilkan lengkap untuk admin (sudah lewat PIN)
+function nomorLengkap(wa) {
   let n = String(wa);
   if (n.charAt(0) !== '0') n = '0' + n; // pulihkan 0 di depan pada baris lama yang terlanjur jadi angka
-  return n.length > 6 ? n.slice(0, 4) + '••••' + n.slice(-2) : n;
+  return n;
 }
 
 // Sel tanggal bisa terbaca sebagai Date oleh Sheets; ubah kembali ke teks yyyy-MM-dd
@@ -260,14 +261,14 @@ function teksTanggalButuh(nilai) {
   return String(nilai || '');
 }
 
-// Daftar pesanan untuk admin (terbaru di atas). No. WA disamarkan.
+// Daftar pesanan untuk admin (terbaru di atas). No. WA lengkap.
 function daftarPesanan() {
   const katalog = ambilProduk();
   return bacaTabel('pesanan').map(function (p) {
     const cocok = katalog.filter(function (k) { return k.nama === p.produk; })[0];
     return {
       kode: p.kode, tanggal: Utilities.formatDate(new Date(p.tanggal), 'Asia/Jakarta', 'yyyy-MM-dd HH:mm'),
-      nama: p.nama, whatsapp: samarkanNomor(String(p.whatsapp)), lini: p.lini, produk: p.produk,
+      nama: p.nama, whatsapp: nomorLengkap(p.whatsapp), lini: p.lini, produk: p.produk,
       produk_id: cocok ? cocok.id : '',
       spesifikasi: p.spesifikasi, jumlah: Number(p.jumlah), total: Number(p.total), link_file: p.link_file,
       tanggal_butuh: teksTanggalButuh(p.tanggal_butuh), alamat: p.alamat, catatan: p.catatan,

@@ -160,7 +160,7 @@ function isiTahun() {
 
 // Muncul bertahap saat elemen masuk layar. Anak dari [data-urut] muncul berurutan.
 function aturAnimasiScroll() {
-  const elemen = [...document.querySelectorAll('.reveal, .footer-lembar, .doodle')];
+  const elemen = [...document.querySelectorAll('.reveal, .doodle')];
 
   document.querySelectorAll('[data-urut]').forEach((induk) => {
     [...induk.children].forEach((anak, i) => {

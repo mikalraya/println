@@ -598,13 +598,14 @@ function bukaFormPesanan(p) {
   kodeDiubah = p ? p.kode : '';
   ambilEl('judul-form-pesanan').textContent = p ? `Ubah pesanan ${p.kode}` : 'Tambah pesanan';
   ambilEl('ps-wa-wajib').hidden = Boolean(p);
-  ambilEl('ps-wa').placeholder = p ? `Tersimpan: ${p.whatsapp}` : '08xxxxxxxxxx';
-  ambilEl('petunjuk-ps-wa').textContent = p ? 'Kosongkan kalau nomor tidak diganti.' : 'Nomor lengkap hanya diminta saat menambah atau mengganti.';
+  ambilEl('ps-wa').placeholder = '08xxxxxxxxxx';
+  ambilEl('petunjuk-ps-wa').textContent = p ? 'Nomor tersimpan sudah terisi. Ubah kalau perlu diganti.' : 'Awali dengan 08, contoh: 081234567890.';
   const status = ambilEl('ps-status');
   status.replaceChildren(...STATUS_PESANAN.map((s) => Object.assign(buatEl('option', '', s), { value: s })));
   isiPilihanProduk(p ? p.produk_id : '', p ? p.produk : '');
   if (p) {
     f.elements.nama.value = p.nama;
+    f.elements.wa.value = p.whatsapp;
     f.elements.jumlah.value = p.jumlah;
     const ukuran = /^([\d.]+) x ([\d.]+) m$/.exec(p.spesifikasi || '');
     if (ukuran) { f.elements.panjang.value = ukuran[1]; f.elements.lebar.value = ukuran[2]; }
