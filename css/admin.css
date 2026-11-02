@@ -1014,89 +1014,6 @@ select.adm-pilih {
   100% { background: transparent; }
 }
 
-/* ----- HP: tabel pesanan ditampilkan sebagai kartu (judul kolom dari data-label) ----- */
-@media (max-width: 39.99rem) {
-  .adm-tabel-bungkus:has(.adm-tabel-kartu) {
-    overflow: visible;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .adm-tabel-kartu,
-  .adm-tabel-kartu tbody {
-    display: block;
-    min-width: 0;
-  }
-
-  .adm-tabel-kartu thead {
-    display: none;
-  }
-
-  .adm-tabel-kartu tbody tr {
-    display: block;
-    margin-bottom: 0.75rem;
-    padding: 0.25rem var(--spasi-3);
-    border: 1px solid #d6dbe8;
-    border-radius: var(--radius-kecil);
-    background: var(--putih) !important;
-    box-shadow: var(--bayangan-lembut);
-  }
-
-  .adm-tabel-kartu td {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spasi-3);
-    padding: 0.625rem 0;
-    border-right: 0;
-    border-bottom: 1px solid var(--garis);
-    text-align: right;
-  }
-
-  .adm-tabel-kartu tbody tr td:last-child {
-    border-bottom: 0;
-  }
-
-  .adm-tabel-kartu td::before {
-    content: attr(data-label);
-    flex: none;
-    color: var(--teks-redup);
-    font-size: var(--teks-kecil);
-    font-weight: 600;
-    text-align: left;
-  }
-
-  /* Kolom pertama jadi judul kartu, tanpa label */
-  .adm-tabel-kartu td:first-child {
-    display: block;
-    padding-top: 0.75rem;
-    text-align: left;
-  }
-
-  .adm-tabel-kartu td:first-child::before,
-  .adm-tabel-kartu td.adm-kosong::before {
-    content: none;
-  }
-
-  .adm-tabel-kartu td.adm-kosong {
-    justify-content: center;
-    text-align: center;
-  }
-
-  .adm-tabel-kartu td > div {
-    min-width: 0;
-  }
-
-  .adm-tabel-kartu .adm-aksi {
-    justify-content: flex-end;
-  }
-
-  .adm-tabel-kartu select.adm-pilih {
-    max-width: 60%;
-  }
-}
-
 /* Petunjuk geser hanya tampil di HP */
 .adm-geser {
   display: none;
@@ -1110,41 +1027,60 @@ select.adm-pilih {
     font-size: var(--teks-kecil);
   }
 
-  /* Tabel produk tetap tabel; kolom nama produk menempel di kiri saat digeser */
-  .adm-tabel-produk {
+  /* Semua tabel admin tetap tabel di HP; kolom pertama menempel di kiri saat digeser */
+  .adm-tabel-geser {
     min-width: 40rem;
     font-size: var(--teks-kecil);
   }
 
-  .adm-tabel-produk th,
-  .adm-tabel-produk td {
+  .adm-tabel-geser th,
+  .adm-tabel-geser td {
     padding: 0.625rem 0.75rem;
   }
 
-  .adm-tabel-produk tbody tr {
+  .adm-tabel-geser tbody tr {
     background: var(--putih);
+  }
+
+  .adm-tabel-geser thead th:first-child,
+  .adm-tabel-geser tbody td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    box-shadow: 4px 0 8px -6px rgba(7, 10, 31, 0.35);
+  }
+
+  .adm-tabel-geser tbody td:first-child {
+    background: inherit;
+  }
+
+  .adm-tabel-geser td:first-child strong {
+    font-size: var(--teks-kecil);
+  }
+
+  /* Kode dan tanggal tidak terlipat */
+  .adm-tabel-geser:not(.adm-tabel-produk) td:nth-child(-n+2) {
+    white-space: nowrap;
+  }
+
+  /* Kolom pelanggan & produk cukup lebar agar tidak terlipat berlebihan */
+  .adm-tabel-geser:not(.adm-tabel-produk) td > div {
+    min-width: 10rem;
+  }
+
+  /* Pesanan punya kolom paling banyak */
+  .adm-tabel-pesanan {
+    min-width: 52rem;
   }
 
   .adm-tabel-produk th:first-child,
   .adm-tabel-produk td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 1;
     min-width: 13rem;
     max-width: 14rem;
-    box-shadow: 4px 0 8px -6px rgba(7, 10, 31, 0.35);
-  }
-
-  .adm-tabel-produk td:first-child {
-    background: inherit;
   }
 
   .adm-tabel-produk .adm-thumb {
     width: 2.75rem;
-  }
-
-  .adm-tabel-produk td:first-child strong {
-    font-size: var(--teks-kecil);
   }
 
   .adm-tabel-produk .adm-produk-sel {

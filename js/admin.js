@@ -335,7 +335,7 @@ function tampilkanTabelPesanan() {
 
   const isi = tampil.map((p) => {
     const tr = document.createElement('tr');
-    // data-label dipakai CSS untuk menampilkan judul kolom saat tabel menjadi kartu di HP
+    // data-label menyimpan judul kolom tiap sel
     const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
 
     const kode = buatEl('strong', '', p.kode);
@@ -779,7 +779,7 @@ function tampilkanTabelProduk() {
 
   const isi = tampil.map((p) => {
     const tr = document.createElement('tr');
-    // data-label dipakai CSS untuk menampilkan judul kolom saat tabel menjadi kartu di HP
+    // data-label menyimpan judul kolom tiap sel
     const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
 
     const nama = buatEl('div', 'adm-produk-sel');
