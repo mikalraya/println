@@ -521,19 +521,6 @@ p {
   box-shadow: var(--bayangan);
 }
 
-.catatan-visual {
-  position: absolute;
-  left: var(--spasi-3);
-  top: var(--spasi-3);
-  margin: 0;
-  padding: 0.125rem 0.75rem;
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
 /* Mockup produk (img/mockup/) melayang langsung di latar biru, tanpa bingkai */
 .mockup {
   position: absolute;
@@ -2628,6 +2615,72 @@ fieldset.field legend {
   margin-bottom: var(--spasi-2);
 }
 
+/* Halaman bayar: kode pesanan + tombol unduh struk PDF sebaris (turun ke bawah bila sempit) */
+.bayar-kode-baris {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spasi-2) var(--spasi-3);
+}
+
+.bayar-kode-baris h2 {
+  margin: 0;
+}
+
+.btn-struk {
+  padding-inline: 1rem;
+  border-color: var(--biru);
+  color: var(--biru-gelap);
+}
+
+.btn-struk:hover {
+  border-color: var(--biru);
+  background: var(--biru);
+}
+
+.btn-struk:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Form pesan: isian "Datamu" terkunci sampai produk dipilih */
+.isian-data {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.isian-data:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.isian-data:disabled * {
+  cursor: not-allowed;
+}
+
+.info-kunci-data {
+  display: flex;
+  align-items: center;
+  gap: var(--spasi-2);
+  margin: 0 0 var(--spasi-3);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-kecil);
+  background: #fff4d6;
+  color: #7a4b00;
+  font-weight: 600;
+}
+
+.info-kunci-data[hidden] {
+  display: none;
+}
+
+.info-kunci-data svg {
+  flex: none;
+}
+
 .daftar-ringkas li {
   display: grid;
   gap: 0.125rem;
@@ -3826,33 +3879,6 @@ img.logo-kotak {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-/* Pratinjau desain di atas foto merchandise (F-16) */
-.pratinjau-merch {
-  margin-block: var(--spasi-3);
-}
-
-.pratinjau-kotak {
-  position: relative;
-  max-width: 22rem;
-  border: 1px solid var(--garis);
-  border-radius: var(--radius-kecil);
-  overflow: hidden;
-  background: var(--putih);
-}
-
-.pratinjau-kotak img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.pratinjau-kotak #pratinjau-desain {
-  position: absolute;
-  width: auto;
-  height: auto;
-  object-fit: contain;
 }
 
 /* Banner persetujuan cookie (F-15) */

@@ -6,7 +6,7 @@
   <title>Pembayaran — PrintIn</title>
   <meta name="description" content="Halaman pembayaran QRIS contoh (mockup) PrintIn.">
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="css/style.css?v=3">
+  <link rel="stylesheet" href="css/style.css?v=7">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body>
@@ -59,7 +59,13 @@
       <div class="bayar-grid" id="bayar-isi" hidden>
         <article class="kartu kartu-pad" aria-labelledby="judul-ringkas-bayar">
           <span class="pil">Kode pesanan</span>
-          <h2 id="judul-ringkas-bayar"><span id="bayar-kode"></span></h2>
+          <div class="bayar-kode-baris">
+            <h2 id="judul-ringkas-bayar"><span id="bayar-kode"></span></h2>
+            <button class="btn btn-garis btn-struk" type="button" id="unduh-struk">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>
+              <span>Unduh struk PDF</span>
+            </button>
+          </div>
           <ul class="daftar-bersih daftar-ringkas" id="bayar-item"></ul>
           <div class="hasil-total">
             <span>Perkiraan total</span>
@@ -122,7 +128,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/main.js?v=3"></script>
-  <script src="js/chatbot.js"></script>
-  <script src="js/bayar.js"></script>
+  <script src="js/chatbot.js?v=4"></script>
+  <script src="js/bayar.js?v=5"></script>
 </body>
 </html>

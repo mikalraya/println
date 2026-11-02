@@ -6,7 +6,7 @@
   <title>Pesan Cetak — PrintIn</title>
   <meta name="description" content="Isi form pesanan cetak PrintIn.">
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="css/style.css?v=3">
+  <link rel="stylesheet" href="css/style.css?v=7">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body>
@@ -71,6 +71,14 @@
           <span class="pil">2</span>
           <h2 id="judul-data">Datamu</h2>
 
+          <!-- Terkunci sampai produk dipilih di langkah 1 (diatur js/pesan.js) -->
+          <p class="info-kunci-data" id="info-kunci-data" role="status" hidden>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span>Pilih produk dulu di langkah 1, baru data diri bisa diisi.</span>
+          </p>
+          <fieldset class="isian-data" id="isian-data">
+            <legend class="sr-saja">Data pemesan</legend>
+
           <div class="field">
             <label for="pesan-nama">Nama</label>
             <input id="pesan-nama" name="nama" type="text" autocomplete="name" aria-describedby="galat-pesan-nama">
@@ -93,13 +101,6 @@
             <legend><span id="judul-desain">File desain</span> <span class="lencana-desain" id="lencana-desain">Wajib</span></legend>
             <p class="petunjuk" id="petunjuk-file">Format PDF, PNG, atau JPG, maksimal 10 MB. Resolusi disarankan minimal 300 dpi. Kalau file perlu diperbaiki, admin akan menghubungimu lewat WhatsApp.</p>
             <div id="daftar-desain"></div>
-            <div class="pratinjau-merch" id="pratinjau-merch" hidden>
-              <p class="petunjuk"><strong>Pratinjau contoh:</strong> posisi dan ukuran hasil cetak bisa sedikit berbeda. Admin akan mengecek desainmu dulu.</p>
-              <div class="pratinjau-kotak">
-                <img id="pratinjau-dasar" alt="" width="800" height="600">
-                <img id="pratinjau-desain" alt="">
-              </div>
-            </div>
             <div class="field">
               <label for="pesan-link">Atau tempel link Google Drive</label>
               <input id="pesan-link" name="linkFile" type="url" inputmode="url" placeholder="https://drive.google.com/..." aria-describedby="galat-pesan-link">
@@ -145,6 +146,7 @@
           <button class="btn btn-utama btn-penuh" type="submit">Kirim pesanan</button>
           <button class="btn btn-wa btn-penuh" type="button" id="btn-wa-pesan">Pesan lewat WhatsApp saja</button>
           <p class="catatan-kecil" id="info-mode-contoh" hidden>Server pesanan belum tersambung (mode contoh). Pesananmu tidak disimpan, jadi selesaikan lewat WhatsApp.</p>
+          </fieldset>
         </form>
       </div>
     </section>
@@ -192,9 +194,9 @@
 
   <script src="js/config.js"></script>
   <script src="js/main.js?v=3"></script>
-  <script src="js/chatbot.js"></script>
+  <script src="js/chatbot.js?v=4"></script>
   <script src="js/kalkulator.js"></script>
   <script src="js/produk.js"></script>
-  <script src="js/pesan.js"></script>
+  <script src="js/pesan.js?v=4"></script>
 </body>
 </html>

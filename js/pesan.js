@@ -49,6 +49,9 @@ function siapkanPesanan() {
 function tampilkanPesanan() {
   ambilEl('pesanan-kosong').hidden = Boolean(pesananIni);
   ambilEl('pesanan-isi').hidden = !pesananIni;
+  // Belum pilih produk: semua isian "Datamu" dikunci (fieldset disabled mengunci isian dan tombol di dalamnya)
+  ambilEl('isian-data').disabled = !pesananIni;
+  ambilEl('info-kunci-data').hidden = Boolean(pesananIni);
   if (!pesananIni) return;
 
   const { produk, hasil } = pesananIni;
@@ -119,36 +122,6 @@ function buatEl(tag, kelas, teks) {
   return e;
 }
 
-// Pratinjau sederhana (F-16): gambar unggahan ditampilkan di atas foto produk.
-// Area cetak dalam persen dari foto produk (img/produk/*.webp).
-const AREA_CETAK = {
-  mug: { kiri: 36.25, atas: 37.5, lebar: 22.5, tinggi: 28.3 },
-  tumbler: { kiri: 43.1, atas: 38.3, lebar: 13.8, tinggi: 31.7 },
-  'tote-bag': { kiri: 36.25, atas: 48.3, lebar: 27.5, tinggi: 36.7 },
-  'gantungan-kunci': { kiri: 37.5, atas: 50.8, lebar: 25, tinggi: 27.5 },
-};
-let urlPratinjauMerch = '';
-
-function perbaruiPratinjau(berkas) {
-  const kotak = ambilEl('pratinjau-merch');
-  if (urlPratinjauMerch) { URL.revokeObjectURL(urlPratinjauMerch); urlPratinjauMerch = ''; }
-  const produk = pesananIni && pesananIni.produk;
-  const area = produk && AREA_CETAK[produk.id];
-  if (!area || !produk.foto || !berkas || berkas.type === 'application/pdf') {
-    kotak.hidden = true;
-    return;
-  }
-  const dasar = ambilEl('pratinjau-dasar');
-  dasar.src = produk.foto;
-  dasar.alt = `Foto contoh ${produk.nama}`;
-  const desain = ambilEl('pratinjau-desain');
-  urlPratinjauMerch = URL.createObjectURL(berkas);
-  desain.src = urlPratinjauMerch;
-  desain.alt = `Pratinjau desainmu di atas ${produk.nama}`;
-  Object.assign(desain.style, { left: `${area.kiri}%`, top: `${area.atas}%`, width: `${area.lebar}%`, height: `${area.tinggi}%` });
-  kotak.hidden = false;
-}
-
 // Kartu pilih file. File disimpan di berkasDesain dan baru dikirim saat form dikirim.
 let kartuDesain = null;
 
@@ -213,7 +186,6 @@ function buatKartuDesain() {
     berkasDesain = null;
     berkasInput.value = '';
     tampilFile(null);
-    perbaruiPratinjau(null);
   };
 
   const pilih = (berkas) => {
@@ -228,7 +200,6 @@ function buatKartuDesain() {
     }
     berkasDesain = berkas;
     tampilFile(berkas);
-    perbaruiPratinjau(berkas);
   };
 
   const buka = () => berkasInput.click();
@@ -301,7 +272,8 @@ function dataPesanan(form) {
 // Ringkasan untuk halaman Bayar dan pesan WhatsApp
 function ringkasanPesanan(data, kode, total, tanpaServer) {
   const { produk, hasil } = pesananIni;
-  return { kode, nama: data.nama, produk: produk.nama, spesifikasi: hasil.spesifikasi, jumlah: data.jumlah, total, ambil: data.ambil, tanpaServer };
+  // tanggal dipakai untuk struk PDF di halaman Bayar
+  return { kode, tanggal: new Date().toISOString(), nama: data.nama, produk: produk.nama, spesifikasi: hasil.spesifikasi, jumlah: data.jumlah, total, ambil: data.ambil, tanpaServer };
 }
 
 // Periksa semua isian; mengembalikan true bila lolos. Fokus ke kolom pertama yang salah.
