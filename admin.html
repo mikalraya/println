@@ -59,7 +59,12 @@
         <div class="adm-kepala">
           <div>
             <p class="adm-salam" id="adm-salam"></p>
-            <h1 id="judul-ringkasan">Ringkasan perusahaan</h1>
+            <div class="adm-judul-bantuan">
+              <h1 id="judul-ringkasan">Ringkasan perusahaan</h1>
+              <button class="tombol-bantuan" type="button" data-bantuan="dialog-bantuan-ringkasan" aria-haspopup="dialog" aria-controls="dialog-bantuan-ringkasan" title="Cara kerja Ringkasan">
+                <span aria-hidden="true">?</span><span class="sr-saja">Cara kerja Ringkasan</span>
+              </button>
+            </div>
             <p class="adm-sub">Gambaran singkat PrintIn dari data pesanan dan produk di Google Sheets. Omzet = total harga simulasi pesanan.</p>
           </div>
           <button class="btn btn-garis" type="button" id="muat-ulang">Muat ulang data</button>
@@ -737,6 +742,78 @@
           <li>Centang <b>Wajib menyertakan file desain</b> untuk produk yang dicetak dari desain pelanggan (custom, brosur, banner, dan sejenisnya). Kolom upload di form pesan jadi bertuliskan "File desain", bukan "File dokumen". Semua pesanan tetap wajib menyertakan file atau link.</li>
           <li><b>Foto</b> bisa dipilih dari folder img/produk/, diisi link https://, atau diupload. Foto upload otomatis dikecilkan dan disimpan di Google Drive.</li>
           <li>Semua harga adalah harga simulasi. Cari produk lewat nama, ID, atau kategori. Tabel menampilkan 10 produk per halaman.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="aksi-dialog">
+      <button class="btn btn-utama" type="button" data-tutup autofocus>Oke, mengerti</button>
+    </div>
+  </dialog>
+
+  <!-- Panduan cara kerja Ringkasan -->
+  <dialog class="dialog-form dialog-bantuan" id="dialog-bantuan-ringkasan" aria-labelledby="bantuan-judul-ringkasan">
+    <div class="bantuan-kepala">
+      <div>
+        <p class="bantuan-label">Panduan</p>
+        <h2 id="bantuan-judul-ringkasan">Cara kerja Ringkasan</h2>
+      </div>
+      <button class="tombol-ikon" type="button" data-tutup aria-label="Tutup panduan">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="bantuan-isi">
+      <section aria-labelledby="bantuan-ring-1">
+        <h3 id="bantuan-ring-1">1. Dari mana angkanya?</h3>
+        <p class="adm-sub">Angka diambil dari tab "pesanan" dan "produk" di Google Sheets. Omzet, grafik, dan pesanan terbaru hanya menghitung pesanan yang <b>sudah dibayar</b>. Pesanan yang masih <b>Menunggu bayar</b> atau <b>Dibatalkan</b> tidak dihitung. Semua nominal adalah harga simulasi.</p>
+      </section>
+
+      <section aria-labelledby="bantuan-ring-2">
+        <h3 id="bantuan-ring-2">2. Filter di atas kartu</h3>
+        <ul class="bantuan-tips">
+          <li><b>Periode pesanan</b> memilih rentang waktu: Bulan ini, 3, 6, atau 12 bulan terakhir, Semua waktu, atau <b>Pilih tanggal</b> untuk rentang tertentu (mis. 10–20 Oktober 2026). Kalau salah satu tanggal dikosongkan, sisi itu tidak dibatasi.</li>
+          <li><b>Lini produk</b> memisahkan Printing Reguler dan Custom Merchandise. Filter ini berlaku untuk pesanan dan juga kartu Produk.</li>
+          <li>Periode hanya berlaku untuk data pesanan. Kartu Produk dan daftar Perlu perhatian tidak ikut periode.</li>
+          <li><b>Reset filter</b> mengembalikan ke 6 bulan dan semua lini.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-ring-3">
+        <h3 id="bantuan-ring-3">3. Arti kartu ringkasan</h3>
+        <ul class="bantuan-tombol daftar-bersih">
+          <li>
+            <span class="adm-angka-ikon adm-angka-biru" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
+            <span><b>Omzet</b>: total harga pesanan lunas pada periode yang dipilih.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-oranye" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 6H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/><path d="M8 12h8M8 16h5"/></svg></span>
+            <span><b>Pesanan lunas</b>: jumlah pesanan yang sudah dibayar. "Baru" = berstatus Diterima dan belum dikerjakan; "menunggu bayar" = pesanan yang belum dibayar.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-tosca" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></span>
+            <span><b>Selesai</b>: pesanan berstatus Selesai. "Sedang dikerjakan" = pesanan lunas yang sedang dicek desain, diproses, atau siap diambil.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-ungu" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg></span>
+            <span><b>Rata-rata pesanan</b>: omzet dibagi jumlah pesanan lunas, yaitu nilai belanja rata-rata satu pesanan.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-kuning" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span>
+            <span><b>Produk</b>: jumlah produk di katalog, beserta berapa yang stoknya terbatas atau habis.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-ring-4">
+        <h3 id="bantuan-ring-4">4. Grafik dan daftar</h3>
+        <ul class="bantuan-tips">
+          <li><b>Omzet per bulan</b>: satu batang = total omzet satu bulan. Arahkan kursor ke batang untuk melihat nominalnya.</li>
+          <li><b>Printing vs Merchandise</b>: perbandingan jumlah pesanan kedua lini produk.</li>
+          <li><b>Produk terlaris</b>: 5 produk dengan pesanan terbanyak, dihitung per pesanan (bukan per unit, karena satuannya berbeda-beda).</li>
+          <li><b>Perlu perhatian</b>: produk yang stoknya Terbatas atau Habis. Ubah statusnya di menu Produk.</li>
+          <li><b>Pesanan terbaru</b>: 5 pesanan lunas paling baru pada periode yang dipilih.</li>
+          <li>Klik <b>Muat ulang data</b> untuk mengambil data terbaru dari Google Sheets.</li>
         </ul>
       </section>
     </div>
