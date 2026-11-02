@@ -10,6 +10,15 @@ const KETERANGAN_TAHAP = {
   Selesai: 'Pesananmu sudah selesai. Terima kasih sudah memesan di PrintIn!',
 };
 
+// Ilustrasi tiap tahap (img/status/), judul singkat untuk kartu panduan
+const GAMBAR_TAHAP = {
+  Diterima: { src: 'img/status/diterima.svg', alt: 'Ilustrasi daftar pesanan dengan tanda centang: pesanan sudah diterima', judul: 'Pesanan masuk' },
+  'Cek desain': { src: 'img/status/cek-desain.svg', alt: 'Ilustrasi admin memeriksa desain mug di layar komputer', judul: 'Desain diperiksa' },
+  Diproses: { src: 'img/status/diproses.svg', alt: 'Ilustrasi mesin cetak sedang mencetak pesanan', judul: 'Sedang dicetak' },
+  'Siap diambil': { src: 'img/status/siap-diambil.svg', alt: 'Ilustrasi petugas toko memegang paket yang siap diambil', judul: 'Paket siap' },
+  Selesai: { src: 'img/status/selesai.svg', alt: 'Ilustrasi pelanggan senang merayakan pesanan yang selesai', judul: 'Pesanan beres' },
+};
+
 const ambil = (id) => document.getElementById(id);
 
 function buatEl(tag, kelas, teks) {
@@ -50,10 +59,13 @@ function tampilkanDetail(pesanan) {
   kepala.append(judul, buatEl('span', 'lencana-pesanan', pesanan.status));
   kotak.append(kepala);
 
-  kotak.append(
-    buatTahap(pesanan.status),
-    buatEl('p', 'info-tahap', KETERANGAN_TAHAP[pesanan.status] || ''),
-  );
+  // Gambar sesuai status sekarang + keterangannya
+  const sorot = buatEl('div', 'detail-sorot');
+  const gambar = GAMBAR_TAHAP[pesanan.status];
+  if (gambar) sorot.append(buatGambar(gambar, 'detail-gambar'));
+  sorot.append(buatEl('p', 'info-tahap', KETERANGAN_TAHAP[pesanan.status] || ''));
+  kotak.append(sorot, buatTahap(pesanan.status));
+  tandaiPanduan(pesanan.status);
 
   // Teks produk dan tombol WhatsApp satu blok agar lebarnya sama
   const aksi = buatEl('div', 'detail-aksi');
@@ -70,6 +82,41 @@ function tampilkanDetail(pesanan) {
   kotak.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function buatGambar({ src, alt }, kelas) {
+  const img = buatEl('img', kelas);
+  img.src = src;
+  img.alt = alt;
+  img.width = 320;
+  img.height = 240;
+  img.loading = 'lazy';
+  return img;
+}
+
+// Kartu panduan: satu gambar per tahap
+function isiPanduan() {
+  const daftar = ambil('panduan-tahap');
+  TAHAP.forEach((nama, i) => {
+    const li = buatEl('li', 'panduan-item');
+    li.dataset.tahap = nama;
+    li.append(
+      buatGambar(GAMBAR_TAHAP[nama], 'panduan-gambar'),
+      buatEl('span', 'panduan-nomor', `${i + 1}. ${nama}`),
+      buatEl('strong', '', GAMBAR_TAHAP[nama].judul),
+      buatEl('p', '', KETERANGAN_TAHAP[nama]),
+    );
+    daftar.append(li);
+  });
+}
+
+function tandaiPanduan(status) {
+  ambil('panduan-tahap').querySelectorAll('.panduan-item').forEach((li) => {
+    const aktif = li.dataset.tahap === status;
+    li.classList.toggle('panduan-aktif', aktif);
+    if (aktif) li.setAttribute('aria-current', 'step');
+    else li.removeAttribute('aria-current');
+  });
+}
+
 function setGalatCek(teks) {
   const area = ambil('galat-cek-kode');
   area.textContent = teks || '';
@@ -82,18 +129,26 @@ function setGalatCek(teks) {
 async function muatKode(kode) {
   setGalatCek('');
   ambil('detail-pesanan').hidden = true;
+  tandaiPanduan('');
   if (!/^PRT-\d{4,}$/.test(kode)) return setGalatCek('Kode pesanan diawali PRT- lalu angka, contoh: PRT-0001.');
   if (!CONFIG.urlApi) return setGalatCek('Server pesanan belum tersambung (mode contoh), jadi status belum bisa dicek. Tanyakan lewat WhatsApp.');
 
-  const tombol = ambil('form-cek').querySelector('button[type="submit"]');
+  // Selama mencari: tombol berubah teks dan ilustrasi kaca pembesar bergoyang
+  const form = ambil('form-cek');
+  const tombol = form.querySelector('button[type="submit"]');
   tombol.disabled = true;
+  tombol.textContent = 'Mencari…';
+  form.classList.add('sedang-mencari');
   const hasil = await panggilApi({ params: { action: 'status', kode } });
   tombol.disabled = false;
+  tombol.textContent = 'Cek status';
+  form.classList.remove('sedang-mencari');
   if (!hasil.ok) return setGalatCek(hasil.pesan || 'Status belum bisa dicek. Coba lagi.');
   tampilkanDetail(hasil.pesanan);
 }
 
 function mulaiStatus() {
+  isiPanduan();
   ambil('form-cek').addEventListener('submit', (e) => {
     e.preventDefault();
     muatKode(ambil('cek-kode').value.trim().toUpperCase());

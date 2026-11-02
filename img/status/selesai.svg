@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240">
+  <style>
+    .konfeti { animation: jatuh 2.8s ease-in infinite; }
+    .k2 { animation-delay: .5s; } .k3 { animation-delay: 1s; } .k4 { animation-delay: 1.5s; } .k5 { animation-delay: 2s; }
+    .loncat { animation: loncat 1.4s ease-in-out infinite; }
+    @keyframes jatuh { 0% { transform: translateY(-14px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(26px); opacity: 0; } }
+    @keyframes loncat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+  <circle cx="160" cy="118" r="104" fill="#e5f6ee"/>
+  <ellipse cx="160" cy="218" rx="128" ry="10" fill="#cfeadc"/>
+  <!-- konfeti -->
+  <g class="konfeti"><rect x="70" y="40" width="8" height="12" rx="2" fill="#ff8a3d" transform="rotate(20 74 46)"/></g>
+  <g class="konfeti k2"><rect x="110" y="26" width="8" height="12" rx="2" fill="#1f6fe8" transform="rotate(-25 114 32)"/></g>
+  <circle class="konfeti k3" cx="210" cy="34" r="5" fill="#f6ee14"/>
+  <g class="konfeti k4"><rect x="248" y="50" width="8" height="12" rx="2" fill="#3de0b5" transform="rotate(35 252 56)"/></g>
+  <circle class="konfeti k5" cx="56" cy="88" r="4" fill="#1f6fe8"/>
+  <rect class="konfeti k3" x="262" y="104" width="7" height="10" rx="2" fill="#ff8a3d"/>
+  <circle class="konfeti k2" cx="150" cy="30" r="4" fill="#3de0b5"/>
+  <!-- lencana selesai -->
+  <circle cx="254" cy="150" r="24" fill="#1fa971"/>
+  <path d="M243 150l8 8 14-16" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- mug hasil cetak -->
+  <path d="M96 182h7a10 10 0 0 1 0 20h-7" stroke="#1f6fe8" stroke-width="5" fill="none"/>
+  <rect x="58" y="172" width="40" height="44" rx="6" fill="#1f6fe8"/>
+  <path d="M78 184l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#f6ee14"/>
+  <!-- orang merayakan -->
+  <g class="loncat">
+    <rect x="144" y="164" width="11" height="46" rx="5" fill="#070a1f"/>
+    <rect x="165" y="164" width="11" height="46" rx="5" fill="#070a1f"/>
+    <rect x="139" y="205" width="18" height="8" rx="4" fill="#070a1f"/>
+    <rect x="163" y="205" width="18" height="8" rx="4" fill="#070a1f"/>
+    <line x1="142" y1="124" x2="122" y2="84" stroke="#f2c39b" stroke-width="10" stroke-linecap="round"/>
+    <line x1="178" y1="124" x2="198" y2="84" stroke="#f2c39b" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="121" cy="80" r="7" fill="#f2c39b"/>
+    <circle cx="199" cy="80" r="7" fill="#f2c39b"/>
+    <rect x="138" y="112" width="44" height="60" rx="16" fill="#ff8a3d"/>
+    <text x="160" y="148" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="11" fill="#fff">PrintIn</text>
+    <rect x="154" y="104" width="12" height="12" rx="4" fill="#e8b48b"/>
+    <circle cx="160" cy="90" r="18" fill="#f2c39b"/>
+    <path d="M142 90a18 18 0 0 1 36 0c-7-6-15-8-22-5-5 2-9 4-14 5z" fill="#070a1f"/>
+    <path d="M151 92q3-4 6 0M163 92q3-4 6 0" stroke="#070a1f" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M152 98q8 9 16 0z" fill="#070a1f"/>
+  </g>
+</svg>

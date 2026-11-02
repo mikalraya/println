@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240">
+  <style>
+    .roda { transform-box: fill-box; transform-origin: center; animation: putar 4s linear infinite; }
+    .roda-balik { animation-direction: reverse; animation-duration: 3s; }
+    .kertas { animation: cetak 2.6s ease-in-out infinite; }
+    .lampu { animation: kedip 1s steps(2) infinite; }
+    @keyframes putar { to { transform: rotate(360deg); } }
+    @keyframes cetak { 0% { transform: translateY(-50px); } 70%,100% { transform: translateY(0); } }
+    @keyframes kedip { 50% { opacity: .3; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+  <defs>
+    <clipPath id="slot"><rect x="60" y="154" width="160" height="70"/></clipPath>
+  </defs>
+  <circle cx="160" cy="118" r="104" fill="#ffeede"/>
+  <ellipse cx="160" cy="218" rx="128" ry="10" fill="#f3dcc6"/>
+  <!-- roda gigi -->
+  <g class="roda">
+    <circle cx="232" cy="52" r="20" fill="none" stroke="#1f6fe8" stroke-width="10" stroke-dasharray="7 5.6"/>
+    <circle cx="232" cy="52" r="15" fill="#1f6fe8"/>
+    <circle cx="232" cy="52" r="6" fill="#ffeede"/>
+  </g>
+  <g class="roda roda-balik">
+    <circle cx="266" cy="78" r="13" fill="none" stroke="#ff8a3d" stroke-width="8" stroke-dasharray="5 4.2"/>
+    <circle cx="266" cy="78" r="10" fill="#ff8a3d"/>
+    <circle cx="266" cy="78" r="4" fill="#ffeede"/>
+  </g>
+  <!-- kertas masuk -->
+  <rect x="94" y="56" width="92" height="44" rx="2" fill="#fff" stroke="#e3e7f0" stroke-width="2"/>
+  <!-- mesin cetak -->
+  <rect x="66" y="92" width="148" height="66" rx="14" fill="#2a3150"/>
+  <rect x="78" y="84" width="124" height="18" rx="7" fill="#3a4366"/>
+  <rect x="88" y="148" width="104" height="8" rx="4" fill="#070a1f"/>
+  <rect x="170" y="110" width="30" height="12" rx="3" fill="#4f5a84"/>
+  <circle class="lampu" cx="84" cy="116" r="5" fill="#3de0b5"/>
+  <!-- kertas keluar -->
+  <g clip-path="url(#slot)">
+    <g class="kertas">
+      <rect x="98" y="154" width="84" height="56" rx="2" fill="#fff" stroke="#e3e7f0" stroke-width="2"/>
+      <rect x="108" y="164" width="64" height="20" rx="3" fill="#1f6fe8"/>
+      <rect x="108" y="190" width="40" height="5" rx="2.5" fill="#ff8a3d"/>
+      <rect x="108" y="199" width="54" height="5" rx="2.5" fill="#f6ee14"/>
+    </g>
+  </g>
+  <!-- orang (operator) -->
+  <rect x="248" y="164" width="11" height="48" rx="5" fill="#070a1f"/>
+  <rect x="269" y="164" width="11" height="48" rx="5" fill="#070a1f"/>
+  <rect x="243" y="207" width="18" height="8" rx="4" fill="#070a1f"/>
+  <rect x="267" y="207" width="18" height="8" rx="4" fill="#070a1f"/>
+  <line x1="282" y1="128" x2="290" y2="166" stroke="#f2c39b" stroke-width="10" stroke-linecap="round"/>
+  <rect x="242" y="112" width="44" height="60" rx="16" fill="#1f6fe8"/>
+  <rect x="252" y="130" width="24" height="42" rx="4" fill="#f6ee14"/>
+  <line x1="246" y1="128" x2="218" y2="134" stroke="#f2c39b" stroke-width="10" stroke-linecap="round"/>
+  <rect x="258" y="104" width="12" height="12" rx="4" fill="#e8b48b"/>
+  <circle cx="264" cy="92" r="18" fill="#f2c39b"/>
+  <path d="M246 90a18 18 0 0 1 36 0z" fill="#ff8a3d"/>
+  <rect x="244" y="86" width="40" height="6" rx="3" fill="#ff8a3d"/>
+  <circle cx="258" cy="97" r="2" fill="#070a1f"/>
+  <circle cx="270" cy="97" r="2" fill="#070a1f"/>
+  <path d="M260 103h8" stroke="#070a1f" stroke-width="2" stroke-linecap="round"/>
+</svg>

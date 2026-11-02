@@ -3914,6 +3914,149 @@ img.logo-kotak {
   margin-top: var(--spasi-2);
 }
 
+/* Ilustrasi status pesanan (img/status/) */
+.cek-kode {
+  display: grid;
+  gap: var(--spasi-3);
+  align-items: center;
+}
+
+.cek-kode-gambar {
+  order: -1;
+  width: 100%;
+  max-width: 13rem;
+  height: auto;
+  margin: 0 auto;
+}
+
+.cek-kode-bantu {
+  margin: 0 0 var(--spasi-3);
+  color: var(--teks-redup);
+}
+
+.sedang-mencari .cek-kode-gambar {
+  animation: gambar-cari 0.9s ease-in-out infinite;
+}
+
+@keyframes gambar-cari {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.detail-sorot {
+  display: grid;
+  gap: var(--spasi-2);
+  justify-items: center;
+  margin-top: var(--spasi-3);
+  padding: var(--spasi-3);
+  background: var(--latar);
+  border-radius: var(--radius-kecil);
+  text-align: center;
+}
+
+.detail-gambar {
+  width: 100%;
+  max-width: 16rem;
+  height: auto;
+}
+
+.detail-sorot .info-tahap {
+  margin: 0;
+}
+
+.panduan-tahap h2 {
+  margin-top: 0;
+}
+
+.panduan-tahap-daftar {
+  display: grid;
+  gap: var(--spasi-3);
+  margin: var(--spasi-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panduan-item {
+  display: grid;
+  align-content: start;
+  gap: var(--spasi-1);
+  padding: var(--spasi-3);
+  background: var(--latar);
+  border: 2px solid transparent;
+  border-radius: var(--radius-kecil);
+}
+
+.panduan-item p {
+  margin: 0;
+  color: var(--teks-redup);
+  font-size: var(--teks-kecil);
+}
+
+.panduan-gambar {
+  width: 100%;
+  max-width: 12rem;
+  height: auto;
+  margin: 0 auto var(--spasi-2);
+}
+
+.panduan-nomor {
+  color: var(--biru-gelap);
+  font-size: var(--teks-kecil);
+  font-weight: 700;
+}
+
+.panduan-aktif {
+  background: var(--putih);
+  border-color: var(--biru);
+  box-shadow: var(--bayangan-lembut);
+}
+
+@media (min-width: 36rem) {
+  .panduan-tahap-daftar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 48rem) {
+  .cek-kode {
+    grid-template-columns: 1fr 15rem;
+    gap: var(--spasi-4);
+  }
+
+  .cek-kode-gambar {
+    order: 0;
+    max-width: none;
+  }
+
+  .detail-sorot {
+    grid-template-columns: 14rem 1fr;
+    align-items: center;
+    justify-items: start;
+    gap: var(--spasi-4);
+    text-align: left;
+  }
+
+  .detail-sorot .info-tahap {
+    font-size: var(--teks-besar);
+  }
+}
+
+@media (min-width: 64rem) {
+  .panduan-tahap-daftar {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .panduan-gambar {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sedang-mencari .cek-kode-gambar {
+    animation: none;
+  }
+}
+
 /* Unggah desain per produk di form pesan */
 .desain-per-item {
   padding: 0;

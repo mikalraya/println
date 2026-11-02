@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240">
+  <style>
+    .sapu { transform-box: view-box; transform-origin: 192px 128px; animation: sapu 2.4s ease-in-out infinite; }
+    .tanya { animation: naik 2.4s ease-in-out infinite; }
+    .titik { animation: kedip 1.2s ease-in-out infinite; }
+    .titik2 { animation-delay: .2s; }
+    .titik3 { animation-delay: .4s; }
+    @keyframes sapu { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(8deg); } }
+    @keyframes naik { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes kedip { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+  <circle cx="160" cy="118" r="104" fill="#eaf1ff"/>
+  <ellipse cx="160" cy="218" rx="128" ry="10" fill="#dbe3f2"/>
+  <!-- paket -->
+  <rect x="46" y="150" width="84" height="64" rx="6" fill="#ffb877"/>
+  <rect x="46" y="150" width="84" height="16" rx="6" fill="#f59f52"/>
+  <rect x="82" y="150" width="12" height="64" fill="#ffe0b8"/>
+  <rect x="56" y="180" width="20" height="14" rx="2" fill="#fff"/>
+  <path d="M59 185h14M59 189h9" stroke="#c7cfe0" stroke-width="2" stroke-linecap="round"/>
+  <!-- tanda tanya -->
+  <g class="tanya">
+    <circle cx="88" cy="104" r="20" fill="#fff" stroke="#e3e7f0" stroke-width="2"/>
+    <text x="88" y="113" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#ff8a3d">?</text>
+  </g>
+  <!-- titik mencari -->
+  <circle class="titik" cx="232" cy="52" r="5" fill="#1f6fe8"/>
+  <circle class="titik titik2" cx="248" cy="52" r="5" fill="#1f6fe8"/>
+  <circle class="titik titik3" cx="264" cy="52" r="5" fill="#1f6fe8"/>
+  <!-- orang -->
+  <rect x="194" y="164" width="11" height="48" rx="5" fill="#070a1f"/>
+  <rect x="215" y="164" width="11" height="48" rx="5" fill="#070a1f"/>
+  <rect x="189" y="207" width="18" height="8" rx="4" fill="#070a1f"/>
+  <rect x="213" y="207" width="18" height="8" rx="4" fill="#070a1f"/>
+  <line x1="230" y1="128" x2="240" y2="166" stroke="#f2c39b" stroke-width="10" stroke-linecap="round"/>
+  <rect x="188" y="112" width="44" height="60" rx="16" fill="#1f6fe8"/>
+  <rect x="204" y="104" width="12" height="12" rx="4" fill="#e8b48b"/>
+  <circle cx="210" cy="92" r="18" fill="#f2c39b"/>
+  <path d="M192 92a18 18 0 0 1 36 0c-7-6-15-8-22-5-5 2-9 4-14 5z" fill="#070a1f"/>
+  <circle cx="204" cy="93" r="2" fill="#070a1f"/>
+  <circle cx="216" cy="93" r="2" fill="#070a1f"/>
+  <path d="M205 100q5 3 10 0" stroke="#070a1f" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- lengan + kaca pembesar -->
+  <g class="sapu">
+    <line x1="192" y1="128" x2="160" y2="164" stroke="#f2c39b" stroke-width="10" stroke-linecap="round"/>
+    <line x1="134" y1="146" x2="156" y2="166" stroke="#070a1f" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="118" cy="130" r="24" fill="#ffffff" fill-opacity=".55" stroke="#070a1f" stroke-width="7"/>
+    <path d="M106 120a14 14 0 0 1 12-6" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

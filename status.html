@@ -49,19 +49,29 @@
     <section class="wadah bagian" aria-label="Status pesanan">
       <!-- Cek lewat kode (tanpa data pribadi) -->
       <form class="kartu kartu-pad cek-kode" id="form-cek" novalidate aria-labelledby="judul-cek">
-        <h2 id="judul-cek">Cek dengan kode pesanan</h2>
-        <div class="cek-kode-baris">
-          <div class="field">
-            <label for="cek-kode">Kode pesanan</label>
-            <input id="cek-kode" type="text" placeholder="PRT-0001" autocomplete="off" autocapitalize="characters" aria-describedby="galat-cek-kode">
+        <div class="cek-kode-isi">
+          <h2 id="judul-cek">Cek dengan kode pesanan</h2>
+          <p class="cek-kode-bantu">Kode pesanan ada di halaman pembayaran dan pesan WhatsApp setelah kamu memesan.</p>
+          <div class="cek-kode-baris">
+            <div class="field">
+              <label for="cek-kode">Kode pesanan</label>
+              <input id="cek-kode" type="text" placeholder="PRT-0001" autocomplete="off" autocapitalize="characters" aria-describedby="galat-cek-kode">
+            </div>
+            <button class="btn btn-utama" type="submit">Cek status</button>
           </div>
-          <button class="btn btn-utama" type="submit">Cek status</button>
+          <p class="pesan-galat" id="galat-cek-kode" hidden></p>
         </div>
-        <p class="pesan-galat" id="galat-cek-kode" hidden></p>
+        <img class="cek-kode-gambar" id="gambar-mencari" src="img/status/mencari.svg" alt="Ilustrasi orang memakai kaca pembesar mencari paket pesanan" width="320" height="240">
       </form>
 
       <!-- Detail satu pesanan -->
       <article class="kartu kartu-pad detail-pesanan" id="detail-pesanan" aria-live="polite" hidden></article>
+
+      <!-- Arti tiap status, masing-masing bergambar -->
+      <section class="kartu kartu-pad panduan-tahap" aria-labelledby="judul-panduan-tahap">
+        <h2 id="judul-panduan-tahap">Arti tiap status pesanan</h2>
+        <ol class="panduan-tahap-daftar" id="panduan-tahap"></ol>
+      </section>
     </section>
   </main>
 
@@ -106,7 +116,7 @@
   </footer>
 
   <script src="js/config.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=3"></script>
   <script src="js/chatbot.js"></script>
   <script src="js/status.js"></script>
 </body>
