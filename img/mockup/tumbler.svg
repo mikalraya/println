@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 290">
+  <!-- sedotan & tutup -->
+  <rect x="80" y="4" width="9" height="46" rx="4.5" fill="#f6ee14" transform="rotate(10 84 27)"/>
+  <rect x="18" y="40" width="104" height="22" rx="8" fill="#0c1230"/>
+  <rect x="26" y="34" width="88" height="10" rx="5" fill="#2a3150"/>
+  <!-- badan -->
+  <path d="M22 62h96l-10 206a14 14 0 0 1-14 13H46a14 14 0 0 1-14-13z" fill="#1fbf93"/>
+  <path d="M22 62h30l-6 219H46a14 14 0 0 1-14-13z" fill="#3de0b5" opacity=".55"/>
+  <rect x="24" y="96" width="92" height="6" fill="#0a8f6c" opacity=".35"/>
+  <!-- logo PrintIn -->
+  <circle cx="70" cy="160" r="26" fill="#f6ee14"/>
+  <path d="M49 170l21-21 21 21z" fill="#ff8a3d"/>
+  <text x="70" y="208" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="15" fill="#fff">PrintIn</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300">
+  <!-- tali -->
+  <path d="M74 110V36a20 20 0 0 1 40 0v74" fill="none" stroke="#d9c9a3" stroke-width="12" stroke-linecap="round"/>
+  <path d="M126 110V36a20 20 0 0 1 40 0v74" fill="none" stroke="#d9c9a3" stroke-width="12" stroke-linecap="round"/>
+  <!-- badan tas -->
+  <path d="M24 96h192l8 196H16z" fill="#f2e6c9"/>
+  <rect x="24" y="96" width="192" height="8" fill="#e3d4ae"/>
+  <path d="M24 110v176" stroke="#d9c9a3" stroke-width="2" stroke-dasharray="4 6"/>
+  <!-- sablon -->
+  <rect x="58" y="132" width="124" height="124" rx="14" fill="#0c1230"/>
+  <circle cx="120" cy="178" r="26" fill="#f6ee14"/>
+  <path d="M99 188l21-21 21 21z" fill="#ff8a3d"/>
+  <text x="120" y="228" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="18" fill="#fff">Print<tspan fill="#f6ee14">In</tspan></text>
+  <text x="120" y="243" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#c7cfe0">Your Design, Your Style.</text>
+</svg>

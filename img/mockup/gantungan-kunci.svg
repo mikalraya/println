@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 220">
+  <!-- ring & rantai -->
+  <circle cx="70" cy="28" r="20" fill="none" stroke="#c7cfe0" stroke-width="6"/>
+  <rect x="64" y="46" width="12" height="18" rx="6" fill="none" stroke="#c7cfe0" stroke-width="4"/>
+  <!-- akrilik -->
+  <rect x="14" y="62" width="112" height="140" rx="26" fill="#ff6fa8"/>
+  <rect x="24" y="72" width="92" height="120" rx="20" fill="#fff" opacity=".18"/>
+  <circle cx="70" cy="78" r="6" fill="#fff" stroke="#c7cfe0" stroke-width="2"/>
+  <circle cx="70" cy="128" r="30" fill="#f6ee14"/>
+  <path d="M46 140l24-24 24 24z" fill="#ff8a3d"/>
+  <text x="70" y="182" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="15" fill="#fff">PrintIn</text>
+</svg>

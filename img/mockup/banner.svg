@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250">
+  <!-- tiang -->
+  <rect x="18" y="8" width="9" height="226" rx="4.5" fill="#3a4366"/>
+  <rect x="373" y="8" width="9" height="226" rx="4.5" fill="#3a4366"/>
+  <ellipse cx="22.5" cy="236" rx="22" ry="6" fill="#3a4366"/>
+  <ellipse cx="377.5" cy="236" rx="22" ry="6" fill="#3a4366"/>
+  <!-- kain banner -->
+  <rect x="27" y="22" width="346" height="150" fill="#ff8a3d"/>
+  <path d="M250 22h123v150H198z" fill="#ff7a2a"/>
+  <circle cx="38" cy="33" r="4" fill="#fff" stroke="#c9d0e0"/>
+  <circle cx="362" cy="33" r="4" fill="#fff" stroke="#c9d0e0"/>
+  <circle cx="38" cy="161" r="4" fill="#fff" stroke="#c9d0e0"/>
+  <circle cx="362" cy="161" r="4" fill="#fff" stroke="#c9d0e0"/>
+  <text x="56" y="80" font-family="Arial, sans-serif" font-weight="800" font-size="38" fill="#fff">GRAND</text>
+  <text x="56" y="122" font-family="Arial, sans-serif" font-weight="800" font-size="38" fill="#070a1f">OPENING</text>
+  <rect x="56" y="134" width="170" height="22" rx="11" fill="#fff"/>
+  <text x="141" y="149.5" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="11" fill="#ff7a2a">Kedai Kopi Contoh</text>
+  <g fill="#f6ee14">
+    <circle cx="318" cy="48" r="4"/><circle cx="334" cy="48" r="4"/><circle cx="350" cy="48" r="4"/>
+    <circle cx="318" cy="64" r="4"/><circle cx="334" cy="64" r="4"/><circle cx="350" cy="64" r="4"/>
+  </g>
+  <!-- logo PrintIn -->
+  <circle cx="320" cy="128" r="22" fill="#f6ee14"/>
+  <path d="M302 136l18-17 18 17z" fill="#ff8a3d"/>
+</svg>
