@@ -111,7 +111,7 @@ function tanggalJam(teks) {
   return `${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}, ${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
 }
 
-// Notifikasi kecil (toast) di bawah layar. jenis: 'sukses' | 'galat'. tautan: { teks, href } (opsional).
+// Notifikasi kecil (toast) di bawah layar. jenis: 'sukses' | 'galat'. tautan: { teks, href, tabBaru } (opsional).
 // Memakai textContent, jadi aman untuk nama produk dari database.
 let waktuToast;
 function tampilToast({ pesan, jenis = 'sukses', tautan }) {
@@ -137,6 +137,7 @@ function tampilToast({ pesan, jenis = 'sukses', tautan }) {
     a.className = 'toast-tautan';
     a.href = tautan.href;
     a.textContent = tautan.teks;
+    if (tautan.tabBaru) Object.assign(a, { target: '_blank', rel: 'noopener' });
     kotak.append(a);
   }
   const tutup = document.createElement('button');
@@ -258,6 +259,18 @@ function isiTautanKontak() {
   });
 }
 
+// ----- Tombol admin di navbar -----
+// PIN admin disimpan admin.js di browser admin setelah masuk; dihapus saat Keluar.
+const KUNCI_PIN = 'printin_pin_admin';
+
+// Sudah masuk (PIN tersimpan): "Login Admin" diganti "Dashboard Admin". Isi PIN tidak dibaca.
+function aturTombolAdmin() {
+  let sudahMasuk = false;
+  try { sudahMasuk = Boolean(localStorage.getItem(KUNCI_PIN)); } catch (err) { /* penyimpanan diblokir: anggap belum masuk */ }
+  if (!sudahMasuk) return;
+  document.querySelectorAll('.header-situs a[href="admin.html"]').forEach((a) => { a.textContent = 'Dashboard Admin'; });
+}
+
 // ----- Persetujuan cookie (F-15) dan statistik kunjungan GoatCounter (F-14) -----
 // Skrip statistik hanya dimuat setelah pengunjung menekan "Setuju". Aktif bila CONFIG.goatCounter terisi.
 const KUNCI_COOKIE = 'printin_cookie';
@@ -328,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
   isiTautanKontak();
   aturMenuHp();
   tandaiMenuAktif();
+  aturTombolAdmin();
   aturBayanganNavbar();
   buatTombolMelayang();
   aturCookie();

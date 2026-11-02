@@ -7,7 +7,6 @@ const LINI = ['Printing Reguler', 'Custom Merchandise'];
 const WARNA = { biru: '#1f6fe8', oranye: '#ff8a3d', tosca: '#3de0b5' };
 const KELAS_STATUS_PRODUK = { Tersedia: 'status-tersedia', Terbatas: 'status-terbatas', Habis: 'status-habis' };
 const KUNCI_MENU_KECIL = 'printin_menu_kecil';
-const KUNCI_PIN = 'printin_pin_admin';
 // Foto produk yang sudah ada di repo (img/produk/), untuk saran isian kolom foto
 const FOTO_TERSEDIA = ['banner', 'brosur', 'fotokopi-bw', 'gantungan-kunci', 'kartu-nama', 'mug', 'poster-a3', 'print-bw', 'print-warna', 'scan', 'tote-bag', 'tumbler', 'undangan']
   .map((n) => `img/produk/${n}.webp`);
@@ -22,6 +21,8 @@ const IKON = {
   rata: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/>',
   ubah: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
   hapus: '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  cetak: '<path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11.5h.01"/>',
+  ceklis: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
 };
 
 const ambilEl = (id) => document.getElementById(id);
@@ -45,6 +46,105 @@ function buatIkon(nama) {
   svg.setAttribute('aria-hidden', 'true');
   svg.innerHTML = IKON[nama]; // isi tetap dari konstanta di atas, bukan dari data pengguna
   return svg;
+}
+
+// ----- Paginasi tabel (Produk, Pesanan, Keuangan) -----
+
+const PER_HALAMAN = 10;
+// Per tabel: halaman aktif, tanda filter terakhir, daftar hasil filter, dan fungsi render ulang
+const paginasi = {};
+
+// Ambil potongan data untuk halaman aktif. Filter berubah = kembali ke halaman 1.
+function potongHalaman(kunci, daftar, tandaFilter, render) {
+  const p = paginasi[kunci] || (paginasi[kunci] = { halaman: 1, tanda: tandaFilter });
+  if (p.tanda !== tandaFilter) Object.assign(p, { halaman: 1, tanda: tandaFilter });
+  const jumlahHalaman = Math.max(1, Math.ceil(daftar.length / PER_HALAMAN));
+  p.halaman = Math.min(p.halaman, jumlahHalaman);
+  Object.assign(p, { daftar, render, jumlahHalaman });
+  const awal = (p.halaman - 1) * PER_HALAMAN;
+  return { potongan: daftar.slice(awal, awal + PER_HALAMAN), awal };
+}
+
+// Teks info, mis. "Menampilkan 11–13 dari 13 produk (total 20)."
+function teksInfoHalaman(kunci, satuan, total) {
+  const { daftar, halaman } = paginasi[kunci];
+  if (!daftar.length) return `Menampilkan 0 dari ${total} ${satuan}.`;
+  const awal = (halaman - 1) * PER_HALAMAN + 1;
+  const akhir = Math.min(halaman * PER_HALAMAN, daftar.length);
+  return `Menampilkan ${awal}–${akhir} dari ${daftar.length} ${satuan}${daftar.length < total ? ` (total ${total})` : ''}.`;
+}
+
+// Nomor halaman yang tampil: 1, terakhir, dan sekitar halaman aktif; sisanya "…"
+// Di HP hanya halaman aktif (tanpa tetangga) agar semua tombol muat satu baris
+const layarHp = matchMedia('(max-width: 39.99rem)');
+
+function nomorHalaman(aktif, jumlah, jarak = layarHp.matches ? 0 : 1) {
+  const tampil = [];
+  for (let i = 1; i <= jumlah; i += 1) {
+    if (i === 1 || i === jumlah || Math.abs(i - aktif) <= jarak) tampil.push(i);
+  }
+  // Celah satu nomor ditampilkan saja; celah lebih dari satu diganti "…"
+  const nomor = [];
+  tampil.forEach((n, i) => {
+    const lalu = tampil[i - 1];
+    if (lalu && n - lalu === 2) nomor.push(lalu + 1);
+    else if (lalu && n - lalu > 2) nomor.push('…');
+    nomor.push(n);
+  });
+  return nomor;
+}
+
+function keHalaman(kunci, halaman) {
+  const p = paginasi[kunci];
+  p.halaman = halaman;
+  p.render();
+  // Gulir ke atas tabel supaya baris pertama halaman baru langsung terlihat
+  ambilEl(`paginasi-${kunci}`).closest('section').querySelector('.adm-tabel-bungkus')
+    .scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function tampilkanPaginasi(kunci) {
+  const nav = ambilEl(`paginasi-${kunci}`);
+  const { halaman, jumlahHalaman } = paginasi[kunci];
+  nav.hidden = jumlahHalaman <= 1;
+  if (nav.hidden) return nav.replaceChildren();
+
+  const tombol = (teks, tujuan, label, kelas = '') => {
+    const t = buatEl('button', `adm-hal ${kelas}`, teks);
+    t.type = 'button';
+    t.setAttribute('aria-label', label);
+    t.disabled = tujuan < 1 || tujuan > jumlahHalaman;
+    t.addEventListener('click', () => keHalaman(kunci, tujuan));
+    return t;
+  };
+  const nomor = nomorHalaman(halaman, jumlahHalaman).map((n) => {
+    if (n === '…') {
+      const titik = buatEl('span', 'adm-hal-titik', '…');
+      titik.setAttribute('aria-hidden', 'true');
+      return titik;
+    }
+    const t = tombol(String(n), n, `Halaman ${n}`, n === halaman ? 'adm-hal-aktif' : '');
+    if (n === halaman) t.setAttribute('aria-current', 'page');
+    return t;
+  });
+  // Tombol arah: teks disembunyikan di HP, panah tetap tampil
+  const sebelum = tombol('‹', halaman - 1, 'Halaman sebelumnya', 'adm-hal-arah');
+  sebelum.append(buatEl('span', 'adm-hal-teks', ' Sebelumnya'));
+  const berikut = tombol('', halaman + 1, 'Halaman berikutnya', 'adm-hal-arah');
+  berikut.append(buatEl('span', 'adm-hal-teks', 'Berikutnya '), '›');
+  nav.replaceChildren(sebelum, ...nomor, berikut);
+}
+
+// Pindah ke halaman yang memuat baris tertentu (dipakai setelah simpan, agar baris bisa disorot)
+function keHalamanBaris(kunci, cocok) {
+  const p = paginasi[kunci];
+  const i = p ? p.daftar.findIndex(cocok) : -1;
+  if (i < 0) return;
+  const tujuan = Math.floor(i / PER_HALAMAN) + 1;
+  if (tujuan !== p.halaman) {
+    p.halaman = tujuan;
+    p.render();
+  }
 }
 
 function setGalatPin(teks) {
@@ -265,13 +365,15 @@ function tampilkanTabelKeuangan() {
   const tampil = semuaPesanan.filter((p) => {
     const t = keTanggal(p.tanggal);
     const cocokPeriode = periode === 'semua' || (t && sama(t, kini) && (periode === '1' || t.getDate() === kini.getDate()));
-    return cocokPeriode && (!lini || p.lini === lini) && (!cari || `${p.kode} ${p.nama}`.toLowerCase().includes(cari));
+    return cocokPeriode && (!lini || p.lini === lini) && (!cari || `${p.kode} ${p.nama} ${p.produk}`.toLowerCase().includes(cari));
   }).sort((a, b) => (keTanggal(b.tanggal) || 0) - (keTanggal(a.tanggal) || 0));
 
-  ambilEl('info-keuangan').textContent = `Menampilkan ${tampil.length} dari ${semuaPesanan.length} pesanan.`;
+  const { potongan } = potongHalaman('keuangan', tampil, `${cari}|${periode}|${lini}`, tampilkanTabelKeuangan);
+  ambilEl('info-keuangan').textContent = teksInfoHalaman('keuangan', 'pesanan', semuaPesanan.length);
+  // Total tetap dihitung dari semua hasil filter, bukan hanya halaman ini
   ambilEl('total-keuangan').textContent = rupiah.format(tampil.reduce((s, p) => s + p.total, 0));
 
-  const isi = tampil.map((p) => {
+  const isi = potongan.map((p) => {
     const tr = document.createElement('tr');
     const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
     const pelanggan = buatEl('div');
@@ -289,6 +391,7 @@ function tampilkanTabelKeuangan() {
     isi.push(tr);
   }
   ambilEl('isi-tabel-keuangan').replaceChildren(...isi);
+  tampilkanPaginasi('keuangan');
 }
 
 // Perbarui data diam-diam tiap 30 detik selama menu Keuangan terbuka
@@ -310,20 +413,102 @@ function buatPilihanStatus(pesanan) {
   });
   pilih.value = pesanan.status;
   pilih.addEventListener('change', async () => {
-    const lama = pesanan.status;
     pilih.disabled = true;
-    const hasil = await panggilApi({ body: { action: 'ubah_status', pin: pinAdmin, kode: pesanan.kode, status: pilih.value } });
+    const ok = await ubahStatusPesanan(pesanan, pilih.value);
     pilih.disabled = false;
-    if (hasil.ok) {
-      pesanan.status = pilih.value;
-      tampilToast({ pesan: `Status ${pesanan.kode} diubah ke "${pesanan.status}".` });
-      tampilkanRingkasan();
-    } else {
-      pilih.value = lama;
-      tampilToast({ jenis: 'galat', pesan: hasil.pesan || 'Status belum bisa diubah. Coba lagi.' });
-    }
+    if (!ok) pilih.value = pesanan.status;
   });
   return pilih;
+}
+
+// Judul, gambar (img/status/, beranimasi), dan keterangan pop-up untuk tiap status
+const INFO_STATUS = {
+  Diterima: { judul: 'Pesanan Diterima', gambar: 'img/status/diterima.svg', pesan: 'Pesanan kembali ke tahap awal dan menunggu dicek admin.' },
+  'Cek desain': { judul: 'Desain Sedang Dicek', gambar: 'img/status/cek-desain.svg', pesan: 'File desain sedang diperiksa. Hubungi pelanggan lewat WhatsApp bila desain perlu diperbaiki.' },
+  Diproses: { judul: 'Pesanan Sedang Diproses', gambar: 'img/status/diproses.svg', pesan: 'Pesanan mulai dicetak dan dikerjakan.' },
+  'Siap diambil': { judul: 'Pesanan Siap Diambil', gambar: 'img/status/siap-diambil.svg', pesan: 'Pesanan siap diambil pelanggan di toko atau dikirim.' },
+  Selesai: { judul: 'Pesanan Selesai', gambar: 'img/status/selesai.svg', pesan: 'Pesanan sudah beres. Terima kasih sudah menyelesaikannya!' },
+};
+
+// Simpan status baru ke Sheets lalu tampilkan pop-up. Mengembalikan true bila berhasil.
+// lanjutan (opsional): { teks, aksi } -> tombol pop-up berganti teks dan menjalankan aksi saat diklik
+async function ubahStatusPesanan(p, statusBaru, catatan = '', lanjutan = null) {
+  if (p.status === statusBaru) return true;
+  const hasil = await panggilApi({ body: { action: 'ubah_status', pin: pinAdmin, kode: p.kode, status: statusBaru } });
+  if (!hasil.ok) {
+    tampilToast({ jenis: 'galat', pesan: hasil.pesan || 'Status belum bisa diubah. Coba lagi.' });
+    return false;
+  }
+  p.status = statusBaru;
+  tampilkanTabelPesanan();
+  tampilkanRingkasan();
+  tampilkanPopupStatus(p, catatan, lanjutan);
+  return true;
+}
+
+// Aksi yang dijalankan saat tombol pop-up status diklik (mis. membuka file desain)
+let aksiSetelahStatus = null;
+
+function tampilkanPopupStatus(p, catatan, lanjutan = null) {
+  const info = INFO_STATUS[p.status] || INFO_STATUS.Diterima;
+  // Gambar diganti elemen baru agar animasi SVG mulai dari awal
+  const gambar = ambilEl('status-gambar');
+  const baru = Object.assign(gambar.cloneNode(), { src: info.gambar, alt: `Ilustrasi status ${p.status}` });
+  gambar.replaceWith(baru);
+  ambilEl('status-kode').textContent = `${p.kode} · ${p.produk}`;
+  ambilEl('status-judul').textContent = info.judul;
+  ambilEl('status-pesan').textContent = `${info.pesan} Pelanggan langsung melihatnya di halaman Cek Status.`;
+  const alasan = ambilEl('status-catatan');
+  alasan.textContent = catatan;
+  alasan.hidden = !catatan;
+  aksiSetelahStatus = lanjutan ? lanjutan.aksi : null;
+  ambilEl('tutup-status').textContent = lanjutan ? lanjutan.teks : 'Oke, mengerti';
+  ambilEl('dialog-status').showModal();
+}
+
+// Tombol pop-up: tutup lalu jalankan aksi lanjutan. Ditutup lewat Esc/latar: aksi dibatalkan.
+function tutupPopupStatus() {
+  const aksi = aksiSetelahStatus;
+  aksiSetelahStatus = null;
+  ambilEl('dialog-status').close();
+  if (aksi) aksi();
+}
+
+// Batas waktu pengerjaan = tanggal pesan + estimasi produk ("Hari ini" = sampai akhir hari pesan).
+// Tidak bisa dihitung (produk/tanggal tidak dikenal) -> null.
+function batasEstimasi(p) {
+  const produk = semuaProduk.find((x) => x.nama === p.produk);
+  const mulai = keTanggal(p.tanggal);
+  if (!produk || !mulai) return null;
+  const teks = String(produk.estimasi).toLowerCase();
+  const batas = new Date(mulai);
+  if (teks.includes('hari ini')) {
+    batas.setHours(23, 59, 59, 999);
+    return { batas, estimasi: produk.estimasi };
+  }
+  const angka = Number((teks.match(/\d+/) || [])[0]);
+  if (!angka) return null;
+  if (teks.includes('jam')) batas.setHours(batas.getHours() + angka);
+  else if (teks.includes('minggu')) batas.setDate(batas.getDate() + angka * 7);
+  else batas.setDate(batas.getDate() + angka);
+  return { batas, estimasi: produk.estimasi };
+}
+
+// Tombol cetak: status selalu jadi Diproses. Estimasi hanya ditampilkan sebagai catatan di pop-up.
+function cetakPesanan(p) {
+  const est = batasEstimasi(p);
+  const teksBatas = est ? tanggalJam(est.batas.toISOString()) : '';
+  let catatan = '';
+  if (est) {
+    catatan = new Date() >= est.batas
+      ? `Estimasi "${est.estimasi}" sudah terlewati (batas ${teksBatas}). Klik tombol ceklis setelah pesanan beres.`
+      : `Estimasi "${est.estimasi}": target selesai ${teksBatas}.`;
+  }
+  if (p.status === 'Diproses') {
+    tampilToast({ pesan: `${p.kode} sudah berstatus Diproses.` });
+    return true;
+  }
+  return ubahStatusPesanan(p, 'Diproses', catatan);
 }
 
 function tampilkanTabelPesanan() {
@@ -331,9 +516,10 @@ function tampilkanTabelPesanan() {
   const saring = ambilEl('saring-status').value;
   const tampil = semuaPesanan.filter((p) => (!saring || p.status === saring)
     && (!cari || `${p.kode} ${p.nama}`.toLowerCase().includes(cari)));
-  ambilEl('info-tabel').textContent = `Menampilkan ${tampil.length} dari ${semuaPesanan.length} pesanan.`;
+  const { potongan } = potongHalaman('pesanan', tampil, `${cari}|${saring}`, tampilkanTabelPesanan);
+  ambilEl('info-tabel').textContent = teksInfoHalaman('pesanan', 'pesanan', semuaPesanan.length);
 
-  const isi = tampil.map((p) => {
+  const isi = potongan.map((p) => {
     const tr = document.createElement('tr');
     // data-label menyimpan judul kolom tiap sel
     const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
@@ -351,10 +537,36 @@ function tampilkanTabelPesanan() {
       desain.href = p.link_file;
       desain.target = '_blank';
       desain.rel = 'noopener';
+      // Pesanan baru masuk: ubah jadi "Cek desain", tampilkan pop-up, desain dibuka setelah tombol pop-up diklik
+      desain.addEventListener('click', async (e) => {
+        if (p.status !== 'Diterima') return; // status lain: link langsung terbuka seperti biasa
+        e.preventDefault();
+        const buka = () => window.open(p.link_file, '_blank', 'noopener');
+        const ok = await ubahStatusPesanan(p, 'Cek desain', '', { teks: 'Oke, lihat desain', aksi: buka });
+        // Status gagal disimpan: desain tetap bisa dilihat lewat link di notifikasi
+        if (!ok) tampilToast({ jenis: 'galat', pesan: 'Status belum bisa diubah, tapi desain tetap bisa dilihat.', tautan: { teks: 'Buka desain', href: p.link_file, tabBaru: true } });
+      });
     }
+
+    const selesai = p.status === 'Selesai';
+    const cetak = tombolIkon('cetak', `Cetak pesanan ${p.kode}`, 'ikon-cetak', async (t) => {
+      t.disabled = true;
+      await cetakPesanan(p);
+      t.disabled = false;
+    });
+    const ceklis = tombolIkon('ceklis', `Tandai pesanan ${p.kode} selesai`, 'ikon-selesai', async (t) => {
+      t.disabled = true;
+      await ubahStatusPesanan(p, 'Selesai');
+      t.disabled = false;
+    });
+    // Cetak tidak boleh memundurkan pesanan yang sudah siap diambil/selesai
+    cetak.disabled = selesai || p.status === 'Siap diambil';
+    ceklis.disabled = selesai;
 
     const aksi = buatEl('div', 'adm-aksi');
     aksi.append(
+      cetak,
+      ceklis,
       tombolIkon('ubah', `Ubah pesanan ${p.kode}`, '', () => bukaFormPesanan(p)),
       tombolIkon('hapus', `Hapus pesanan ${p.kode}`, 'ikon-hapus', () => hapusPesanan(p)),
     );
@@ -371,6 +583,7 @@ function tampilkanTabelPesanan() {
     isi.push(tr);
   }
   ambilEl('isi-tabel').replaceChildren(...isi);
+  tampilkanPaginasi('pesanan');
 }
 
 function isiSaringStatus() {
@@ -701,6 +914,7 @@ function perbaruiPesanan(daftar) {
 }
 
 function sorotBarisPesanan(kode) {
+  keHalamanBaris('pesanan', (p) => p.kode === kode);
   const tr = ambilEl('isi-tabel').querySelector(`tr[data-kode="${CSS.escape(kode)}"]`);
   if (!tr) return;
   tr.classList.add('adm-sorot');
@@ -775,9 +989,10 @@ function tampilkanTabelProduk() {
   const status = ambilEl('saring-status-produk').value;
   const tampil = semuaProduk.filter((p) => (!lini || p.lini === lini) && (!status || p.status === status)
     && (!cari || `${p.nama} ${p.id} ${p.kategori}`.toLowerCase().includes(cari)));
-  ambilEl('info-produk').textContent = `Menampilkan ${tampil.length} dari ${semuaProduk.length} produk.`;
+  const { potongan } = potongHalaman('produk', tampil, `${cari}|${lini}|${status}`, tampilkanTabelProduk);
+  ambilEl('info-produk').textContent = teksInfoHalaman('produk', 'produk', semuaProduk.length);
 
-  const isi = tampil.map((p) => {
+  const isi = potongan.map((p) => {
     const tr = document.createElement('tr');
     // data-label menyimpan judul kolom tiap sel
     const sel = (label, ...konten) => { const td = document.createElement('td'); td.dataset.label = label; td.append(...konten); return td; };
@@ -807,6 +1022,7 @@ function tampilkanTabelProduk() {
     isi.push(tr);
   }
   ambilEl('isi-tabel-produk').replaceChildren(...isi);
+  tampilkanPaginasi('produk');
 }
 
 function isiSaranForm() {
@@ -1013,6 +1229,7 @@ function tampilkanHasil({ judul, pesan, rincian = [] }) {
 }
 
 function sorotBaris(id) {
+  keHalamanBaris('produk', (p) => p.id === id);
   const tr = ambilEl('isi-tabel-produk').querySelector(`tr[data-id="${CSS.escape(id)}"]`);
   if (!tr) return;
   tr.classList.add('adm-sorot');
@@ -1176,6 +1393,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ambilEl('ya-keluar').addEventListener('click', () => { ambilEl('dialog-keluar').close(); keluar(); });
   ambilEl('adm-toggle').addEventListener('click', () => aturMenuKecil(!document.body.classList.contains('adm-menu-kecil')));
   window.addEventListener('hashchange', tampilkanBagian);
+  // Ganti ukuran layar HP <-> laptop: susun ulang nomor halaman
+  layarHp.addEventListener('change', () => Object.keys(paginasi).forEach(tampilkanPaginasi));
 
   // Ringkasan
   ambilEl('muat-ulang').addEventListener('click', muatUlang);
@@ -1210,8 +1429,14 @@ document.addEventListener('DOMContentLoaded', () => {
   ambilEl('batal-hapus').addEventListener('click', () => { produkDihapus = null; ambilEl('dialog-hapus').close(); });
   ambilEl('ya-hapus').addEventListener('click', konfirmasiHapus);
   ambilEl('tutup-hasil').addEventListener('click', () => ambilEl('dialog-hasil').close());
-  // Klik di luar kotak dialog (latar gelap) menutup dialog konfirmasi/hasil
-  ['dialog-hapus', 'dialog-hasil'].forEach((id) => ambilEl(id).addEventListener('click', (e) => {
+  ambilEl('tutup-status').addEventListener('click', tutupPopupStatus);
+  ambilEl('dialog-status').addEventListener('close', () => { aksiSetelahStatus = null; });
+  // Panduan cara kerja tiap menu: tombol ? (data-bantuan = id dialog) dan tombol tutup (data-tutup)
+  document.querySelectorAll('[data-bantuan]').forEach((b) => b.addEventListener('click', () => ambilEl(b.dataset.bantuan).showModal()));
+  document.querySelectorAll('.dialog-bantuan [data-tutup]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
+  // Klik di luar kotak dialog (latar gelap) menutup dialog konfirmasi/hasil/panduan
+  const dialogTutupLuar = ['dialog-hapus', 'dialog-hasil', 'dialog-status', ...[...document.querySelectorAll('.dialog-bantuan')].map((d) => d.id)];
+  dialogTutupLuar.forEach((id) => ambilEl(id).addEventListener('click', (e) => {
     const r = e.currentTarget.getBoundingClientRect();
     const diLuar = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
     if (e.target === e.currentTarget && diLuar && !ambilEl('ya-hapus').disabled) e.currentTarget.close();

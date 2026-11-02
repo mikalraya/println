@@ -7,7 +7,7 @@
   <title>Dashboard Admin — PrintIn</title>
   <script>document.documentElement.classList.add('js')</script>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/admin.css?v=9">
+  <link rel="stylesheet" href="css/admin.css?v=23">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body data-halaman="admin" class="adm">
@@ -120,7 +120,12 @@
       <section id="bagian-produk" data-bagian hidden aria-labelledby="judul-produk">
         <div class="adm-kepala">
           <div>
-            <h1 id="judul-produk">Kelola produk</h1>
+            <div class="adm-judul-bantuan">
+              <h1 id="judul-produk">Kelola produk</h1>
+              <button class="tombol-bantuan" type="button" data-bantuan="dialog-bantuan-produk" aria-haspopup="dialog" aria-controls="dialog-bantuan-produk" title="Cara kerja Kelola produk">
+                <span aria-hidden="true">?</span><span class="sr-saja">Cara kerja Kelola produk</span>
+              </button>
+            </div>
             <p class="adm-sub">Perubahan langsung tersimpan di tab "produk" Google Sheets dan tampil di halaman Produk. Semua harga adalah harga simulasi.</p>
           </div>
           <button class="btn btn-utama" type="button" id="tambah-produk">+ Tambah produk</button>
@@ -156,13 +161,19 @@
           <thead><tr><th scope="col">Produk</th><th scope="col">Lini</th><th scope="col">Harga</th><th scope="col">Estimasi</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead>
           <tbody id="isi-tabel-produk"></tbody>
         </table></div>
+        <nav class="adm-paginasi" id="paginasi-produk" aria-label="Halaman tabel produk" hidden></nav>
       </section>
 
       <!-- Pesanan -->
       <section id="bagian-pesanan" data-bagian hidden aria-labelledby="judul-pesanan">
         <div class="adm-kepala">
           <div>
-            <h1 id="judul-pesanan">Kelola pesanan</h1>
+            <div class="adm-judul-bantuan">
+              <h1 id="judul-pesanan">Kelola pesanan</h1>
+              <button class="tombol-bantuan" type="button" data-bantuan="dialog-bantuan-pesanan" aria-haspopup="dialog" aria-controls="dialog-bantuan-pesanan" title="Cara kerja Kelola pesanan">
+                <span aria-hidden="true">?</span><span class="sr-saja">Cara kerja Kelola pesanan</span>
+              </button>
+            </div>
             <p class="adm-sub">Ubah tahap pengerjaan di kolom Status. Pelanggan langsung melihatnya di halaman Cek Status. Nomor WhatsApp tampil lengkap.</p>
           </div>
           <button class="btn btn-utama" type="button" id="tambah-pesanan">+ Tambah pesanan</button>
@@ -185,13 +196,19 @@
           <thead><tr><th scope="col">Kode</th><th scope="col">Tanggal</th><th scope="col">Pelanggan</th><th scope="col">Produk</th><th scope="col">Total</th><th scope="col">Desain</th><th scope="col">Status</th><th scope="col">Aksi</th></tr></thead>
           <tbody id="isi-tabel"></tbody>
         </table></div>
+        <nav class="adm-paginasi" id="paginasi-pesanan" aria-label="Halaman tabel pesanan" hidden></nav>
       </section>
 
       <!-- Keuangan -->
       <section id="bagian-keuangan" data-bagian hidden aria-labelledby="judul-keuangan">
         <div class="adm-kepala">
           <div>
-            <h1 id="judul-keuangan">Keuangan</h1>
+            <div class="adm-judul-bantuan">
+              <h1 id="judul-keuangan">Keuangan</h1>
+              <button class="tombol-bantuan" type="button" data-bantuan="dialog-bantuan-keuangan" aria-haspopup="dialog" aria-controls="dialog-bantuan-keuangan" title="Cara kerja Keuangan">
+                <span aria-hidden="true">?</span><span class="sr-saja">Cara kerja Keuangan</span>
+              </button>
+            </div>
             <p class="adm-sub">Uang masuk dihitung dari total semua pesanan yang sudah masuk (harga simulasi). Data diperbarui otomatis tiap 30 detik.</p>
             <p class="adm-sub" id="keuangan-terakhir" role="status"></p>
           </div>
@@ -201,7 +218,7 @@
         <div class="adm-saring">
           <div class="field">
             <label for="cari-keuangan">Cari pemasukan</label>
-            <input id="cari-keuangan" type="search" placeholder="Kode atau nama pelanggan" autocomplete="off">
+            <input id="cari-keuangan" type="search" placeholder="Kode, pelanggan, produk" autocomplete="off">
           </div>
           <div class="field">
             <label for="saring-periode-keuangan">Periode</label>
@@ -229,6 +246,7 @@
           <tbody id="isi-tabel-keuangan"></tbody>
           <tfoot><tr><th scope="row" colspan="5">Total pemasukan (sesuai filter)</th><td id="total-keuangan"></td></tr></tfoot>
         </table></div>
+        <nav class="adm-paginasi" id="paginasi-keuangan" aria-label="Halaman tabel keuangan" hidden></nav>
       </section>
     </main>
   </div>
@@ -525,9 +543,244 @@
     </div>
   </dialog>
 
+  <!-- Panduan cara kerja Kelola pesanan (dibuka dari tombol ? di judul) -->
+  <dialog class="dialog-form dialog-bantuan" id="dialog-bantuan-pesanan" aria-labelledby="bantuan-judul">
+    <div class="bantuan-kepala">
+      <div>
+        <p class="bantuan-label">Panduan</p>
+        <h2 id="bantuan-judul">Cara kerja Kelola pesanan</h2>
+      </div>
+      <button class="tombol-ikon" type="button" data-tutup aria-label="Tutup panduan">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="bantuan-isi">
+      <section aria-labelledby="bantuan-alur">
+        <h3 id="bantuan-alur">1. Alur status pesanan</h3>
+        <p class="adm-sub">Setiap pesanan berjalan lewat 5 tahap. Status yang kamu ubah langsung tersimpan di Google Sheets dan terlihat pelanggan di halaman Cek Status.</p>
+        <ol class="bantuan-alur daftar-bersih">
+          <li>
+            <img src="img/status/diterima.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Diterima</strong><span>Pesanan baru masuk dari form pemesanan.</span></div>
+          </li>
+          <li>
+            <img src="img/status/cek-desain.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Cek desain</strong><span>Otomatis saat kamu klik <b>Buka desain</b> pada pesanan berstatus Diterima.</span></div>
+          </li>
+          <li>
+            <img src="img/status/diproses.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Diproses</strong><span>Klik tombol <b>cetak</b> saat pesanan mulai dikerjakan.</span></div>
+          </li>
+          <li>
+            <img src="img/status/siap-diambil.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Siap diambil</strong><span>Pilih lewat <b>dropdown Status</b> saat pesanan siap diambil atau dikirim.</span></div>
+          </li>
+          <li>
+            <img src="img/status/selesai.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Selesai</strong><span>Klik tombol <b>ceklis</b> setelah pesanan diterima pelanggan.</span></div>
+          </li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="bantuan-tombol">
+        <h3 id="bantuan-tombol">2. Arti tombol di tabel</h3>
+        <ul class="bantuan-tombol daftar-bersih">
+          <li>
+            <span class="bantuan-link" aria-hidden="true">Buka desain</span>
+            <span>Membuka file desain pelanggan. Pesanan berstatus Diterima diubah jadi <b>Cek desain</b> dulu, lalu desain terbuka setelah kamu klik <b>Oke, lihat desain</b>.</span>
+          </li>
+          <li>
+            <span class="tombol-ikon ikon-cetak" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11.5h.01"/></svg></span>
+            <span><b>Cetak</b>: status jadi <b>Diproses</b>. Pop-up menampilkan target selesai sesuai estimasi produk. Tidak aktif bila pesanan sudah Siap diambil atau Selesai.</span>
+          </li>
+          <li>
+            <span class="tombol-ikon ikon-selesai" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+            <span><b>Ceklis</b>: status jadi <b>Selesai</b>. Tidak aktif bila pesanan sudah selesai.</span>
+          </li>
+          <li>
+            <span class="tombol-ikon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></span>
+            <span><b>Ubah</b>: memperbaiki data pesanan (nama, produk, jumlah, catatan, dan lainnya).</span>
+          </li>
+          <li>
+            <span class="tombol-ikon ikon-hapus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></span>
+            <span><b>Hapus</b>: menghapus pesanan dari Google Sheets setelah dikonfirmasi. Tidak bisa dibatalkan.</span>
+          </li>
+          <li>
+            <span class="bantuan-pilih" aria-hidden="true">Diterima</span>
+            <span><b>Dropdown Status</b>: memilih tahap mana pun secara manual, termasuk memundurkan status bila salah klik.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-tips">
+        <h3 id="bantuan-tips">3. Tips</h3>
+        <ul class="bantuan-tips">
+          <li>Setiap perubahan status memunculkan pop-up bergambar sebagai tanda status sudah tersimpan.</li>
+          <li>Cari pesanan lewat kode atau nama pelanggan, atau saring berdasarkan status.</li>
+          <li>Tabel menampilkan 10 pesanan per halaman. Pakai nomor halaman di bawah tabel untuk melihat sisanya.</li>
+          <li>Pesanan baru dari website masuk otomatis. Pesanan lewat WhatsApp bisa dicatat lewat <b>+ Tambah pesanan</b>.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="aksi-dialog">
+      <button class="btn btn-utama" type="button" data-tutup autofocus>Oke, mengerti</button>
+    </div>
+  </dialog>
+
+  <!-- Panduan cara kerja Kelola produk -->
+  <dialog class="dialog-form dialog-bantuan" id="dialog-bantuan-produk" aria-labelledby="bantuan-judul-produk">
+    <div class="bantuan-kepala">
+      <div>
+        <p class="bantuan-label">Panduan</p>
+        <h2 id="bantuan-judul-produk">Cara kerja Kelola produk</h2>
+      </div>
+      <button class="tombol-ikon" type="button" data-tutup aria-label="Tutup panduan">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="bantuan-isi">
+      <section aria-labelledby="bantuan-produk-1">
+        <h3 id="bantuan-produk-1">1. Produk tampil di mana saja?</h3>
+        <p class="adm-sub">Data di menu ini tersimpan di tab "produk" Google Sheets. Setiap perubahan langsung dipakai di katalog halaman Produk, kalkulator harga, dan pilihan produk di form pemesanan.</p>
+      </section>
+
+      <section aria-labelledby="bantuan-produk-2">
+        <h3 id="bantuan-produk-2">2. Arti status stok</h3>
+        <ul class="bantuan-tombol daftar-bersih">
+          <li>
+            <span class="lencana-status status-tersedia" aria-hidden="true">Tersedia</span>
+            <span>Produk normal: tampil di katalog, bisa dihitung di kalkulator, dan bisa dipesan.</span>
+          </li>
+          <li>
+            <span class="lencana-status status-terbatas" aria-hidden="true">Terbatas</span>
+            <span>Tetap bisa dipesan, tapi pelanggan melihat tanda bahwa bahan terbatas. Cocok untuk stok menipis.</span>
+          </li>
+          <li>
+            <span class="lencana-status status-habis" aria-hidden="true">Habis</span>
+            <span>Tetap tampil di katalog dengan tombol "Bahan habis", tapi tidak bisa dihitung di kalkulator atau dipesan.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-produk-3">
+        <h3 id="bantuan-produk-3">3. Tombol di halaman ini</h3>
+        <ul class="bantuan-tombol daftar-bersih">
+          <li>
+            <span class="bantuan-btn" aria-hidden="true">+ Tambah</span>
+            <span><b>Tambah produk</b>: membuka form produk baru. Isi 4 bagian: Informasi produk, Harga, Ketersediaan, dan Foto. Kolom bertanda * wajib diisi.</span>
+          </li>
+          <li>
+            <span class="tombol-ikon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></span>
+            <span><b>Ubah</b>: memperbarui harga, estimasi, status stok, foto, atau deskripsi. ID produk tidak bisa diubah. Setelah disimpan, muncul ringkasan data yang berubah.</span>
+          </li>
+          <li>
+            <span class="tombol-ikon ikon-hapus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></span>
+            <span><b>Hapus</b>: menghapus produk dari Google Sheets setelah dikonfirmasi. Tidak bisa dibatalkan. Kalau hanya ingin berhenti menjual sementara, ubah status stok jadi <b>Habis</b>.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-produk-4">
+        <h3 id="bantuan-produk-4">4. Tips mengisi form</h3>
+        <ul class="bantuan-tips">
+          <li><b>ID produk</b> memakai huruf kecil dan tanda hubung, contoh: stiker-vinyl.</li>
+          <li><b>Cara hitung</b> menentukan rumus kalkulator: per lembar, per paket 100 pcs, per m² (panjang × lebar), atau per pcs.</li>
+          <li>Centang <b>Harga "Mulai"</b> bila harga masih bisa berubah. Hasil kalkulator diberi label Estimasi.</li>
+          <li>Centang <b>Wajib menyertakan file desain</b> untuk produk custom. Pelanggan tidak bisa memesan tanpa file atau link desain.</li>
+          <li><b>Foto</b> bisa dipilih dari folder img/produk/, diisi link https://, atau diupload. Foto upload otomatis dikecilkan dan disimpan di Google Drive.</li>
+          <li>Semua harga adalah harga simulasi. Cari produk lewat nama, ID, atau kategori. Tabel menampilkan 10 produk per halaman.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="aksi-dialog">
+      <button class="btn btn-utama" type="button" data-tutup autofocus>Oke, mengerti</button>
+    </div>
+  </dialog>
+
+  <!-- Panduan cara kerja Keuangan -->
+  <dialog class="dialog-form dialog-bantuan" id="dialog-bantuan-keuangan" aria-labelledby="bantuan-judul-keuangan">
+    <div class="bantuan-kepala">
+      <div>
+        <p class="bantuan-label">Panduan</p>
+        <h2 id="bantuan-judul-keuangan">Cara kerja Keuangan</h2>
+      </div>
+      <button class="tombol-ikon" type="button" data-tutup aria-label="Tutup panduan">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="bantuan-isi">
+      <section aria-labelledby="bantuan-keu-1">
+        <h3 id="bantuan-keu-1">1. Dari mana angkanya?</h3>
+        <p class="adm-sub">Setiap pesanan yang masuk dihitung sebagai uang masuk sebesar total harganya. Datanya diambil dari tab "pesanan" Google Sheets. Semua nominal adalah harga simulasi, bukan pembayaran sungguhan.</p>
+      </section>
+
+      <section aria-labelledby="bantuan-keu-2">
+        <h3 id="bantuan-keu-2">2. Arti kartu ringkasan</h3>
+        <ul class="bantuan-tombol daftar-bersih">
+          <li>
+            <span class="adm-angka-ikon adm-angka-biru" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
+            <span><b>Total uang masuk</b>: jumlah total semua pesanan sejak awal, apa pun statusnya.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-oranye" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg></span>
+            <span><b>Hari ini</b>: uang masuk dari pesanan yang dibuat hari ini.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-tosca" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 6H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/><path d="M8 12h8M8 16h5"/></svg></span>
+            <span><b>Bulan ini</b>: uang masuk dari pesanan yang dibuat bulan ini.</span>
+          </li>
+          <li>
+            <span class="adm-angka-ikon adm-angka-ungu" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></span>
+            <span><b>Pesanan selesai</b>: uang dari pesanan berstatus Selesai. Di bawahnya tertulis sisa uang dari pesanan yang belum selesai.</span>
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-keu-3">
+        <h3 id="bantuan-keu-3">3. Tabel pemasukan</h3>
+        <ul class="bantuan-tips">
+          <li>Satu baris = satu pesanan. Pesanan terbaru ada di paling atas.</li>
+          <li><b>Cari pemasukan</b> lewat kode pesanan, nama pelanggan, atau nama produk.</li>
+          <li><b>Periode</b> menyaring Hari ini, Bulan ini, atau Semua waktu. <b>Lini produk</b> memisahkan Printing Reguler dan Custom Merchandise.</li>
+          <li><b>Total pemasukan</b> di bawah tabel menghitung semua hasil filter dari semua halaman, bukan hanya 10 baris yang tampil.</li>
+          <li>Kartu ringkasan di atas tidak ikut filter. Kartu selalu menghitung semua pesanan.</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="bantuan-keu-4">
+        <h3 id="bantuan-keu-4">4. Data selalu terbaru</h3>
+        <ul class="bantuan-tips">
+          <li>Selama menu Keuangan terbuka, data diperbarui otomatis tiap 30 detik. Waktu pembaruan terakhir tertulis di bawah judul.</li>
+          <li>Klik <b>Muat ulang data</b> untuk memperbarui saat itu juga, misalnya setelah ada pesanan baru.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="aksi-dialog">
+      <button class="btn btn-utama" type="button" data-tutup autofocus>Oke, mengerti</button>
+    </div>
+  </dialog>
+
+  <!-- Pop-up perubahan status pesanan, dengan ilustrasi beranimasi sesuai status -->
+  <dialog class="dialog-form dialog-konfirmasi dialog-status" id="dialog-status" aria-labelledby="status-judul" aria-describedby="status-pesan">
+    <img class="status-gambar" id="status-gambar" src="img/status/diterima.svg" alt="" width="320" height="240">
+    <p class="status-kode" id="status-kode"></p>
+    <h2 id="status-judul">Status diubah</h2>
+    <p class="adm-sub" id="status-pesan"></p>
+    <p class="status-catatan" id="status-catatan" hidden></p>
+    <div class="konf-aksi">
+      <button class="btn btn-utama" type="button" id="tutup-status" autofocus>Oke, mengerti</button>
+    </div>
+  </dialog>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/admin.js?v=12"></script>
+  <script src="js/main.js?v=3"></script>
+  <script src="js/admin.js?v=26"></script>
 </body>
 </html>
