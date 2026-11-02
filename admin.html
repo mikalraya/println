@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Dashboard Admin — PrintIn</title>
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="css/style.css?v=7">
-  <link rel="stylesheet" href="css/admin.css?v=23">
+  <link rel="stylesheet" href="css/style.css?v=9">
+  <link rel="stylesheet" href="css/admin.css?v=29">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body data-halaman="admin" class="adm">
@@ -174,10 +174,12 @@
                 <span aria-hidden="true">?</span><span class="sr-saja">Cara kerja Kelola pesanan</span>
               </button>
             </div>
-            <p class="adm-sub">Ubah tahap pengerjaan di kolom Status. Pelanggan langsung melihatnya di halaman Cek Status. Nomor WhatsApp tampil lengkap.</p>
+            <p class="adm-sub">Pesanan baru menunggu dibayar dulu, lalu ubah tahap pengerjaannya di kolom Status. Pelanggan langsung melihatnya di halaman Cek Status. Nomor WhatsApp tampil lengkap.</p>
           </div>
           <button class="btn btn-utama" type="button" id="tambah-pesanan">+ Tambah pesanan</button>
         </div>
+        <!-- Jumlah pesanan per status; klik kartu untuk menyaring tabel (diisi js/admin.js) -->
+        <div class="adm-ringkas-status" id="ringkas-status" role="group" aria-label="Jumlah pesanan per status"></div>
         <div class="adm-saring">
           <div class="field">
             <label for="cari-pesanan">Cari pesanan</label>
@@ -209,7 +211,7 @@
                 <span aria-hidden="true">?</span><span class="sr-saja">Cara kerja Keuangan</span>
               </button>
             </div>
-            <p class="adm-sub">Uang masuk dihitung dari total semua pesanan yang sudah masuk (harga simulasi). Data diperbarui otomatis tiap 30 detik.</p>
+            <p class="adm-sub">Uang masuk dihitung dari pesanan yang sudah dibayar (harga simulasi). Pesanan yang menunggu bayar atau dibatalkan tidak dihitung. Data diperbarui otomatis tiap 30 detik.</p>
             <p class="adm-sub" id="keuangan-terakhir" role="status"></p>
           </div>
           <button class="btn btn-garis" type="button" id="muat-ulang-keuangan">Muat ulang data</button>
@@ -558,11 +560,15 @@
     <div class="bantuan-isi">
       <section aria-labelledby="bantuan-alur">
         <h3 id="bantuan-alur">1. Alur status pesanan</h3>
-        <p class="adm-sub">Setiap pesanan berjalan lewat 5 tahap. Status yang kamu ubah langsung tersimpan di Google Sheets dan terlihat pelanggan di halaman Cek Status.</p>
+        <p class="adm-sub">Pesanan dari website dimulai dari <b>Menunggu bayar</b>. Setelah dibayar, pesanan berjalan lewat 5 tahap pengerjaan. Status yang kamu ubah langsung tersimpan di Google Sheets dan terlihat pelanggan di halaman Cek Status.</p>
         <ol class="bantuan-alur daftar-bersih">
           <li>
+            <img src="img/status/menunggu-bayar.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Menunggu bayar</strong><span>Pesanan baru dari website. Pelanggan punya waktu 60 menit untuk membayar (ada hitung mundur di halaman Bayar). Belum dihitung di Keuangan.</span></div>
+          </li>
+          <li>
             <img src="img/status/diterima.svg" alt="" width="320" height="240" loading="lazy">
-            <div><strong>Diterima</strong><span>Pesanan baru masuk dari form pemesanan.</span></div>
+            <div><strong>Diterima</strong><span>Sudah dibayar: kamu klik <b>Tandai lunas</b> setelah cek bukti transfer, atau pelanggan menekan tombol simulasi bayar. Nominal mulai dihitung di Keuangan.</span></div>
           </li>
           <li>
             <img src="img/status/cek-desain.svg" alt="" width="320" height="240" loading="lazy">
@@ -580,23 +586,42 @@
             <img src="img/status/selesai.svg" alt="" width="320" height="240" loading="lazy">
             <div><strong>Selesai</strong><span>Klik tombol <b>ceklis</b> setelah pesanan diterima pelanggan.</span></div>
           </li>
+          <li>
+            <img src="img/status/dibatalkan.svg" alt="" width="320" height="240" loading="lazy">
+            <div><strong>Dibatalkan</strong><span>Otomatis bila tidak dibayar dalam 60 menit (dicek tiap 10 menit dan setiap dashboard dibuka). Datanya tetap tersimpan, tapi tidak dihitung di Keuangan.</span></div>
+          </li>
         </ol>
       </section>
 
+      <section aria-labelledby="bantuan-kartu-status">
+        <h3 id="bantuan-kartu-status">2. Kartu jumlah per status</h3>
+        <p class="adm-sub">Deretan kartu di atas kolom cari menunjukkan berapa pesanan di tiap status, dari Menunggu bayar sampai Dibatalkan.</p>
+        <ul class="bantuan-tombol daftar-bersih">
+          <li>
+            <span class="adm-status-kartu st-selesai bantuan-contoh-kartu" aria-hidden="true"><span class="adm-status-label">Selesai</span><strong class="adm-status-jumlah">3</strong></span>
+            <span><b>Klik kartu</b> untuk menampilkan pesanan dengan status itu saja. Kartu yang aktif diberi warna, dan dropdown Status ikut berubah. Klik <b>Semua</b> untuk melihat semua pesanan lagi.</span>
+          </li>
+        </ul>
+      </section>
+
       <section aria-labelledby="bantuan-tombol">
-        <h3 id="bantuan-tombol">2. Arti tombol di tabel</h3>
+        <h3 id="bantuan-tombol">3. Arti tombol di tabel</h3>
         <ul class="bantuan-tombol daftar-bersih">
           <li>
             <span class="bantuan-link" aria-hidden="true">Buka desain</span>
-            <span>Membuka file desain pelanggan. Pesanan berstatus Diterima diubah jadi <b>Cek desain</b> dulu, lalu desain terbuka setelah kamu klik <b>Oke, lihat desain</b>.</span>
+            <span>Membuka file desain pelanggan. Pesanan berstatus Diterima diubah jadi <b>Cek desain</b> dulu, lalu desain terbuka setelah kamu klik <b>Oke, lihat desain</b>. Untuk status lain, desain langsung terbuka di tab baru.</span>
+          </li>
+          <li>
+            <span class="tombol-ikon ikon-lunas" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v.01M18 15v.01"/></svg></span>
+            <span><b>Tandai lunas</b>: muncul di pesanan yang <b>Menunggu bayar</b>. Klik setelah bukti transfer dicek lewat WhatsApp. Status jadi <b>Diterima</b> dan nominal masuk ke Keuangan.</span>
           </li>
           <li>
             <span class="tombol-ikon ikon-cetak" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11.5h.01"/></svg></span>
-            <span><b>Cetak</b>: status jadi <b>Diproses</b>. Pop-up menampilkan target selesai sesuai estimasi produk. Tidak aktif bila pesanan sudah Siap diambil atau Selesai.</span>
+            <span><b>Cetak</b>: status jadi <b>Diproses</b>. Pop-up menampilkan target selesai sesuai estimasi produk, atau pengingat bila estimasinya sudah lewat. Tidak aktif bila pesanan Siap diambil, Selesai, atau Dibatalkan.</span>
           </li>
           <li>
             <span class="tombol-ikon ikon-selesai" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-            <span><b>Ceklis</b>: status jadi <b>Selesai</b>. Tidak aktif bila pesanan sudah selesai.</span>
+            <span><b>Ceklis</b>: status jadi <b>Selesai</b>. Tidak aktif bila pesanan belum dibayar, dibatalkan, atau sudah selesai.</span>
           </li>
           <li>
             <span class="tombol-ikon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></span>
@@ -608,18 +633,19 @@
           </li>
           <li>
             <span class="bantuan-pilih" aria-hidden="true">Diterima</span>
-            <span><b>Dropdown Status</b>: memilih tahap mana pun secara manual, termasuk memundurkan status bila salah klik.</span>
+            <span><b>Dropdown Status</b>: memilih status mana pun secara manual, termasuk Menunggu bayar atau Dibatalkan, atau memundurkan status bila salah klik.</span>
           </li>
         </ul>
       </section>
 
       <section aria-labelledby="bantuan-tips">
-        <h3 id="bantuan-tips">3. Tips</h3>
+        <h3 id="bantuan-tips">4. Tips</h3>
         <ul class="bantuan-tips">
           <li>Setiap perubahan status memunculkan pop-up bergambar sebagai tanda status sudah tersimpan.</li>
-          <li>Cari pesanan lewat kode atau nama pelanggan, atau saring berdasarkan status.</li>
+          <li>Cari pesanan lewat kode atau nama pelanggan, atau saring lewat kartu status dan dropdown Status.</li>
           <li>Tabel menampilkan 10 pesanan per halaman. Pakai nomor halaman di bawah tabel untuk melihat sisanya.</li>
-          <li>Pesanan baru dari website masuk otomatis. Pesanan lewat WhatsApp bisa dicatat lewat <b>+ Tambah pesanan</b>.</li>
+          <li>Pesanan baru dari website masuk otomatis. Pesanan lewat WhatsApp atau datang langsung bisa dicatat lewat <b>+ Tambah pesanan</b>, statusnya otomatis <b>Diterima</b> (dianggap sudah dibayar).</li>
+          <li>Di halaman Cek Status, pelanggan bisa menekan <b>Bayar sekarang</b> bila pesanannya belum dibayar, dan <b>Unduh struk PDF</b> berisi status terbaru setelah lunas.</li>
         </ul>
       </section>
     </div>
@@ -674,7 +700,7 @@
           </li>
           <li>
             <span class="tombol-ikon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></span>
-            <span><b>Ubah</b>: memperbarui harga, estimasi, status stok, foto, atau deskripsi. ID produk tidak bisa diubah. Setelah disimpan, muncul ringkasan data yang berubah.</span>
+            <span><b>Ubah</b>: memperbarui harga, estimasi, status stok, foto, atau deskripsi. ID produk tidak bisa diubah. Setelah disimpan, muncul ringkasan data yang berubah. Harga baru hanya berlaku untuk pesanan berikutnya, pesanan lama tidak ikut berubah.</span>
           </li>
           <li>
             <span class="tombol-ikon ikon-hapus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></span>
@@ -689,7 +715,8 @@
           <li><b>ID produk</b> memakai huruf kecil dan tanda hubung, contoh: stiker-vinyl.</li>
           <li><b>Cara hitung</b> menentukan rumus kalkulator: per lembar, per paket 100 pcs, per m² (panjang × lebar), atau per pcs.</li>
           <li>Centang <b>Harga "Mulai"</b> bila harga masih bisa berubah. Hasil kalkulator diberi label Estimasi.</li>
-          <li>Centang <b>Wajib menyertakan file desain</b> untuk produk custom. Pelanggan tidak bisa memesan tanpa file atau link desain.</li>
+          <li><b>Estimasi selesai</b> (mis. "Hari ini" atau "3 hari") dipakai untuk menghitung target selesai saat tombol cetak diklik di menu Pesanan.</li>
+          <li>Centang <b>Wajib menyertakan file desain</b> untuk produk yang dicetak dari desain pelanggan (custom, brosur, banner, dan sejenisnya). Kolom upload di form pesan jadi bertuliskan "File desain", bukan "File dokumen". Semua pesanan tetap wajib menyertakan file atau link.</li>
           <li><b>Foto</b> bisa dipilih dari folder img/produk/, diisi link https://, atau diupload. Foto upload otomatis dikecilkan dan disimpan di Google Drive.</li>
           <li>Semua harga adalah harga simulasi. Cari produk lewat nama, ID, atau kategori. Tabel menampilkan 10 produk per halaman.</li>
         </ul>
@@ -716,7 +743,7 @@
     <div class="bantuan-isi">
       <section aria-labelledby="bantuan-keu-1">
         <h3 id="bantuan-keu-1">1. Dari mana angkanya?</h3>
-        <p class="adm-sub">Setiap pesanan yang masuk dihitung sebagai uang masuk sebesar total harganya. Datanya diambil dari tab "pesanan" Google Sheets. Semua nominal adalah harga simulasi, bukan pembayaran sungguhan.</p>
+        <p class="adm-sub">Pesanan dihitung sebagai uang masuk <b>setelah dibayar</b> (status Diterima sampai Selesai). Pesanan yang masih <b>Menunggu bayar</b> atau <b>Dibatalkan</b> tidak dihitung. Datanya diambil dari tab "pesanan" Google Sheets. Semua nominal adalah harga simulasi.</p>
       </section>
 
       <section aria-labelledby="bantuan-keu-2">
@@ -724,15 +751,15 @@
         <ul class="bantuan-tombol daftar-bersih">
           <li>
             <span class="adm-angka-ikon adm-angka-biru" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span>
-            <span><b>Total uang masuk</b>: jumlah total semua pesanan sejak awal, apa pun statusnya.</span>
+            <span><b>Total uang masuk</b>: jumlah semua pesanan yang sudah dibayar. Di bawahnya tertulis jumlah dan nominal pesanan yang masih menunggu bayar.</span>
           </li>
           <li>
             <span class="adm-angka-ikon adm-angka-oranye" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg></span>
-            <span><b>Hari ini</b>: uang masuk dari pesanan yang dibuat hari ini.</span>
+            <span><b>Hari ini</b>: uang masuk dari pesanan lunas yang dibuat hari ini.</span>
           </li>
           <li>
             <span class="adm-angka-ikon adm-angka-tosca" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 6H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/><path d="M8 12h8M8 16h5"/></svg></span>
-            <span><b>Bulan ini</b>: uang masuk dari pesanan yang dibuat bulan ini.</span>
+            <span><b>Bulan ini</b>: uang masuk dari pesanan lunas yang dibuat bulan ini.</span>
           </li>
           <li>
             <span class="adm-angka-ikon adm-angka-ungu" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></span>
@@ -744,11 +771,12 @@
       <section aria-labelledby="bantuan-keu-3">
         <h3 id="bantuan-keu-3">3. Tabel pemasukan</h3>
         <ul class="bantuan-tips">
-          <li>Satu baris = satu pesanan. Pesanan terbaru ada di paling atas.</li>
+          <li>Satu baris = satu pesanan yang sudah dibayar. Pesanan terbaru ada di paling atas.</li>
           <li><b>Cari pemasukan</b> lewat kode pesanan, nama pelanggan, atau nama produk.</li>
           <li><b>Periode</b> menyaring Hari ini, Bulan ini, atau Semua waktu. <b>Lini produk</b> memisahkan Printing Reguler dan Custom Merchandise.</li>
           <li><b>Total pemasukan</b> di bawah tabel menghitung semua hasil filter dari semua halaman, bukan hanya 10 baris yang tampil.</li>
-          <li>Kartu ringkasan di atas tidak ikut filter. Kartu selalu menghitung semua pesanan.</li>
+          <li>Kartu ringkasan di atas tidak ikut filter. Kartu selalu menghitung semua pesanan yang sudah dibayar.</li>
+          <li>Pesanan masuk ke tabel ini begitu ditandai lunas, baik lewat tombol <b>Tandai lunas</b> di menu Pesanan maupun lewat tombol simulasi bayar pelanggan.</li>
         </ul>
       </section>
 
@@ -756,7 +784,8 @@
         <h3 id="bantuan-keu-4">4. Data selalu terbaru</h3>
         <ul class="bantuan-tips">
           <li>Selama menu Keuangan terbuka, data diperbarui otomatis tiap 30 detik. Waktu pembaruan terakhir tertulis di bawah judul.</li>
-          <li>Klik <b>Muat ulang data</b> untuk memperbarui saat itu juga, misalnya setelah ada pesanan baru.</li>
+          <li>Klik <b>Muat ulang data</b> untuk memperbarui saat itu juga, misalnya setelah pelanggan membayar.</li>
+          <li>Pesanan yang tidak dibayar dalam 60 menit otomatis dibatalkan, jadi angka "menunggu bayar" bisa berkurang sendiri.</li>
         </ul>
       </section>
     </div>
@@ -780,7 +809,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/main.js?v=3"></script>
-  <script src="js/admin.js?v=26"></script>
+  <script src="js/main.js?v=4"></script>
+  <script src="js/admin.js?v=29"></script>
 </body>
 </html>

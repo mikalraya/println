@@ -312,7 +312,9 @@ async function kirimPesanan(form, galatPesanan) {
     const hasil = await panggilApi({ body: isi });
     if (!hasil.ok) throw new Error(hasil.pesan || 'Pesanan belum bisa dikirim. Coba lagi.');
 
-    sessionStorage.setItem(KUNCI_TERAKHIR, JSON.stringify(ringkasanPesanan(data, hasil.kode, hasil.total, false)));
+    // status & batas_bayar dari server dipakai halaman Bayar untuk hitung mundur pembayaran
+    const ringkasan = { ...ringkasanPesanan(data, hasil.kode, hasil.total, false), status: hasil.status, batas_bayar: hasil.batas_bayar };
+    sessionStorage.setItem(KUNCI_TERAKHIR, JSON.stringify(ringkasan));
     sessionStorage.removeItem(KUNCI_PILIHAN);
     location.href = `bayar.html?kode=${encodeURIComponent(hasil.kode)}`;
   } catch (err) {

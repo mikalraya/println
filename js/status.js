@@ -1,4 +1,4 @@
-// Cek status pesanan lewat kode. Data publik hanya berisi kode, produk, dan status
+// Cek status pesanan lewat kode. Data publik hanya berisi kode, produk, status, dan batas bayar
 // (tanpa nama, no. WhatsApp, atau alamat). Teks dari server selalu lewat textContent.
 
 const TAHAP = ['Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai'];
@@ -8,6 +8,9 @@ const KETERANGAN_TAHAP = {
   Diproses: 'Pesananmu sedang dikerjakan.',
   'Siap diambil': 'Pesananmu sudah siap. Silakan diambil di toko atau tunggu pengiriman.',
   Selesai: 'Pesananmu sudah selesai. Terima kasih sudah memesan di PrintIn!',
+  // Di luar 5 tahap pengerjaan
+  'Menunggu bayar': 'Pesananmu belum dibayar. Selesaikan pembayaran agar pesanan bisa langsung dikerjakan.',
+  Dibatalkan: 'Pesanan ini dibatalkan otomatis karena tidak dibayar sampai batas waktu. Silakan buat pesanan baru.',
 };
 
 // Ilustrasi tiap tahap (img/status/), judul singkat untuk kartu panduan
@@ -17,7 +20,11 @@ const GAMBAR_TAHAP = {
   Diproses: { src: 'img/status/diproses.svg', alt: 'Ilustrasi mesin cetak sedang mencetak pesanan', judul: 'Sedang dicetak' },
   'Siap diambil': { src: 'img/status/siap-diambil.svg', alt: 'Ilustrasi petugas toko memegang paket yang siap diambil', judul: 'Paket siap' },
   Selesai: { src: 'img/status/selesai.svg', alt: 'Ilustrasi pelanggan senang merayakan pesanan yang selesai', judul: 'Pesanan beres' },
+  'Menunggu bayar': { src: 'img/status/menunggu-bayar.svg', alt: 'Ilustrasi HP berisi kode QRIS dan jam pasir: pesanan menunggu pembayaran', judul: 'Menunggu bayar' },
+  Dibatalkan: { src: 'img/status/dibatalkan.svg', alt: 'Ilustrasi struk bertanda batal: pesanan dibatalkan', judul: 'Dibatalkan' },
 };
+
+const IKON_UNDUH = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>';
 
 const ambil = (id) => document.getElementById(id);
 
@@ -63,13 +70,40 @@ function tampilkanDetail(pesanan) {
   const sorot = buatEl('div', 'detail-sorot');
   const gambar = GAMBAR_TAHAP[pesanan.status];
   if (gambar) sorot.append(buatGambar(gambar, 'detail-gambar'));
-  sorot.append(buatEl('p', 'info-tahap', KETERANGAN_TAHAP[pesanan.status] || ''));
-  kotak.append(sorot, buatTahap(pesanan.status));
+  let keterangan = KETERANGAN_TAHAP[pesanan.status] || '';
+  if (pesanan.status === 'Menunggu bayar' && pesanan.batas_bayar) {
+    const jam = new Intl.DateTimeFormat('id-ID', { hour: '2-digit', minute: '2-digit' }).format(new Date(pesanan.batas_bayar));
+    keterangan += ` Bayar sebelum pukul ${jam}, lewat dari itu pesanan otomatis dibatalkan.`;
+  }
+  sorot.append(buatEl('p', 'info-tahap', keterangan));
+  kotak.append(sorot);
+  // Garis waktu pengerjaan tidak relevan untuk pesanan yang dibatalkan
+  if (pesanan.status !== 'Dibatalkan') kotak.append(buatTahap(pesanan.status));
   tandaiPanduan(pesanan.status);
 
   // Teks produk dan tombol WhatsApp satu blok agar lebarnya sama
   const aksi = buatEl('div', 'detail-aksi');
   aksi.append(buatEl('p', 'item-nama', `Produk: ${pesanan.produk}`));
+
+  // Belum dibayar: arahkan ke halaman Bayar pesanan ini
+  if (pesanan.status === 'Menunggu bayar') {
+    const bayar = buatEl('a', 'btn btn-utama', 'Bayar sekarang');
+    bayar.href = `bayar.html?kode=${encodeURIComponent(pesanan.kode)}`;
+    aksi.append(bayar);
+  }
+
+  // Sudah dibayar (Diterima s.d. Selesai): cetak ulang struk dengan status terbaru (js/struk.js)
+  if (TAHAP.includes(pesanan.status) && Number.isFinite(pesanan.total)) {
+    const struk = buatEl('button', 'btn btn-garis btn-struk');
+    struk.type = 'button';
+    struk.innerHTML = IKON_UNDUH; // ikon tetap, bukan data dari server
+    struk.append(buatEl('span', '', 'Unduh struk PDF'));
+    struk.addEventListener('click', () => unduhStruk({
+      kode: pesanan.kode, tanggal: pesanan.tanggal, produk: pesanan.produk, spesifikasi: pesanan.spesifikasi,
+      jumlah: pesanan.jumlah, total: pesanan.total, ambil: pesanan.pengambilan, status: pesanan.status,
+    }, struk));
+    aksi.append(struk);
+  }
 
   const wa = buatEl('a', 'btn btn-garis', 'Tanya admin lewat WhatsApp');
   wa.href = `https://wa.me/${CONFIG.waAdmin}?text=${encodeURIComponent(`Halo ${CONFIG.namaToko}, saya mau tanya soal pesanan ${pesanan.kode}.`)}`;

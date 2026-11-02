@@ -200,12 +200,16 @@ Isi awal tab ini (dan data dummy di `js/produk.js`) = **13 produk** di bagian 3,
 
 `kode, tanggal, nama, whatsapp, lini, produk, spesifikasi, jumlah, total, link_file, tanggal_butuh, pengambilan (ambil/kirim), alamat, catatan, status`
 
-Nilai `status`: `Diterima` → `Cek desain` → `Diproses` → `Siap diambil` → `Selesai`.
+Nilai `status`: `Menunggu bayar` → `Diterima` → `Cek desain` → `Diproses` → `Siap diambil` → `Selesai`, atau `Dibatalkan`.
+
+- Pesanan dari website mulai di `Menunggu bayar`. Jadi `Diterima` setelah dibayar: admin klik **Tandai lunas**, atau pelanggan menekan tombol **simulasi bayar** di halaman Bayar (demo, tanpa uang sungguhan).
+- Tidak dibayar dalam `BATAS_BAYAR_MENIT` (60 menit, di `Code.gs`) → otomatis `Dibatalkan` lewat pemicu berkala Apps Script. Baris tidak dihapus.
+- Keuangan & omzet hanya menghitung pesanan yang sudah dibayar (bukan `Menunggu bayar`/`Dibatalkan`).
 
 ### Endpoint Apps Script (satu Web App)
 
 - `GET ?action=produk` → daftar produk (JSON).
-- `GET ?action=status&kode=PRT-0001` → status satu pesanan (hanya kode, produk, status; **tanpa** data pribadi).
+- `GET ?action=status&kode=PRT-0001` → status satu pesanan (kode, produk, status, rincian jumlah/total/tanggal, batas bayar; **tanpa** nama, no. WA, alamat). Dipakai Cek Status dan halaman Bayar.
 - `POST` dengan `action: "dashboard"` + PIN di body → ringkasan + daftar pesanan untuk admin (no. WA disamarkan). PIN jangan dikirim lewat URL.
 - `POST` dengan `action: "ubah_status"` / `"produk_simpan"` (mode `tambah`/`ubah`) / `"produk_hapus"` + PIN di body → khusus admin; PIN diperiksa di Apps Script sebelum menulis ke Sheets.
 - `POST` dengan `action: "pesan"` (body `text/plain` berisi JSON, untuk menghindari CORS preflight) → simpan pesanan, buat kode, kirim email admin, kembalikan `{kode, total}`.

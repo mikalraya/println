@@ -6,7 +6,7 @@
   <title>Pembayaran — PrintIn</title>
   <meta name="description" content="Halaman pembayaran QRIS contoh (mockup) PrintIn.">
   <script>document.documentElement.classList.add('js')</script>
-  <link rel="stylesheet" href="css/style.css?v=7">
+  <link rel="stylesheet" href="css/style.css?v=9">
   <link rel="icon" type="image/png" href="img/printin-logo.png">
 </head>
 <body>
@@ -78,9 +78,19 @@
         <aside class="kartu kartu-pad qris-kartu" aria-labelledby="judul-qris">
           <h2 id="judul-qris">Bayar dengan QRIS</h2>
           <p class="label-mockup">Contoh/mockup — bukan pembayaran sungguhan</p>
-          <img class="qris-gambar" src="img/qris-contoh.svg" alt="Contoh kode QRIS, hanya mockup dan tidak bisa dipindai untuk membayar" width="232" height="232">
-          <p class="catatan-kecil">Segera lakukan pembayaran agar pesananmu bisa langsung kami kerjakan. Setelah membayar, tekan tombol di bawah untuk konfirmasi ke admin.</p>
-          <a class="btn btn-wa btn-penuh" id="tombol-wa-bayar" href="#" target="_blank" rel="noopener">Konfirmasi lewat WhatsApp</a>
+          <!-- Status pembayaran + hitung mundur batas bayar (diatur js/bayar.js) -->
+          <div class="status-bayar" id="status-bayar" role="status" aria-live="polite" hidden>
+            <strong id="status-bayar-judul"></strong>
+            <span id="status-bayar-teks"></span>
+          </div>
+          <div id="blok-qris">
+            <img class="qris-gambar" src="img/qris-contoh.svg" alt="Contoh kode QRIS, hanya mockup dan tidak bisa dipindai untuk membayar" width="232" height="232">
+            <p class="catatan-kecil">Segera lakukan pembayaran agar pesananmu bisa langsung kami kerjakan. Setelah membayar, tekan tombol di bawah untuk konfirmasi ke admin.</p>
+            <a class="btn btn-wa btn-penuh" id="tombol-wa-bayar" href="#" target="_blank" rel="noopener">Konfirmasi lewat WhatsApp</a>
+            <button class="btn btn-garis btn-penuh" type="button" id="bayar-simulasi" hidden>Simulasikan pembayaran berhasil</button>
+            <p class="catatan-kecil" id="catatan-simulasi" hidden>Tombol simulasi khusus demo tugas kuliah: menandai pesanan lunas tanpa uang sungguhan.</p>
+          </div>
+          <a class="btn btn-utama btn-penuh" id="pesan-lagi" href="pesan.html" hidden>Buat pesanan baru</a>
         </aside>
       </div>
     </section>
@@ -127,8 +137,9 @@
   </footer>
 
   <script src="js/config.js"></script>
-  <script src="js/main.js?v=3"></script>
-  <script src="js/chatbot.js?v=4"></script>
-  <script src="js/bayar.js?v=5"></script>
+  <script src="js/main.js?v=4"></script>
+  <script src="js/chatbot.js?v=7"></script>
+  <script src="js/struk.js?v=1"></script>
+  <script src="js/bayar.js?v=9"></script>
 </body>
 </html>

@@ -11,8 +11,14 @@
  *      FOLDER_ID   = (opsional) ID folder Drive induk, mis. PrintIn/Pesanan. Desain pelanggan
  *                    disimpan di subfolder per hari ("Rabu, 28 Oktober 2026") yang dibuat otomatis
  * 4. Jalankan fungsi siapkanSheet() sekali untuk membuat judul kolom dan isi 13 produk awal.
- * 5. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.
- * 6. Salin URL web app ke js/config.js (urlApi).
+ * 5. Jalankan fungsi pasangPemicu() sekali: membatalkan otomatis pesanan yang belum dibayar
+ *    lebih dari BATAS_BAYAR_MENIT (dicek tiap 10 menit).
+ * 6. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.
+ * 7. Salin URL web app ke js/config.js (urlApi).
+ *
+ * ALUR BAYAR: pesanan dari website berstatus "Menunggu bayar". Setelah dibayar (admin menandai lunas,
+ * atau pelanggan menekan tombol simulasi di halaman Bayar) status menjadi "Diterima" dan nominalnya
+ * dihitung di Keuangan. Lewat BATAS_BAYAR_MENIT tanpa dibayar: status "Dibatalkan" (baris tidak dihapus).
  *
  * KEAMANAN: PIN hanya ada di Script Properties dan diperiksa di sini, tidak pernah di front-end.
  * Ini pengaman untuk demo, bukan keamanan tingkat produksi.
@@ -25,7 +31,10 @@
 
 const KOLOM_PRODUK = ['id', 'nama', 'lini', 'kategori', 'harga', 'satuan', 'tipe_hitung', 'harga_mulai', 'perlu_desain', 'estimasi', 'status', 'foto', 'deskripsi'];
 const KOLOM_PESANAN = ['kode', 'tanggal', 'nama', 'whatsapp', 'lini', 'produk', 'spesifikasi', 'jumlah', 'total', 'link_file', 'tanggal_butuh', 'pengambilan', 'alamat', 'catatan', 'status', 'email'];
-const STATUS_PESANAN = ['Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai'];
+const STATUS_PESANAN = ['Menunggu bayar', 'Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai', 'Dibatalkan'];
+const STATUS_BELUM_BAYAR = 'Menunggu bayar';
+const STATUS_BATAL = 'Dibatalkan';
+const BATAS_BAYAR_MENIT = 60; // pesanan belum dibayar lebih lama dari ini otomatis dibatalkan
 const LINI_PRODUK = ['Printing Reguler', 'Custom Merchandise'];
 const TIPE_HITUNG = ['lembar', 'paket', 'luas', 'pcs'];
 const STATUS_PRODUK = ['Tersedia', 'Terbatas', 'Habis'];
@@ -51,6 +60,7 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     if (data.action === 'pesan') return balas(simpanPesanan(data));
+    if (data.action === 'bayar_simulasi') return balas(bayarSimulasi(data));
     if (data.action === 'dashboard') return balas(dashboard(data));
     if (data.action === 'ubah_status') return balas(ubahStatus(data));
     if (data.action === 'produk_simpan') return balas(simpanProduk(data));
@@ -210,14 +220,14 @@ function simpanPesanan(d) {
       kode: kode, tanggal: new Date(), nama: amanSel(nama), whatsapp: wa, lini: produk.lini, produk: produk.nama,
       spesifikasi: spesifikasi, jumlah: hitung.jumlah, total: hitung.total, link_file: linkFile,
       tanggal_butuh: bersihkan(d.tanggal, 10), pengambilan: ambil, alamat: amanSel(alamat),
-      catatan: amanSel(bersihkan(d.catatan, 500)), status: 'Diterima', email: amanSel(email),
+      catatan: amanSel(bersihkan(d.catatan, 500)), status: STATUS_BELUM_BAYAR, email: amanSel(email),
     };
     const lembar = sheet('pesanan');
     lembar.appendRow(KOLOM_PESANAN.map(function (k) { return baris[k]; }));
     // Tulis ulang no. WA sebagai teks supaya angka 0 di depan tidak hilang
     lembar.getRange(lembar.getLastRow(), KOLOM_PESANAN.indexOf('whatsapp') + 1).setNumberFormat('@').setValue(wa);
     kirimEmailAdmin(baris);
-    return { ok: true, kode: kode, total: hitung.total };
+    return { ok: true, kode: kode, total: hitung.total, status: STATUS_BELUM_BAYAR, batas_bayar: batasBayar(baris.tanggal) };
   } finally {
     kunci.releaseLock();
   }
@@ -237,13 +247,89 @@ function kirimEmailAdmin(b) {
   } catch (err) { /* pesanan tetap tersimpan walau email gagal */ }
 }
 
-// Status publik: hanya kode, produk, status (tanpa nama, no. WA, alamat)
+// Status publik: kode, produk, status, rincian pesanan, dan batas bayar (tanpa nama, no. WA, alamat)
 function cekStatus(kode) {
   const k = String(kode || '').trim().toUpperCase();
   if (!/^PRT-\d{4,}$/.test(k)) return { ok: false, pesan: 'Kode pesanan diawali PRT- lalu angka, contoh: PRT-0001.' };
+  batalkanPesananKedaluwarsa();
   const p = bacaTabel('pesanan').filter(function (b) { return String(b.kode) === k; })[0];
   if (!p) return { ok: false, pesan: 'Kode pesanan tidak ditemukan. Periksa lagi kodenya.' };
-  return { ok: true, pesanan: { kode: p.kode, produk: p.produk, status: p.status } };
+  // Detail pesanan untuk halaman Bayar (dibuka dari Cek Status di perangkat mana pun); tanpa data pribadi
+  const hasil = {
+    kode: p.kode, produk: p.produk, status: p.status, spesifikasi: p.spesifikasi, jumlah: Number(p.jumlah),
+    total: Number(p.total), tanggal: new Date(p.tanggal).toISOString(), pengambilan: p.pengambilan,
+  };
+  if (p.status === STATUS_BELUM_BAYAR) hasil.batas_bayar = batasBayar(p.tanggal);
+  return { ok: true, pesanan: hasil };
+}
+
+// ----- Pembayaran -----
+
+// Waktu terakhir boleh membayar (ISO) = tanggal pesan + BATAS_BAYAR_MENIT
+function batasBayar(tanggal) {
+  return new Date(new Date(tanggal).getTime() + BATAS_BAYAR_MENIT * 60000).toISOString();
+}
+
+function sudahLewatBatas(tanggal) {
+  return Date.now() > new Date(tanggal).getTime() + BATAS_BAYAR_MENIT * 60000;
+}
+
+// Ubah status "Menunggu bayar" yang lewat batas menjadi "Dibatalkan". Baris tidak dihapus (jejak data).
+// Dipanggil pemicu berkala (pasangPemicu) dan setiap kali status/dashboard dibuka.
+function batalkanPesananKedaluwarsa() {
+  const lembar = sheet('pesanan');
+  const nilai = lembar.getDataRange().getValues();
+  const judul = nilai[0];
+  const kStatus = judul.indexOf('status');
+  const kTanggal = judul.indexOf('tanggal');
+  for (let i = 1; i < nilai.length; i++) {
+    if (nilai[i][kStatus] === STATUS_BELUM_BAYAR && sudahLewatBatas(nilai[i][kTanggal])) {
+      lembar.getRange(i + 1, kStatus + 1).setValue(STATUS_BATAL);
+    }
+  }
+}
+
+// Pasang pemicu berkala sekali dari editor Apps Script (Run > pasangPemicu)
+function pasangPemicu() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'batalkanPesananKedaluwarsa') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('batalkanPesananKedaluwarsa').timeBased().everyMinutes(10).create();
+}
+
+// Tombol "Simulasikan pembayaran berhasil" di halaman Bayar (QRIS mockup, tanpa uang sungguhan).
+// Hanya mengubah "Menunggu bayar" -> "Diterima" dan hanya selama belum lewat batas bayar.
+function bayarSimulasi(d) {
+  const kode = String(d.kode || '').trim().toUpperCase();
+  if (!/^PRT-\d{4,}$/.test(kode)) return { ok: false, pesan: 'Kode pesanan tidak valid.' };
+  const kunci = LockService.getScriptLock();
+  kunci.waitLock(20000);
+  try {
+    const lembar = sheet('pesanan');
+    const nilai = lembar.getDataRange().getValues();
+    const judul = nilai[0];
+    const kStatus = judul.indexOf('status');
+    for (let i = 1; i < nilai.length; i++) {
+      if (String(nilai[i][0]) !== kode) continue;
+      const status = nilai[i][kStatus];
+      if (status === STATUS_BATAL) return { ok: false, status: status, pesan: 'Pesanan ini sudah dibatalkan karena melewati batas waktu pembayaran.' };
+      if (status !== STATUS_BELUM_BAYAR) return { ok: true, status: status }; // sudah dibayar sebelumnya
+      if (sudahLewatBatas(nilai[i][judul.indexOf('tanggal')])) {
+        lembar.getRange(i + 1, kStatus + 1).setValue(STATUS_BATAL);
+        return { ok: false, status: STATUS_BATAL, pesan: 'Waktu pembayaran sudah habis, pesanan dibatalkan. Silakan buat pesanan baru.' };
+      }
+      lembar.getRange(i + 1, kStatus + 1).setValue('Diterima');
+      return { ok: true, status: 'Diterima' };
+    }
+    return { ok: false, pesan: 'Pesanan tidak ditemukan.' };
+  } finally {
+    kunci.releaseLock();
+  }
+}
+
+// Sudah dibayar = bukan "Menunggu bayar" dan bukan "Dibatalkan" (dipakai untuk omzet)
+function sudahBayar(p) {
+  return p.status !== STATUS_BELUM_BAYAR && p.status !== STATUS_BATAL;
 }
 
 // ----- Admin (PIN) -----
@@ -279,12 +365,14 @@ function daftarPesanan() {
 
 function dashboard(d) {
   if (!adaPin(d.pin)) return { ok: false, pesan: 'PIN salah.' };
+  batalkanPesananKedaluwarsa();
   const pesanan = daftarPesanan();
+  const lunas = pesanan.filter(sudahBayar);
 
   const perProduk = {};
   const perLini = { 'Printing Reguler': 0, 'Custom Merchandise': 0 };
   let omzet = 0;
-  pesanan.forEach(function (p) {
+  lunas.forEach(function (p) {
     perProduk[p.produk] = (perProduk[p.produk] || 0) + p.jumlah;
     perLini[p.lini] = (perLini[p.lini] || 0) + 1;
     omzet += p.total;
@@ -292,7 +380,8 @@ function dashboard(d) {
   return {
     ok: true,
     ringkasan: {
-      totalPesanan: pesanan.length,
+      totalPesanan: lunas.length,
+      menungguBayar: pesanan.filter(function (p) { return p.status === STATUS_BELUM_BAYAR; }).length,
       pesananBaru: pesanan.filter(function (p) { return p.status === 'Diterima'; }).length,
       selesai: pesanan.filter(function (p) { return p.status === 'Selesai'; }).length,
       omzet: omzet, perProduk: perProduk, perLini: perLini,

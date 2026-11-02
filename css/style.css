@@ -3395,6 +3395,41 @@ img.logo-kotak {
   margin-top: var(--spasi-2);
 }
 
+/* Status pembayaran di halaman Bayar: menunggu (kuning), lunas (hijau), batal (merah) */
+.status-bayar {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0 0 var(--spasi-3);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-kecil);
+  background: #fff4d6;
+  color: #7a4b00;
+}
+
+.status-bayar[hidden],
+#blok-qris[hidden] {
+  display: none;
+}
+
+.status-bayar strong {
+  font-size: var(--teks-besar);
+  font-variant-numeric: tabular-nums;
+}
+
+.status-bayar.status-lunas {
+  background: #e5f6ee;
+  color: #0a4d2b;
+}
+
+.status-bayar.status-batal {
+  background: #fde8e8;
+  color: #9b1c1c;
+}
+
+#catatan-simulasi {
+  margin-top: var(--spasi-2);
+}
+
 .cek-kode {
   margin-bottom: var(--spasi-3);
 }
@@ -3920,14 +3955,91 @@ img.logo-kotak {
 }
 
 /* Chatbot FAQ (F-13) */
+/* Tombol chatbot: maskot asisten PrintIn beranimasi + gelembung "Hai!" yang sesekali muncul */
 .btn-bot {
-  background: var(--navy);
+  padding: 0;
+  background: linear-gradient(160deg, #3b8cff, var(--biru-gelap));
   color: #fff;
 }
 
-.btn-bot svg {
-  width: 1.625rem;
-  height: 1.625rem;
+.btn-bot .bot-maskot {
+  width: 100%;
+  height: 100%;
+  clip-path: circle(50%);
+}
+
+.bot-kepala {
+  transform-box: view-box;
+  transform-origin: 32px 44px;
+  animation: bot-goyang 4s ease-in-out infinite;
+}
+
+.bot-mata {
+  transform-box: view-box;
+  transform-origin: 32px 30px;
+  animation: bot-kedip 4.5s infinite;
+}
+
+.bot-tangan {
+  transform-box: view-box;
+  transform-origin: 48px 56px;
+  animation: bot-lambai 3s ease-in-out infinite;
+}
+
+.bot-gelembung {
+  position: absolute;
+  right: calc(100% + 0.375rem);
+  top: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px 999px 0.25rem 999px;
+  background: var(--kuning);
+  color: var(--navy);
+  font-size: var(--teks-kecil);
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(10, 15, 60, 0.25);
+  pointer-events: none;
+  transform-origin: right bottom;
+  animation: bot-sapa 7s ease-in-out infinite;
+}
+
+/* Saat disorot (label muncul) atau panel terbuka, gelembung disembunyikan */
+.btn-bot:hover .bot-gelembung,
+.btn-bot:focus-visible .bot-gelembung,
+.btn-bot[aria-expanded="true"] .bot-gelembung {
+  display: none;
+}
+
+@keyframes bot-goyang {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes bot-kedip {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+@keyframes bot-lambai {
+  0%, 60%, 100% { transform: rotate(0); }
+  70%, 90% { transform: rotate(-22deg); }
+  80% { transform: rotate(8deg); }
+}
+
+@keyframes bot-sapa {
+  0%, 55%, 100% { opacity: 0; transform: scale(0.6); }
+  62%, 90% { opacity: 1; transform: scale(1); }
+}
+
+/* Avatar di kepala panel memakai maskot yang sama (tanpa animasi agar tidak ramai) */
+.panel-bot-avatar .bot-maskot {
+  width: 100%;
+  height: 100%;
+}
+
+.panel-bot-avatar .bot-maskot * {
+  animation: none;
 }
 
 /* Mobile: panel menutupi tombol melayang hampir selebar layar (tombol tutup ada di kepala panel) */
@@ -3967,7 +4079,8 @@ img.logo-kotak {
   flex-shrink: 0;
   width: 2.5rem;
   height: 2.5rem;
-  background: var(--kuning);
+  overflow: hidden;
+  background: linear-gradient(160deg, #3b8cff, var(--biru-gelap));
   color: var(--navy);
   border-radius: 50%;
   font-weight: 800;

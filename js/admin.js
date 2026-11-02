@@ -2,7 +2,9 @@
 // PIN dikirim lewat POST ke Apps Script dan diperiksa di sana (tidak ada PIN di front-end).
 // PIN disimpan di localStorage browser admin supaya tidak diminta lagi setelah refresh; dihapus saat tombol Keluar ditekan.
 
-const STATUS_PESANAN = ['Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai'];
+const STATUS_PESANAN = ['Menunggu bayar', 'Diterima', 'Cek desain', 'Diproses', 'Siap diambil', 'Selesai', 'Dibatalkan'];
+// Sudah dibayar = bukan "Menunggu bayar" dan bukan "Dibatalkan". Hanya pesanan ini yang dihitung sebagai uang masuk.
+const sudahBayar = (p) => p.status !== 'Menunggu bayar' && p.status !== 'Dibatalkan';
 const LINI = ['Printing Reguler', 'Custom Merchandise'];
 const WARNA = { biru: '#1f6fe8', oranye: '#ff8a3d', tosca: '#3de0b5' };
 const KELAS_STATUS_PRODUK = { Tersedia: 'status-tersedia', Terbatas: 'status-terbatas', Habis: 'status-habis' };
@@ -23,6 +25,7 @@ const IKON = {
   hapus: '<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   cetak: '<path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11.5h.01"/>',
   ceklis: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  lunas: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v.01M18 15v.01"/>',
 };
 
 const ambilEl = (id) => document.getElementById(id);
@@ -204,13 +207,19 @@ function labelPeriode(nilai) {
   return LABEL_PERIODE[nilai] || nilai;
 }
 
-function pesananTersaring() {
+// Ringkasan hanya menghitung pesanan yang sudah dibayar; semua = true untuk menyertakan semua status
+function pesananTersaring(semua = false) {
   const awal = awalPeriode(ambilEl('saring-periode').value);
   const lini = ambilEl('saring-lini-ringkasan').value;
   return semuaPesanan.filter((p) => {
     const t = keTanggal(p.tanggal);
-    return (!awal || (t && t >= awal)) && (!lini || p.lini === lini);
+    return (semua || sudahBayar(p)) && (!awal || (t && t >= awal)) && (!lini || p.lini === lini);
   });
+}
+
+// Pesanan yang belum dibayar pada periode & lini yang sama (untuk keterangan kartu Pesanan)
+function jumlahMenungguBayar() {
+  return pesananTersaring(true).filter((p) => p.status === 'Menunggu bayar').length;
 }
 
 function kartuAngka({ ikon, warna, label, nilai, sub }) {
@@ -232,7 +241,7 @@ function tampilkanKartu(pesanan, produk) {
   const habis = produk.filter((p) => p.status === 'Habis').length;
   ambilEl('kartu-angka').replaceChildren(
     kartuAngka({ ikon: 'omzet', warna: 'biru', label: 'Omzet', nilai: rupiah.format(omzet), sub: periode }),
-    kartuAngka({ ikon: 'pesanan', warna: 'oranye', label: 'Pesanan', nilai: angkaId.format(pesanan.length), sub: `${baru} baru (Diterima)` }),
+    kartuAngka({ ikon: 'pesanan', warna: 'oranye', label: 'Pesanan lunas', nilai: angkaId.format(pesanan.length), sub: `${baru} baru · ${jumlahMenungguBayar()} menunggu bayar` }),
     kartuAngka({ ikon: 'selesai', warna: 'tosca', label: 'Selesai', nilai: angkaId.format(selesai), sub: `${pesanan.length - selesai - baru} sedang dikerjakan` }),
     kartuAngka({ ikon: 'rata', warna: 'ungu', label: 'Rata-rata pesanan', nilai: rupiah.format(pesanan.length ? Math.round(omzet / pesanan.length) : 0), sub: 'Omzet dibagi jumlah pesanan' }),
     kartuAngka({ ikon: 'produk', warna: 'kuning', label: 'Produk', nilai: angkaId.format(produk.length), sub: `${terbatas} terbatas · ${habis} habis` }),
@@ -341,12 +350,14 @@ const sama = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b
 function tampilkanKeuangan() {
   const kini = new Date();
   const jumlah = (daftar) => daftar.reduce((s, p) => s + p.total, 0);
-  const hariIni = semuaPesanan.filter((p) => { const t = keTanggal(p.tanggal); return t && sama(t, kini) && t.getDate() === kini.getDate(); });
-  const bulanIni = semuaPesanan.filter((p) => { const t = keTanggal(p.tanggal); return t && sama(t, kini); });
-  const total = jumlah(semuaPesanan);
-  const selesai = jumlah(semuaPesanan.filter((p) => p.status === 'Selesai'));
+  const lunas = semuaPesanan.filter(sudahBayar);
+  const menunggu = semuaPesanan.filter((p) => p.status === 'Menunggu bayar');
+  const hariIni = lunas.filter((p) => { const t = keTanggal(p.tanggal); return t && sama(t, kini) && t.getDate() === kini.getDate(); });
+  const bulanIni = lunas.filter((p) => { const t = keTanggal(p.tanggal); return t && sama(t, kini); });
+  const total = jumlah(lunas);
+  const selesai = jumlah(lunas.filter((p) => p.status === 'Selesai'));
   ambilEl('kartu-keuangan').replaceChildren(
-    kartuAngka({ ikon: 'omzet', warna: 'biru', label: 'Total uang masuk', nilai: rupiah.format(total), sub: `${angkaId.format(semuaPesanan.length)} pesanan, semua waktu` }),
+    kartuAngka({ ikon: 'omzet', warna: 'biru', label: 'Total uang masuk', nilai: rupiah.format(total), sub: `${angkaId.format(lunas.length)} pesanan lunas · ${menunggu.length} menunggu bayar (${rupiah.format(jumlah(menunggu))})` }),
     kartuAngka({ ikon: 'rata', warna: 'oranye', label: 'Hari ini', nilai: rupiah.format(jumlah(hariIni)), sub: `${hariIni.length} pesanan` }),
     kartuAngka({ ikon: 'pesanan', warna: 'tosca', label: 'Bulan ini', nilai: rupiah.format(jumlah(bulanIni)), sub: `${bulanIni.length} pesanan` }),
     kartuAngka({ ikon: 'selesai', warna: 'ungu', label: 'Pesanan selesai', nilai: rupiah.format(selesai), sub: `Belum selesai: ${rupiah.format(total - selesai)}` }),
@@ -365,11 +376,11 @@ function tampilkanTabelKeuangan() {
   const tampil = semuaPesanan.filter((p) => {
     const t = keTanggal(p.tanggal);
     const cocokPeriode = periode === 'semua' || (t && sama(t, kini) && (periode === '1' || t.getDate() === kini.getDate()));
-    return cocokPeriode && (!lini || p.lini === lini) && (!cari || `${p.kode} ${p.nama} ${p.produk}`.toLowerCase().includes(cari));
+    return sudahBayar(p) && cocokPeriode && (!lini || p.lini === lini) && (!cari || `${p.kode} ${p.nama} ${p.produk}`.toLowerCase().includes(cari));
   }).sort((a, b) => (keTanggal(b.tanggal) || 0) - (keTanggal(a.tanggal) || 0));
 
   const { potongan } = potongHalaman('keuangan', tampil, `${cari}|${periode}|${lini}`, tampilkanTabelKeuangan);
-  ambilEl('info-keuangan').textContent = teksInfoHalaman('keuangan', 'pesanan', semuaPesanan.length);
+  ambilEl('info-keuangan').textContent = teksInfoHalaman('keuangan', 'pesanan lunas', semuaPesanan.filter(sudahBayar).length);
   // Total tetap dihitung dari semua hasil filter, bukan hanya halaman ini
   ambilEl('total-keuangan').textContent = rupiah.format(tampil.reduce((s, p) => s + p.total, 0));
 
@@ -423,11 +434,13 @@ function buatPilihanStatus(pesanan) {
 
 // Judul, gambar (img/status/, beranimasi), dan keterangan pop-up untuk tiap status
 const INFO_STATUS = {
-  Diterima: { judul: 'Pesanan Diterima', gambar: 'img/status/diterima.svg', pesan: 'Pesanan kembali ke tahap awal dan menunggu dicek admin.' },
+  'Menunggu bayar': { judul: 'Menunggu Pembayaran', gambar: 'img/status/menunggu-bayar.svg', pesan: 'Pesanan belum dibayar, jadi belum dihitung di Keuangan. Tanpa pembayaran, pesanan dibatalkan otomatis setelah batas waktu.' },
+  Diterima: { judul: 'Pesanan Diterima', gambar: 'img/status/diterima.svg', pesan: 'Pesanan sudah dibayar dan menunggu dicek admin.' },
   'Cek desain': { judul: 'Desain Sedang Dicek', gambar: 'img/status/cek-desain.svg', pesan: 'File desain sedang diperiksa. Hubungi pelanggan lewat WhatsApp bila desain perlu diperbaiki.' },
   Diproses: { judul: 'Pesanan Sedang Diproses', gambar: 'img/status/diproses.svg', pesan: 'Pesanan mulai dicetak dan dikerjakan.' },
   'Siap diambil': { judul: 'Pesanan Siap Diambil', gambar: 'img/status/siap-diambil.svg', pesan: 'Pesanan siap diambil pelanggan di toko atau dikirim.' },
   Selesai: { judul: 'Pesanan Selesai', gambar: 'img/status/selesai.svg', pesan: 'Pesanan sudah beres. Terima kasih sudah menyelesaikannya!' },
+  Dibatalkan: { judul: 'Pesanan Dibatalkan', gambar: 'img/status/dibatalkan.svg', pesan: 'Pesanan dibatalkan dan tidak dihitung di Keuangan. Datanya tetap tersimpan di Google Sheets.' },
 };
 
 // Simpan status baru ke Sheets lalu tampilkan pop-up. Mengembalikan true bila berhasil.
@@ -511,9 +524,27 @@ function cetakPesanan(p) {
   return ubahStatusPesanan(p, 'Diproses', catatan);
 }
 
+// Kartu jumlah pesanan per status di atas filter. Klik kartu = saring tabel ke status itu (sama dengan dropdown Status).
+function tampilkanRingkasStatus(saring) {
+  const jumlah = (s) => semuaPesanan.filter((p) => p.status === s).length;
+  const kartu = [['', 'Semua', semuaPesanan.length], ...STATUS_PESANAN.map((s) => [s, s, jumlah(s)])].map(([nilai, label, n]) => {
+    const t = buatEl('button', `adm-status-kartu st-${(nilai || 'semua').toLowerCase().replace(/\s+/g, '-')}`);
+    t.type = 'button';
+    t.setAttribute('aria-pressed', String(saring === nilai));
+    t.append(buatEl('span', 'adm-status-label', label), buatEl('strong', 'adm-status-jumlah', angkaId.format(n)));
+    t.addEventListener('click', () => {
+      ambilEl('saring-status').value = nilai;
+      tampilkanTabelPesanan();
+    });
+    return t;
+  });
+  ambilEl('ringkas-status').replaceChildren(...kartu);
+}
+
 function tampilkanTabelPesanan() {
   const cari = ambilEl('cari-pesanan').value.trim().toLowerCase();
   const saring = ambilEl('saring-status').value;
+  tampilkanRingkasStatus(saring);
   const tampil = semuaPesanan.filter((p) => (!saring || p.status === saring)
     && (!cari || `${p.kode} ${p.nama}`.toLowerCase().includes(cari)));
   const { potongan } = potongHalaman('pesanan', tampil, `${cari}|${saring}`, tampilkanTabelPesanan);
@@ -549,6 +580,14 @@ function tampilkanTabelPesanan() {
     }
 
     const selesai = p.status === 'Selesai';
+    const belumBayar = p.status === 'Menunggu bayar';
+    const batal = p.status === 'Dibatalkan';
+    // Belum dibayar: tombol pertama "Tandai lunas" (status jadi Diterima dan nominal masuk Keuangan)
+    const lunas = tombolIkon('lunas', `Tandai pesanan ${p.kode} sudah dibayar`, 'ikon-lunas', async (t) => {
+      t.disabled = true;
+      await ubahStatusPesanan(p, 'Diterima', 'Pembayaran dikonfirmasi admin. Nominal pesanan ini sekarang dihitung di menu Keuangan.');
+      t.disabled = false;
+    });
     const cetak = tombolIkon('cetak', `Cetak pesanan ${p.kode}`, 'ikon-cetak', async (t) => {
       t.disabled = true;
       await cetakPesanan(p);
@@ -559,13 +598,13 @@ function tampilkanTabelPesanan() {
       await ubahStatusPesanan(p, 'Selesai');
       t.disabled = false;
     });
-    // Cetak tidak boleh memundurkan pesanan yang sudah siap diambil/selesai
-    cetak.disabled = selesai || p.status === 'Siap diambil';
-    ceklis.disabled = selesai;
+    // Cetak tidak boleh memundurkan pesanan yang sudah siap diambil/selesai; belum bayar/batal belum boleh dikerjakan
+    cetak.disabled = selesai || batal || p.status === 'Siap diambil';
+    ceklis.disabled = selesai || batal || belumBayar;
 
     const aksi = buatEl('div', 'adm-aksi');
     aksi.append(
-      cetak,
+      belumBayar ? lunas : cetak,
       ceklis,
       tombolIkon('ubah', `Ubah pesanan ${p.kode}`, '', () => bukaFormPesanan(p)),
       tombolIkon('hapus', `Hapus pesanan ${p.kode}`, 'ikon-hapus', () => hapusPesanan(p)),
@@ -828,6 +867,8 @@ function bukaFormPesanan(p) {
     f.elements.alamat.value = p.alamat || '';
     f.elements.catatan.value = p.catatan || '';
     f.elements.status.value = p.status;
+  } else {
+    f.elements.status.value = 'Diterima'; // pesanan manual (datang langsung/WA) biasanya sudah dibayar
   }
   perbaruiFormPesanan();
   ambilEl('dialog-pesanan').showModal();

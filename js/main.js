@@ -93,8 +93,8 @@ async function panggilApi({ params, body } = {}) {
 function pesanWaPesanan(p) {
   const baris = [`Halo ${CONFIG.namaToko}, saya ingin memesan.`, ''];
   if (p.kode) baris.push(`Kode pesanan: ${p.kode}`);
+  if (p.nama) baris.push(`Nama: ${p.nama}`); // kosong bila halaman Bayar dibuka lewat kode
   baris.push(
-    `Nama: ${p.nama}`,
     `Produk: ${p.produk}${p.spesifikasi ? ` (${p.spesifikasi})` : ''}`,
     `Jumlah: ${p.jumlah}`,
     `Perkiraan total: ${rupiah.format(p.total)}`,

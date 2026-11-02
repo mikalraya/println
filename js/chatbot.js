@@ -13,7 +13,7 @@ const ATURAN_BOT = [
   },
   {
     kunci: ['refund', 'batal', 'pengembalian', 'uang kembali', 'cancel'],
-    jawab: 'Pembatalan atau pengembalian uang dibicarakan langsung dengan admin lewat WhatsApp. Sebutkan kode pesananmu, misalnya PRT-0001. Pesanan yang sudah berstatus "Diproses" sudah mulai dicetak, jadi hubungi admin secepatnya.',
+    jawab: 'Pembatalan atau pengembalian uang dibicarakan langsung dengan admin lewat WhatsApp. Sebutkan kode pesananmu, misalnya PRT-0001. Pesanan yang sudah berstatus "Diproses" sudah mulai dicetak, jadi hubungi admin secepatnya. Pesanan yang tidak dibayar dalam 60 menit dibatalkan otomatis.',
     tautan: ['Halaman kontak', 'kontak.html'],
   },
   {
@@ -36,7 +36,7 @@ const ATURAN_BOT = [
   },
   {
     kunci: ['bayar', 'qris', 'scan qr'],
-    jawab: 'Cara membayar: (1) kirim pesanan lewat form, (2) kamu otomatis diarahkan ke halaman Pembayaran berisi kode pesanan dan perkiraan total, (3) scan QRIS di halaman itu, lalu (4) tekan "Konfirmasi lewat WhatsApp". Catatan: QRIS di website ini masih contoh (mockup), bukan pembayaran sungguhan.',
+    jawab: 'Cara membayar: (1) kirim pesanan lewat form, (2) kamu otomatis diarahkan ke halaman Pembayaran berisi kode pesanan dan perkiraan total, (3) scan QRIS di halaman itu, lalu (4) tekan "Konfirmasi lewat WhatsApp". Bayar dalam 60 menit, kalau lewat pesanan otomatis dibatalkan. Catatan: QRIS di website ini masih contoh (mockup), bukan pembayaran sungguhan.',
     tautan: ['Mulai pesan', 'pesan.html'],
   },
   // ----- Pertanyaan lain -----
@@ -116,6 +116,30 @@ function cariJawabanBot(teks) {
   return terbaik;
 }
 
+// Maskot asisten PrintIn (SVG tetap, bukan data pengguna). Kedip mata, lambaian tangan, dan goyang kepala
+// diatur di css/style.css (kelas bot-*), otomatis berhenti bila pengguna memilih kurangi animasi.
+const MASKOT_BOT = `<svg class="bot-maskot" viewBox="5 6 54 54" aria-hidden="true" focusable="false">
+  <path d="M8 66c2-13 12-18 24-18s22 5 24 18z" fill="#ff8a3d"/>
+  <path d="M26 48l6 7 6-7z" fill="#fff"/>
+  <rect x="28" y="40" width="8" height="9" rx="3" fill="#e8b48b"/>
+  <g class="bot-kepala">
+    <circle cx="32" cy="29" r="13" fill="#f2c39b"/>
+    <path d="M19 29a13 13 0 0 1 26 0c-4-6-9-8-14-7-5 1-8 3-12 7z" fill="#070a1f"/>
+    <g class="bot-mata" fill="#070a1f"><ellipse cx="27" cy="30" rx="1.8" ry="2.1"/><ellipse cx="37" cy="30" rx="1.8" ry="2.1"/></g>
+    <circle cx="24.5" cy="34" r="1.8" fill="#ff8fa3" opacity=".7"/><circle cx="39.5" cy="34" r="1.8" fill="#ff8fa3" opacity=".7"/>
+    <path d="M28.5 35.5q3.5 3 7 0" stroke="#070a1f" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M17.5 29a14.5 14.5 0 0 1 29 0" stroke="#1f2a5c" stroke-width="2.6" fill="none"/>
+    <rect x="15" y="26" width="5" height="9" rx="2.5" fill="#1f2a5c"/>
+    <rect x="44" y="26" width="5" height="9" rx="2.5" fill="#1f2a5c"/>
+    <path d="M17.5 34.5q1 6 8 6" stroke="#1f2a5c" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <circle cx="26.5" cy="40.5" r="1.8" fill="#f6ee14"/>
+  </g>
+  <g class="bot-tangan">
+    <path d="M48 56l5-11" stroke="#ff8a3d" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="53.5" cy="43" r="3.4" fill="#f2c39b"/>
+  </g>
+</svg>`;
+
 function buatBot() {
   if (document.body.dataset.halaman === 'admin') return;
   const wadahTombol = document.querySelector('.tombol-melayang');
@@ -127,7 +151,7 @@ function buatBot() {
   tombol.setAttribute('aria-expanded', 'false');
   tombol.setAttribute('aria-controls', 'panel-bot');
   tombol.setAttribute('aria-label', 'Buka chat tanya jawab');
-  tombol.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 3C6.48 3 2 6.9 2 11.7c0 2.5 1.2 4.7 3.2 6.3L4.6 21l3.6-1.8c1.2.4 2.5.6 3.8.6 5.52 0 10-3.9 10-8.7S17.52 3 12 3z"/><circle cx="8" cy="11.7" r="1.3" fill="#0b1240"/><circle cx="12" cy="11.7" r="1.3" fill="#0b1240"/><circle cx="16" cy="11.7" r="1.3" fill="#0b1240"/></svg><span class="label-ikon" aria-hidden="true">Tanya PrintIn</span>';
+  tombol.innerHTML = `${MASKOT_BOT}<span class="bot-gelembung" aria-hidden="true">Hai!</span><span class="label-ikon" aria-hidden="true">Tanya PrintIn</span>`;
   wadahTombol.append(tombol);
 
   const panel = document.createElement('section');
@@ -138,7 +162,7 @@ function buatBot() {
   panel.setAttribute('aria-label', 'Tanya jawab PrintIn');
   panel.innerHTML = `
     <header class="panel-bot-kepala">
-      <span class="panel-bot-avatar" aria-hidden="true">P</span>
+      <span class="panel-bot-avatar" aria-hidden="true">${MASKOT_BOT}</span>
       <div class="panel-bot-judul"><strong>Tanya PrintIn</strong><span>Asisten FAQ · membalas langsung</span></div>
       <button type="button" class="panel-bot-tutup" aria-label="Tutup chat">×</button>
     </header>
