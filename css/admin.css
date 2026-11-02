@@ -360,7 +360,12 @@ body.adm.adm-menu-kecil {
   transform: none;
 }
 
-.field input[type="search"] {
+.adm-saring .field[hidden] {
+  display: none;
+}
+
+.field input[type="search"],
+.adm-saring input[type="date"] {
   width: 100%;
   min-height: var(--tinggi-sentuh);
   padding: 0.5rem 1rem;
@@ -371,7 +376,8 @@ body.adm.adm-menu-kecil {
   font: inherit;
 }
 
-.field input[type="search"]:focus-visible {
+.field input[type="search"]:focus-visible,
+.adm-saring input[type="date"]:focus-visible {
   border-color: var(--biru);
   box-shadow: 0 0 0 3px rgba(31, 111, 232, 0.25);
   outline: none;

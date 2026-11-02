@@ -73,7 +73,16 @@
               <option value="6" selected>6 bulan</option>
               <option value="12">12 bulan</option>
               <option value="semua">Semua waktu</option>
+              <option value="rentang">Pilih tanggal…</option>
             </select>
+          </div>
+          <div class="field" id="blok-dari-ringkasan" hidden>
+            <label for="dari-ringkasan">Dari tanggal</label>
+            <input id="dari-ringkasan" type="date">
+          </div>
+          <div class="field" id="blok-sampai-ringkasan" hidden>
+            <label for="sampai-ringkasan">Sampai tanggal</label>
+            <input id="sampai-ringkasan" type="date">
           </div>
           <div class="field">
             <label for="saring-lini-ringkasan">Lini produk</label>
@@ -228,7 +237,16 @@
               <option value="hari">Hari ini</option>
               <option value="1">Bulan ini</option>
               <option value="semua" selected>Semua waktu</option>
+              <option value="rentang">Pilih tanggal…</option>
             </select>
+          </div>
+          <div class="field" id="blok-dari-keuangan" hidden>
+            <label for="dari-keuangan">Dari tanggal</label>
+            <input id="dari-keuangan" type="date">
+          </div>
+          <div class="field" id="blok-sampai-keuangan" hidden>
+            <label for="sampai-keuangan">Sampai tanggal</label>
+            <input id="sampai-keuangan" type="date">
           </div>
           <div class="field">
             <label for="saring-lini-keuangan">Lini produk</label>
@@ -773,7 +791,7 @@
         <ul class="bantuan-tips">
           <li>Satu baris = satu pesanan yang sudah dibayar. Pesanan terbaru ada di paling atas.</li>
           <li><b>Cari pemasukan</b> lewat kode pesanan, nama pelanggan, atau nama produk.</li>
-          <li><b>Periode</b> menyaring Hari ini, Bulan ini, atau Semua waktu. <b>Lini produk</b> memisahkan Printing Reguler dan Custom Merchandise.</li>
+          <li><b>Periode</b> menyaring Hari ini, Bulan ini, Semua waktu, atau <b>Pilih tanggal</b> untuk rentang tertentu (mis. 10–20 Oktober 2026). <b>Lini produk</b> memisahkan Printing Reguler dan Custom Merchandise.</li>
           <li><b>Total pemasukan</b> di bawah tabel menghitung semua hasil filter dari semua halaman, bukan hanya 10 baris yang tampil.</li>
           <li>Kartu ringkasan di atas tidak ikut filter. Kartu selalu menghitung semua pesanan yang sudah dibayar.</li>
           <li>Pesanan masuk ke tabel ini begitu ditandai lunas, baik lewat tombol <b>Tandai lunas</b> di menu Pesanan maupun lewat tombol simulasi bayar pelanggan.</li>

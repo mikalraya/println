@@ -203,17 +203,47 @@ function awalPeriode(nilai) {
 // Teks pilihan dibuat singkat agar muat di HP; label lengkap untuk kartu dan grafik
 const LABEL_PERIODE = { 1: 'Bulan ini', 3: '3 bulan terakhir', 6: '6 bulan terakhir', 12: '12 bulan terakhir', semua: 'Semua waktu' };
 
+const formatTanggalPendek = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+// Rentang dari dua input tanggal; "Sampai" dihitung sampai akhir hari (23.59), kosong = tidak dibatasi
+function rentangTanggal(akhiran) {
+  const nilaiDari = ambilEl(`dari-${akhiran}`).value;
+  const nilaiSampai = ambilEl(`sampai-${akhiran}`).value;
+  return {
+    dari: nilaiDari ? new Date(`${nilaiDari}T00:00:00`) : null,
+    sampai: nilaiSampai ? new Date(`${nilaiSampai}T23:59:59.999`) : null,
+  };
+}
+
+// Tampilkan kolom tanggal hanya saat periode "Pilih tanggal…" dipilih
+function aturKolomRentang(akhiran, tampil) {
+  ambilEl(`blok-dari-${akhiran}`).hidden = !tampil;
+  ambilEl(`blok-sampai-${akhiran}`).hidden = !tampil;
+}
+
+const dalamRentang = (t, { dari, sampai }) => Boolean(t) && (!dari || t >= dari) && (!sampai || t <= sampai);
+
 function labelPeriode(nilai) {
+  if (nilai === 'rentang') {
+    const { dari, sampai } = rentangTanggal('ringkasan');
+    if (!dari && !sampai) return 'Pilih rentang tanggal';
+    if (!sampai) return `Sejak ${formatTanggalPendek.format(dari)}`;
+    if (!dari) return `Sampai ${formatTanggalPendek.format(sampai)}`;
+    return `${formatTanggalPendek.format(dari)} – ${formatTanggalPendek.format(sampai)}`;
+  }
   return LABEL_PERIODE[nilai] || nilai;
 }
 
 // Ringkasan hanya menghitung pesanan yang sudah dibayar; semua = true untuk menyertakan semua status
 function pesananTersaring(semua = false) {
-  const awal = awalPeriode(ambilEl('saring-periode').value);
+  const nilai = ambilEl('saring-periode').value;
+  const awal = nilai === 'rentang' ? null : awalPeriode(nilai);
+  const rentang = nilai === 'rentang' ? rentangTanggal('ringkasan') : null;
   const lini = ambilEl('saring-lini-ringkasan').value;
   return semuaPesanan.filter((p) => {
     const t = keTanggal(p.tanggal);
-    return (semua || sudahBayar(p)) && (!awal || (t && t >= awal)) && (!lini || p.lini === lini);
+    const cocokPeriode = rentang ? dalamRentang(t, rentang) : !awal || (t && t >= awal);
+    return (semua || sudahBayar(p)) && cocokPeriode && (!lini || p.lini === lini);
   });
 }
 
@@ -251,15 +281,18 @@ function tampilkanKartu(pesanan, produk) {
 // Daftar bulan (label + kunci "yyyy-mm") untuk grafik omzet
 function daftarBulan(pesanan) {
   const nilai = ambilEl('saring-periode').value;
-  const kini = new Date();
+  const tertuaPesanan = () => pesanan.map((p) => keTanggal(p.tanggal)).filter(Boolean).sort((a, b) => a - b)[0];
+  let akhir = new Date();
   let jumlah = Number(nilai);
-  if (nilai === 'semua') {
-    const tertua = pesanan.map((p) => keTanggal(p.tanggal)).filter(Boolean).sort((a, b) => a - b)[0] || kini;
-    jumlah = Math.min(24, (kini.getFullYear() - tertua.getFullYear()) * 12 + kini.getMonth() - tertua.getMonth() + 1);
+  if (nilai === 'semua' || nilai === 'rentang') {
+    const { dari, sampai } = nilai === 'rentang' ? rentangTanggal('ringkasan') : {};
+    if (sampai) akhir = sampai;
+    const awal = dari || tertuaPesanan() || akhir;
+    jumlah = Math.max(1, Math.min(24, (akhir.getFullYear() - awal.getFullYear()) * 12 + akhir.getMonth() - awal.getMonth() + 1));
   }
   const format = new Intl.DateTimeFormat('id-ID', { month: 'short', year: '2-digit' });
   return Array.from({ length: jumlah }, (_, i) => {
-    const d = new Date(kini.getFullYear(), kini.getMonth() - (jumlah - 1 - i), 1);
+    const d = new Date(akhir.getFullYear(), akhir.getMonth() - (jumlah - 1 - i), 1);
     return { kunci: `${d.getFullYear()}-${d.getMonth()}`, label: format.format(d) };
   });
 }
@@ -334,6 +367,7 @@ function tampilkanDaftar(pesanan, produk) {
 
 function tampilkanRingkasan() {
   const lini = ambilEl('saring-lini-ringkasan').value;
+  aturKolomRentang('ringkasan', ambilEl('saring-periode').value === 'rentang');
   const pesanan = pesananTersaring();
   const produk = semuaProduk.filter((p) => !lini || p.lini === lini);
   ambilEl('info-ringkasan').textContent = 'Periode berlaku untuk data pesanan; filter lini berlaku untuk pesanan dan produk.';
@@ -373,13 +407,18 @@ function tampilkanTabelKeuangan() {
   const cari = ambilEl('cari-keuangan').value.trim().toLowerCase();
   const periode = ambilEl('saring-periode-keuangan').value;
   const lini = ambilEl('saring-lini-keuangan').value;
+  const rentang = periode === 'rentang';
+  aturKolomRentang('keuangan', rentang);
+  const { dari, sampai } = rentangTanggal('keuangan');
   const tampil = semuaPesanan.filter((p) => {
     const t = keTanggal(p.tanggal);
-    const cocokPeriode = periode === 'semua' || (t && sama(t, kini) && (periode === '1' || t.getDate() === kini.getDate()));
+    const cocokPeriode = periode === 'semua'
+      || (rentang ? dalamRentang(t, { dari, sampai })
+        : t && sama(t, kini) && (periode === '1' || t.getDate() === kini.getDate()));
     return sudahBayar(p) && cocokPeriode && (!lini || p.lini === lini) && (!cari || `${p.kode} ${p.nama} ${p.produk}`.toLowerCase().includes(cari));
   }).sort((a, b) => (keTanggal(b.tanggal) || 0) - (keTanggal(a.tanggal) || 0));
 
-  const { potongan } = potongHalaman('keuangan', tampil, `${cari}|${periode}|${lini}`, tampilkanTabelKeuangan);
+  const { potongan } = potongHalaman('keuangan', tampil, `${cari}|${periode}|${dari}|${sampai}|${lini}`, tampilkanTabelKeuangan);
   ambilEl('info-keuangan').textContent = teksInfoHalaman('keuangan', 'pesanan lunas', semuaPesanan.filter(sudahBayar).length);
   // Total tetap dihitung dari semua hasil filter, bukan hanya halaman ini
   ambilEl('total-keuangan').textContent = rupiah.format(tampil.reduce((s, p) => s + p.total, 0));
@@ -1442,16 +1481,20 @@ document.addEventListener('DOMContentLoaded', () => {
   ambilEl('muat-ulang-keuangan').addEventListener('click', muatUlang);
   setInterval(segarkanKeuangan, 30000);
   ambilEl('cari-keuangan').addEventListener('input', tampilkanTabelKeuangan);
-  ['saring-periode-keuangan', 'saring-lini-keuangan'].forEach((id) => ambilEl(id).addEventListener('change', tampilkanTabelKeuangan));
+  ['saring-periode-keuangan', 'saring-lini-keuangan', 'dari-keuangan', 'sampai-keuangan'].forEach((id) => ambilEl(id).addEventListener('change', tampilkanTabelKeuangan));
   ambilEl('reset-keuangan').addEventListener('click', () => {
     ambilEl('cari-keuangan').value = '';
     ambilEl('saring-periode-keuangan').value = 'semua';
+    ambilEl('dari-keuangan').value = '';
+    ambilEl('sampai-keuangan').value = '';
     ambilEl('saring-lini-keuangan').value = '';
     tampilkanTabelKeuangan();
   });
-  ['saring-periode', 'saring-lini-ringkasan'].forEach((id) => ambilEl(id).addEventListener('change', tampilkanRingkasan));
+  ['saring-periode', 'saring-lini-ringkasan', 'dari-ringkasan', 'sampai-ringkasan'].forEach((id) => ambilEl(id).addEventListener('change', tampilkanRingkasan));
   ambilEl('reset-ringkasan').addEventListener('click', () => {
     ambilEl('saring-periode').value = '6';
+    ambilEl('dari-ringkasan').value = '';
+    ambilEl('sampai-ringkasan').value = '';
     ambilEl('saring-lini-ringkasan').value = '';
     tampilkanRingkasan();
   });
