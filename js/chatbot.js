@@ -2,12 +2,44 @@
 // pertanyaan dicocokkan dengan kata kunci, jawaban sama dengan halaman Kontak & FAQ.
 // Membutuhkan js/config.js dan js/main.js (tombol melayang dibuat di main.js).
 
+// Urutan penting: bila skor sama, aturan yang lebih atas menang.
+// Karena itu aturan pembayaran yang spesifik ditaruh paling atas, aturan pembayaran umum sesudahnya.
 const ATURAN_BOT = [
+  // ----- Pembayaran -----
   {
-    kunci: ['harga', 'tarif', 'biaya', 'berapa', 'murah', 'kalkulator', 'hitung'],
-    jawab: 'Daftar harga dan kalkulator ada di halaman Produk. Semua harga adalah harga simulasi. Harga "Mulai" (brosur dan undangan) adalah harga dasar, harga akhir dikonfirmasi admin.',
-    tautan: ['Buka kalkulator', 'produk.html#kalkulator'],
+    kunci: ['bukti', 'konfirmasi', 'sudah bayar', 'sudah transfer', 'struk', 'resi'],
+    jawab: 'Setelah membayar, tekan tombol "Konfirmasi lewat WhatsApp" di halaman Pembayaran. Pesan berisi kode pesananmu sudah terisi otomatis, tinggal kirim ke admin. Admin akan mengecek lalu memperbarui status pesananmu.',
+    tautan: ['Cek status pesanan', 'status.html'],
   },
+  {
+    kunci: ['refund', 'batal', 'pengembalian', 'uang kembali', 'cancel'],
+    jawab: 'Pembatalan atau pengembalian uang dibicarakan langsung dengan admin lewat WhatsApp. Sebutkan kode pesananmu, misalnya PRT-0001. Pesanan yang sudah berstatus "Diproses" sudah mulai dicetak, jadi hubungi admin secepatnya.',
+    tautan: ['Halaman kontak', 'kontak.html'],
+  },
+  {
+    kunci: ['metode', 'transfer', 'tunai', 'cash', 'cod', 'rekening', 'bank', 'ovo', 'gopay', 'dana', 'shopeepay', 'e wallet', 'ewallet', 'dompet digital'],
+    jawab: 'Di website ini tersedia contoh pembayaran QRIS. QRIS biasanya bisa dibayar lewat aplikasi bank atau dompet digital mana pun. Karena halaman QRIS masih contoh (mockup), jangan kirim uang sungguhan. Pilihan pembayaran lain bisa ditanyakan ke admin lewat WhatsApp.',
+  },
+  {
+    kunci: ['total', 'nominal', 'tagihan', 'dp', 'uang muka', 'cicil', 'lunas', 'kurang bayar'],
+    jawab: 'Total di halaman Pembayaran adalah perkiraan harga simulasi dari kalkulator. Total pasti dikonfirmasi admin setelah desainmu dicek. Soal uang muka (DP) atau pelunasan, admin akan menjelaskannya lewat WhatsApp saat konfirmasi.',
+    tautan: ['Hitung harga', 'produk.html#kalkulator'],
+  },
+  {
+    kunci: ['ongkir', 'ongkos kirim', 'biaya kirim', 'pengiriman', 'kurir', 'antar'],
+    jawab: 'Harga di website belum termasuk ongkos kirim. Kalau kamu memilih "Dikirim ke alamat" di form pesanan, admin akan mengonfirmasi biaya dan cara pengirimannya lewat WhatsApp. Pilih "Ambil sendiri di toko" kalau ingin mengambil sendiri tanpa ongkir.',
+    tautan: ['Ke form pesan', 'pesan.html'],
+  },
+  {
+    kunci: ['aman', 'penipuan', 'tipu', 'otp', 'cvv', 'kartu kredit', 'nomor kartu', 'password'],
+    jawab: 'PrintIn tidak pernah meminta nomor kartu, kode OTP, PIN, atau password. Halaman QRIS di website ini hanya contoh, jadi jangan transfer uang sungguhan. Kalau ada yang meminta data seperti itu atas nama PrintIn, abaikan dan hubungi admin.',
+  },
+  {
+    kunci: ['bayar', 'qris', 'scan qr'],
+    jawab: 'Cara membayar: (1) kirim pesanan lewat form, (2) kamu otomatis diarahkan ke halaman Pembayaran berisi kode pesanan dan perkiraan total, (3) scan QRIS di halaman itu, lalu (4) tekan "Konfirmasi lewat WhatsApp". Catatan: QRIS di website ini masih contoh (mockup), bukan pembayaran sungguhan.',
+    tautan: ['Mulai pesan', 'pesan.html'],
+  },
+  // ----- Pertanyaan lain -----
   {
     kunci: ['format', 'file', 'pdf', 'png', 'jpg', 'drive', 'unggah', 'upload', 'kirim desain'],
     jawab: 'File desain boleh PDF, PNG, atau JPG, maksimal 10 MB per file. Kalau lebih besar, taruh di Google Drive lalu tempel link-nya di form pesanan (akses "siapa saja yang memiliki link").',
@@ -18,13 +50,14 @@ const ATURAN_BOT = [
     jawab: 'Usahakan resolusi sekitar 300 dpi pada ukuran cetak sebenarnya. Untuk banner besar, resolusi lebih rendah biasanya sudah cukup. Kalau file perlu diperbaiki, admin akan menghubungimu lewat WhatsApp.',
   },
   {
-    kunci: ['lama', 'hari', 'selesai', 'estimasi', 'kapan', 'waktu', 'cepat'],
+    kunci: ['lama', 'hari', 'selesai', 'estimasi', 'kapan', 'waktu', 'cepat', 'pengerjaan', 'berapa lama'],
     jawab: 'Estimasi selesai tertulis di setiap produk di halaman Produk. Kamu juga bisa mengisi tanggal dibutuhkan di form pesanan. Waktunya bisa berubah kalau pesanan sedang ramai.',
     tautan: ['Lihat produk', 'produk.html'],
   },
   {
-    kunci: ['bayar', 'pembayaran', 'qris', 'transfer', 'lunas'],
-    jawab: 'Setelah pesanan dikirim, kamu diarahkan ke halaman pembayaran QRIS. Halaman itu masih contoh (mockup), bukan pembayaran sungguhan, jadi konfirmasi dilakukan lewat WhatsApp.',
+    kunci: ['harga', 'tarif', 'biaya', 'berapa', 'murah', 'kalkulator', 'hitung'],
+    jawab: 'Daftar harga dan kalkulator ada di halaman Produk. Semua harga adalah harga simulasi. Harga "Mulai" (brosur dan undangan) adalah harga dasar, harga akhir dikonfirmasi admin.',
+    tautan: ['Buka kalkulator', 'produk.html#kalkulator'],
   },
   {
     kunci: ['revisi', 'ubah desain', 'ganti desain', 'salah', 'perbaiki'],
@@ -65,13 +98,19 @@ const ATURAN_BOT = [
 const SAPAAN_BOT = ['halo', 'hai', 'hi', 'selamat', 'permisi'];
 const PERTANYAAN_CEPAT = ['Berapa harganya?', 'Format file desain?', 'Berapa lama pengerjaan?', 'Cara membayar?', 'Cek status pesanan'];
 
+// Awalan kata kerja/benda yang umum, agar "membayar", "dibayar", "pembayaran" cocok dengan kunci "bayar"
+const AWALAN_BOT = ['', 'me', 'mem', 'men', 'meng', 'di', 'pe', 'pem', 'pen', 'ber', 'ter'];
+
 // Pilih jawaban dengan skor kata kunci terbanyak. Mengembalikan aturan, atau null bila tidak ada yang cocok.
 function cariJawabanBot(teks) {
   const t = ` ${teks.toLowerCase().replace(/[^a-z0-9 ]/g, ' ')} `;
   let terbaik = null;
   let skorTerbaik = 0;
+  // Kunci pendek (≤ 3 huruf, mis. "wa", "dp") harus satu kata utuh agar "waktu"/"dpi" tidak ikut cocok
+  const cocok = (k) => (k.length <= 3 ? t.includes(` ${k} `) : AWALAN_BOT.some((a) => t.includes(` ${a}${k}`)));
   ATURAN_BOT.forEach((aturan) => {
-    const skor = aturan.kunci.filter((k) => t.includes(` ${k}`)).length;
+    // Frasa lebih spesifik: nilainya sebanyak jumlah katanya ("biaya kirim" = 2)
+    const skor = aturan.kunci.filter(cocok).reduce((n, k) => n + k.split(' ').length, 0);
     if (skor > skorTerbaik) { terbaik = aturan; skorTerbaik = skor; }
   });
   return terbaik;
